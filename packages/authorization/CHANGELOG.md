@@ -1,0 +1,9 @@
+# Changelog
+
+## 0.1.0 - 2026-11-25
+
+- Initial release of `@forge-fr/authorization` (Phase 4 — Milestone 4.4).
+- Added RBAC registry with cycle detection, segment-strict permissions, and deny-overrides-allow precedence.
+- Added async policy engine with fail-closed evaluation and decision audit hooks.
+- Added resource ownership (anti-IDOR) and multi-tenant isolation guards usable at both service and HTTP route boundaries.
+- Added HTTP route middleware guards (`requireRoles`, `requirePermissions`, `requireTenantParam`, `createAuthorizationMiddleware`) and `createAuthorizationPlugin()`.

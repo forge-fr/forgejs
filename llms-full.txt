@@ -1,0 +1,4315 @@
+# ForgeJS — Complete Documentation & API Corpus (v1.0.0-rc.1)
+
+> Build structured, modular TypeScript backends for Bun, Node.js, and WinterCG Edge with typed DI, capability-scoped plugins, and OWASP ASVS 5.0.0 defaults.
+
+- Index manifest: https://github.com/forge-fr/forgejs/llms.txt
+- Documentation Portal: https://github.com/forge-fr/forgejs/docs/getting-started/introduction
+- Live Playground: https://github.com/forge-fr/forgejs/playground
+- License: MIT
+- Repository: https://github.com/forge-fr/forgejs
+
+---
+
+# ForgeJS Guides & Learning Paths
+
+> Structured backend engineering learning paths covering foundation setup, hands-on modular backend construction, HTTP & validation, data/ORM layers, OWASP ASVS 5.0.0 security, and infrastructure plugins.
+
+- **HTML URL**: https://github.com/forge-fr/forgejs/guides
+- **Markdown URL**: https://github.com/forge-fr/forgejs/guides.md
+
+## Featured Hands-On Track
+
+- [Build a Production Modular Backend Step by Step (9 Steps)](https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend.md)
+
+## Documentation Modules
+
+### Part A: Getting Started
+
+- [Introduction](https://github.com/forge-fr/forgejs/docs/getting-started/introduction.md) — What ForgeJS is, its architectural philosophy, honest comparisons with Express, Fastify, Hono, and NestJS, and verified runtime targets.
+- [Installation](https://github.com/forge-fr/forgejs/docs/getting-started/installation.md) — Runtime prerequisites, package manager commands for pnpm, npm, and Bun, CLI scaffolding, TypeScript settings, and troubleshooting.
+- [Quick Start](https://github.com/forge-fr/forgejs/docs/getting-started/quick-start.md) — Build a schema-validated HTTP API with createHttpApp() and validatedHandler(), then swap seamlessly across Node.js, Bun, and WinterCG Edge.
+- [Your First Application](https://github.com/forge-fr/forgejs/docs/getting-started/first-application.md) — Step-by-step typed backend combining createKernel(), defineModule(), validatedHandler(), security headers, and graceful shutdown.
+
+### Part B: Core Concepts
+
+- [Architecture](https://github.com/forge-fr/forgejs/docs/concepts/architecture.md) — Unidirectional 6-layer architecture enforced by 60 automated boundary checks across all 20 @forge-fr/* workspace packages.
+- [Application Lifecycle](https://github.com/forge-fr/forgejs/docs/concepts/lifecycle.md) — Deterministic 7-stage ApplicationKernel lifecycle with boot-failure rollback, lifecycle events, and reverse-order graceful shutdown.
+- [Configuration & Secrets](https://github.com/forge-fr/forgejs/docs/concepts/configuration.md) — Typed configuration management via createConfigManager(), prototype-safe key guards, and credential masking with secret() and SecretValue.
+- [Dependency Injection](https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection.md) — Typed DI tokens, singleton/transient/request scopes, captive-dependency detection, cycle errors, and LIFO async disposal.
+- [Encapsulated Modules](https://github.com/forge-fr/forgejs/docs/concepts/modules.md) — Define modular boundaries with defineModule(), explicit exports, non-transitive encapsulation, and diamond deduplication.
+- [Error Handling](https://github.com/forge-fr/forgejs/docs/concepts/error-handling.md) — Structured ForgeError hierarchy, production expose: false sanitization, normalizeError(), and HTTP onError hooks.
+
+### Part C: HTTP & API Development
+
+- [Routing](https://github.com/forge-fr/forgejs/docs/http/routing.md) — O(1) static route lookup, constrained radix parameters, wildcards, nested groups, autoHead, and RFC 405 Allow generation.
+- [Controllers & Handlers](https://github.com/forge-fr/forgejs/docs/http/controllers.md) — Composition-first route registration factories resolving typed DI services via ctx.container and generated via forge generate controller.
+- [Request & Response](https://github.com/forge-fr/forgejs/docs/http/request-and-response.md) — Compact 13-field ForgeContext, bounded body readers (1 MiB default), RFC 9110 Accept negotiation, streaming, compression, and ETags.
+- [Middleware & Hooks](https://github.com/forge-fr/forgejs/docs/http/middleware.md) — Deterministic tiered middleware (global → module → group → route), double-next() guards, and 7 HTTP lifecycle hooks.
+- [Validation](https://github.com/forge-fr/forgejs/docs/http/validation.md) — Standard Schema v1 validation across params, query, headers, and body with Zod v4 fast path and prototype-pollution sanitization.
+- [Response Validation & Serialization](https://github.com/forge-fr/forgejs/docs/http/serialization.md) — Enforce outgoing response contracts with validatedHandler({ response }) to strip accidental PII before serialization.
+- [OpenAPI 3.1 & Swagger UI](https://github.com/forge-fr/forgejs/docs/http/openapi.md) — Reflect Standard Schema routes into JSON Schema 2020-12 OpenAPI 3.1 documents and mount XSS-escaped Swagger UI with strict CSP.
+
+### Part D: Database & Data Access
+
+- [Database Overview](https://github.com/forge-fr/forgejs/docs/database/overview.md) — DatabaseAdapter contract, SQLSTATE normalization, credential-redacted URLs, and supported PostgreSQL, Drizzle, and Prisma integrations.
+- [PostgreSQL](https://github.com/forge-fr/forgejs/docs/database/postgresql.md) — Native postgres-js pooling, allowlisted transaction isolation levels, SQLSTATE error mapping, and checksum-verified migrations.
+- [Drizzle ORM](https://github.com/forge-fr/forgejs/docs/database/drizzle.md) — Preserve 100% native Drizzle schema and relational query inference with createDrizzlePostgresPlugin() and normalizeDrizzleError().
+- [Prisma ORM](https://github.com/forge-fr/forgejs/docs/database/prisma.md) — Integrate generated PrismaClient (v5/v6/v7+) with P1xxx/P2xxx error normalization and kernel $disconnect draining.
+- [Repository Pattern](https://github.com/forge-fr/forgejs/docs/database/repository-pattern.md) — Decouple domain services from ORM specifics using typed DI repository tokens and explicit transaction propagation.
+- [Database Testing](https://github.com/forge-fr/forgejs/docs/database/testing.md) — Run deterministic PostgreSQL 16 integration suites via FORGE_TEST_DATABASE_URL in CI and local Docker environments.
+
+### Part E: Authentication & Security
+
+- [Authentication](https://github.com/forge-fr/forgejs/docs/security/authentication.md) — Cross-runtime OWASP Argon2id hashing, algorithm-pinned JWT/JWKS, SHA-256 hashed sessions and API keys, OAuth 2.0 PKCE/OIDC, and Better Auth.
+- [Authorization](https://github.com/forge-fr/forgejs/docs/security/authorization.md) — Segment-strict RBAC, deny-overrides-allow ABAC policies, anti-IDOR assertOwnership(), and multi-tenant isolation checks.
+- [Security Guide (OWASP ASVS 5.0.0)](https://github.com/forge-fr/forgejs/docs/security/security-guide.md) — Clear separation of built-in HTTP defaults, optional @forge-fr/security middleware, and application/infrastructure security responsibilities.
+
+### Part F: Plugins & Extensions
+
+- [Plugin System](https://github.com/forge-fr/forgejs/docs/plugins/plugin-system.md) — SemVer 2.0.0 compatibility engine, topological dependency DAG, conflict detection, and frozen capability-scoped PluginContext.
+- [Creating Plugins](https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins.md) — Author, validate, and test custom ForgeJS plugins with definePlugin(), Standard Schema config validation, and createPluginTestHarness().
+- [Adapter Development](https://github.com/forge-fr/forgejs/docs/plugins/adapter-development.md) — Implement custom HTTP runtime, database, cache, queue, or storage adapters and verify them against ForgeJS contract suites.
+- [Integrating External Libraries](https://github.com/forge-fr/forgejs/docs/plugins/external-libraries.md) — Use optional peerDependencies and duck-typed interfaces (RedisClientLike, PrismaClientLike) to keep core packages dependency-free.
+
+### Part G: Advanced Features
+
+- [Caching & Redis](https://github.com/forge-fr/forgejs/docs/advanced/caching.md) — O(1) LRU memory cache, cursor SCAN-based Redis cache, single-flight getOrSet() stampede protection, and tag/prefix invalidation.
+- [Queues & Background Jobs](https://github.com/forge-fr/forgejs/docs/advanced/queues.md) — Memory, Redis sorted-set (atomic Lua pop), and PostgreSQL SKIP LOCKED job queues with retries, idempotency keys, DLQ replay, and graceful worker drain.
+- [Events & Hooks](https://github.com/forge-fr/forgejs/docs/advanced/events-and-hooks.md) — Typed EventDispatcher (fail-fast, collect, isolate error strategies) and priority HookRegistry pipelines in @forge-fr/core.
+- [File Storage & S3](https://github.com/forge-fr/forgejs/docs/advanced/storage.md) — Memory, symlink-jailed local disk, and zero-SDK Web Crypto AWS SigV4 S3 object storage with magic-byte upload validation.
+- [WebSockets & Server-Sent Events](https://github.com/forge-fr/forgejs/docs/advanced/realtime.md) — Cross-runtime app.ws() (RFC 6455 Node, native Bun.serve, Edge) with pre-upgrade auth, CSWSH allowedOrigins, and createSseResponse() streaming.
+- [Logging, Metrics, Tracing & Health Checks](https://github.com/forge-fr/forgejs/docs/advanced/observability.md) — Structured Pino logging with secret & URL redaction, CRLF neutralization, correlation IDs, OpenTelemetry tracing/metrics, and sanitized /health/live & /health/ready endpoints.
+
+### Part H: Testing & Production
+
+- [Testing](https://github.com/forge-fr/forgejs/docs/deployment/testing.md) — In-memory HTTP/WebSocket tests, DI provider overrides, plugin harnesses, and dual-runtime Node.js + Bun verification.
+- [Runtime Compatibility](https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility.md) — Transparent compatibility matrix separating locally verified runtimes (Node.js v22.23.5, Bun 1.4.4) from CI-configured targets.
+- [Production Deployment](https://github.com/forge-fr/forgejs/docs/deployment/production.md) — Strict ESM builds, NODE_ENV=production hardening, POSIX graceful draining, health probes, and reverse-proxy configuration.
+- [Performance & Benchmarks](https://github.com/forge-fr/forgejs/docs/deployment/performance.md) — Hot-path HTTP optimizations and verbatim reproducible Node.js v22.23.5 & Bun 1.4.4 benchmark results from benchmarks/RESULTS.md.
+
+### Part I: CLI Reference
+
+- [CLI Reference (@forge-fr/cli)](https://github.com/forge-fr/forgejs/docs/cli/reference.md) — Complete reference for all 10 verified forge CLI commands, flags, templates, expected output, and error codes from packages/cli/src/commands.ts.
+
+### Part K: Community & Contributing
+
+- [Contributing](https://github.com/forge-fr/forgejs/docs/community/contributing.md) — Monorepo workspace layout, strict TypeScript standards, architectural boundary tests, and verification commands for contributors.
+- [Plugin Author Guide](https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide.md) — Checklist for publishing pure-ESM, capability-scoped third-party ForgeJS plugins with SemVer safety and clean npm pack tarballs.
+- [Release & Versioning](https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md) — SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.1 status, and OIDC Trusted Publishing workflow.
+- [Frequently Asked Questions](https://github.com/forge-fr/forgejs/docs/community/faq.md) — Direct answers on runtime compatibility, ORM choices, decorators vs. typed tokens, security boundaries, and benchmark reproduction.
+
+---
+
+# ForgeJS Architecture Specifications, ADRs & Benchmarks
+
+> Architectural overview, 20-package directed acyclic graph, verified benchmarks, and OWASP ASVS 5.0.0 release checklist for ForgeJS v1.0.0-rc.1.
+
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/architecture/hub
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/architecture/hub.md
+
+## Core Engineering Specifications
+
+- 7-stage `ApplicationKernel` lifecycle (`config` -> `register` -> `boot` -> `routes` -> `ready` -> `listen` -> `shutdown`).
+- Strict layered dependency DAG across 20 `@forge-fr/*` packages with zero circular module dependencies.
+- Capability-scoped plugin security model enforcing SemVer compatibility checks and isolated DI token visibility.
+- OWASP ASVS 5.0.0 defaults across Argon2id, algorithm-pinned JWTs, CSRF Fetch Metadata, safe fetch SSRF protection, and confined filesystem paths.
+
+## Related Documentation
+
+- [Architecture & Dependency Injection](https://github.com/forge-fr/forgejs/docs/concepts/architecture.md)
+- [Security Overview & OWASP ASVS 5.0.0](https://github.com/forge-fr/forgejs/docs/security/security-guide.md)
+- [Performance Benchmarks](https://github.com/forge-fr/forgejs/docs/concepts/benchmarks.md)
+- [Build Modular Backend Tutorial](https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend.md)
+
+---
+
+# Official ForgeJS Plugin & Runtime Ecosystem
+
+> 11 official capability-scoped plugins, 3 runtime adapters (Node.js, Bun, WinterCG Edge), and 10 verified CLI commands.
+
+- **HTML URL**: https://github.com/forge-fr/forgejs/ecosystem
+- **Markdown URL**: https://github.com/forge-fr/forgejs/ecosystem.md
+
+## Official Plugins
+
+| Plugin | Factory | Tokens | Health Probe | Capabilities |
+| --- | --- | --- | --- | --- |
+| `@forge-fr/database` | `createPostgresPlugin / createDatabasePlugin` | `DefaultDatabaseTokens` | `database` | di:register, health:register |
+| `@forge-fr/drizzle` | `createDrizzlePostgresPlugin` | `DefaultDrizzleTokens` | `drizzle` | di:register, health:register |
+| `@forge-fr/prisma` | `createPrismaPlugin` | `DefaultPrismaTokens` | `prisma` | di:register, health:register |
+| `@forge-fr/auth` | `createAuthPlugin` | `AuthTokens` | `auth` | di:register, health:register |
+| `@forge-fr/authorization` | `createAuthorizationPlugin` | `AuthorizationTokens` | `authorization` | di:register, health:register |
+| `@forge-fr/security` | `createSecurityPlugin` | `SecurityTokens` | `security` | di:register, health:register |
+| `@forge-fr/logger` | `createObservabilityPlugin` | `ObservabilityTokens` | `observability:logger` | di:register, health:register |
+| `@forge-fr/cache` | `createCachePlugin` | `CacheTokens` | `cache` | di:register, health:register |
+| `@forge-fr/queue` | `createQueuePlugin` | `QueueTokens` | `queue` | di:register, health:register |
+| `@forge-fr/storage` | `createStoragePlugin` | `StorageTokens` | `storage` | di:register, health:register |
+| `@forge-fr/openapi` | `createOpenApiPlugin` | `OpenApiTokens` | `openapi` | di:register, health:register |
+
+## Verified CLI Commands (`@forge-fr/cli`)
+
+| Command | Usage | Description |
+| --- | --- | --- |
+| `new` | `forge new <name> [--template minimal\|api\|modular] [--runtime node\|bun\|edge]` | Scaffold a strict-ESM TypeScript ForgeJS application with runtime adapter setup. |
+| `generate` | `forge generate\|g <module\|controller\|service> <name>` | Generate typed module, controller, or service boilerplate following layered boundaries. |
+| `plugin add` | `forge plugin add <plugin>` | Register an official @forge-fr/* plugin into your project configuration safely. |
+| `dev` | `forge dev [--watch] [--runtime node\|bun]` | Start the development server on Node.js or Bun with optional file watch mode. |
+| `build` | `forge build` | Compile TypeScript sources into production ESM artifacts. |
+| `start` | `forge start` | Launch the compiled production application entrypoint. |
+| `test` | `forge test` | Run the project test suite via the configured test runner. |
+| `doctor` | `forge doctor [--json]` | Inspect runtime versions, TypeScript configuration, ESM mode, and workspace health. |
+| `help` | `forge help` | Display CLI usage instructions and available flags. |
+| `version` | `forge version` | Print the installed @forge-fr/cli version. |
+
+---
+
+# Build a Production Modular Backend Step by Step
+
+> Build the full opinionated modular ForgeJS backend step by step — from workspace setup and Kernel DI to auth strategies, OWASP security, caching, magic-byte storage, webhook queues with DLQ replay, SSE/WebSockets, OpenTelemetry, and OpenAPI 3.1.
+
+- **Version**: v1.0.0-rc.1
+- **Steps**: 9 interactive steps
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend.md
+- **Live Playground**: https://github.com/forge-fr/forgejs/playground
+
+## Step 01: Workspace Setup, ESM TypeScript & HTTP Runtime
+
+*Scaffold the workspace and boot the server natively with @forge-fr/node*
+
+- **Estimated time**: 5 min
+- **Packages**: @forge-fr/cli, @forge-fr/node, @forge-fr/http
+- **Module files**: `package.json`, `tsconfig.json`, `server.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=source
+
+Every production ForgeJS backend runs on pure ECMAScript Modules (ESM) with strict TypeScript compiler checks enabled from day one.
+
+Instead of wrapping an external framework, your entry file wires createNodeAdapter() directly to createHttpApp() and delegates SIGINT/SIGTERM draining to attachProcessShutdown().
+
+### Key Architectural Highlights
+
+- Pure ESM package configuration ("type": "module") and strict tsconfig rules (strict, exactOptionalPropertyTypes, noUncheckedIndexedAccess).
+- createNodeAdapter({ trustHostHeader: true }) exposes native Node.js HTTP and WebSocket upgrades with zero third-party server wrappers.
+- attachProcessShutdown(app, { exitOnComplete: true }) guarantees queued jobs and open connections drain cleanly on shutdown.
+
+### Implementation Code
+
+**1. Bootstrap CLI (`terminal`)**
+
+```bash
+# Scaffold a modular backend workspace
+npx @forge-fr/cli@next new task-webhook-api --template modular --runtime node
+cd task-webhook-api
+
+# Install ForgeJS domain, security, cache, queue, storage, and OpenAPI packages
+npm install @forge-fr/core @forge-fr/http @forge-fr/node @forge-fr/validation \
+  @forge-fr/auth @forge-fr/authorization @forge-fr/security \
+  @forge-fr/cache @forge-fr/queue @forge-fr/storage \
+  @forge-fr/logger @forge-fr/openapi zod @opentelemetry/api
+```
+
+**2. Node Runtime Entry (`server.ts`)**
+
+```ts
+import { attachProcessShutdown, createNodeAdapter } from '@forge-fr/node';
+import { createPlaygroundBackend } from './src/playground-server/app.ts';
+
+const PORT = Number(process.env['PORT'] ?? 3000);
+const HOST = '0.0.0.0';
+
+async function startServer(): Promise<void> {
+  const backend = createPlaygroundBackend({
+    adapter: createNodeAdapter({
+      trustHostHeader: true,
+    }),
+  });
+
+  await backend.start();
+
+  const address = await backend.app.listen({ host: HOST, port: PORT });
+  console.log(`ForgeJS backend listening on ${address.url}`);
+
+  attachProcessShutdown(backend.app, {
+    exitOnComplete: true,
+    onShutdown: async () => {
+      await backend.close();
+    },
+  });
+}
+
+void startServer();
+```
+
+### Verification Checklist
+
+- [ ] Inspect server.ts in the Backend Source viewer to confirm pure @forge-fr/node booting.
+- [ ] Verify graceful shutdown closes both the HTTP listener and background queue worker.
+
+## Step 02: Application Kernel, Typed Tokens & Opinionated Modules
+
+*Organize domain features into isolated DI modules with defineModule()*
+
+- **Estimated time**: 8 min
+- **Packages**: @forge-fr/core, @forge-fr/http
+- **Module files**: `src/playground-server/app.ts`, `src/playground-server/types.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=source
+
+As backends grow, flat route files turn into circular dependency knots. The Playground backend uses ForgeJS opinionated modules: each domain folder owns its module wiring, service factory, and HTTP controller.
+
+Cross-module communication flows exclusively through typed tokens (createToken<T>()) and explicit imports/exports declarations resolved by ApplicationKernel.
+
+### Key Architectural Highlights
+
+- Zero runtime reflection or experimental decorators — createToken<T>() preserves full static TypeScript inference.
+- Plugins (createCachePlugin, createQueuePlugin, createStoragePlugin) extend container capabilities safely in topological boot order.
+- Global middleware (correlation IDs, OpenTelemetry spans, security headers, rate limiting) wraps all domain controllers uniformly.
+
+### Implementation Code
+
+**app.ts Composition Root (`src/playground-server/app.ts`)**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createCachePlugin } from '@forge-fr/cache';
+import { createQueuePlugin } from '@forge-fr/queue';
+import { createStoragePlugin } from '@forge-fr/storage';
+import { createRateLimitMiddleware, createSecurityHeadersMiddleware } from '@forge-fr/security';
+import { authModule } from './auth/auth.module.ts';
+import { tasksModule } from './tasks/tasks.module.ts';
+import { webhooksModule } from './webhooks/webhooks.module.ts';
+import { attachmentsModule } from './attachments/attachments.module.ts';
+
+const app = createHttpApp({
+  logger,
+  providers: [
+    { token: PlaygroundStoreToken, useValue: store },
+    { token: ObservabilityServiceToken, useValue: observability },
+  ],
+  modules: [
+    authModule,
+    securityModule,
+    realtimeModule,
+    webhooksModule,
+    tasksModule,
+    attachmentsModule,
+    systemModule,
+  ],
+  plugins: [
+    createCachePlugin({ adapter: cache }),
+    createQueuePlugin({ queue, worker, drainTimeoutMs: 2_000 }),
+    createStoragePlugin({ adapter: storage }),
+  ],
+});
+
+app.use(createSecurityHeadersMiddleware({ contentTypeOptions: 'nosniff', frameOptions: 'SAMEORIGIN' }));
+app.use(createRateLimitMiddleware({ max: 300, windowMs: 60_000 }));
+```
+
+**Feature Module Contract (`src/playground-server/tasks/tasks.module.ts`)**
+
+```ts
+import { defineModule } from '@forge-fr/core';
+import { CacheTokens } from '@forge-fr/cache';
+import { StorageTokens } from '@forge-fr/storage';
+import { authModule } from '../auth/auth.module.ts';
+import { AuthServiceToken } from '../auth/auth.service.ts';
+import { webhooksModule } from '../webhooks/webhooks.module.ts';
+import { WebhooksServiceToken } from '../webhooks/webhooks.service.ts';
+import { PlaygroundStoreToken } from '../store.ts';
+import { TasksServiceToken, createTasksService } from './tasks.service.ts';
+
+export const tasksModule = defineModule({
+  name: 'tasks',
+  imports: [authModule, webhooksModule],
+  providers: [
+    {
+      token: TasksServiceToken,
+      scope: 'singleton',
+      useFactory: (resolver) =>
+        createTasksService({
+          store: resolver.resolve(PlaygroundStoreToken),
+          cache: resolver.resolve(CacheTokens.Adapter),
+          storage: resolver.resolve(StorageTokens.Adapter),
+          auth: resolver.resolve(AuthServiceToken),
+          webhooks: resolver.resolve(WebhooksServiceToken),
+        }),
+    },
+  ],
+  exports: [TasksServiceToken],
+});
+```
+
+### Verification Checklist
+
+- [ ] Confirm every domain folder exports an explicit module token and never imports unexported internals.
+- [ ] View the DI Module Topology inside Health & OpenAPI after inspecting Backend Source.
+
+## Step 03: Multi-Tenant Store & Deterministic Seed Modeling
+
+*Isolate tenant records and expose deterministic sandbox seed data*
+
+- **Estimated time**: 6 min
+- **Packages**: @forge-fr/core
+- **Module files**: `src/playground-server/types.ts`, `src/playground-server/store.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=tasks
+
+Every record in a multi-tenant SaaS backend carries a required tenantId field from creation. Modeling this explicitly at the type and store boundary guarantees queries and authorization checks never drop tenant scope.
+
+Our Playground store hashes seed passwords with Argon2id and uploads starter attachment bytes during kernel.start() so the API boots ready for immediate verification and one-click resets.
+
+### Key Architectural Highlights
+
+- Strict readonly TypeScript interfaces distinguish internal UserRecord (with passwordHash) from PublicUser.
+- Two isolated seed tenants (Acme Corp and Globex Labs) let you prove cross-tenant boundaries immediately.
+- In production databases, swap the in-memory store token for @forge-fr/database, @forge-fr/drizzle, or @forge-fr/prisma with zero controller changes.
+
+### Implementation Code
+
+**Domain Entities (`src/playground-server/types.ts`)**
+
+```ts
+export type UserRole = 'admin' | 'member';
+export type TaskStatus = 'todo' | 'in_progress' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high';
+
+export interface TaskRecord {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly createdBy: string;
+  readonly createdByName: string;
+  readonly title: string;
+  readonly description: string;
+  readonly status: TaskStatus;
+  readonly priority: TaskPriority;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+export const TENANT_ACME_ID = 'tenant_acme';
+export const TENANT_GLOBEX_ID = 'tenant_globex';
+export const SAMPLE_CROSS_TENANT_TASK_ID = 'task_globex_01';
+```
+
+**Store Token & Seeding (`src/playground-server/store.ts`)**
+
+```ts
+import { createToken } from '@forge-fr/core';
+import type { PasswordHasher } from '@forge-fr/auth';
+import type { StorageAdapter } from '@forge-fr/storage';
+
+export const PlaygroundStoreToken = createToken<PlaygroundStore>('playground:Store');
+
+export class PlaygroundStore {
+  private readonly tenants = new Map<string, TenantRecord>();
+  private readonly users = new Map<string, UserRecord>();
+  private readonly tasks = new Map<string, TaskRecord>();
+
+  async seed(hasher: PasswordHasher, storage: StorageAdapter): Promise<void> {
+    this.tenants.clear();
+    this.users.clear();
+    this.tasks.clear();
+    // Hash seed user passwords with real Argon2id and seed sample tenant records
+  }
+}
+```
+
+### Verification Checklist
+
+- [ ] Switch personas between Acme Admin and Globex Admin in the Playground top bar.
+- [ ] Confirm task lists stay strictly scoped to the active persona tenant.
+
+## Step 04: Authentication Strategies & RBAC/ABAC Policies
+
+*Combine Argon2id, JWT, hashed sessions, API keys, OAuth2 PKCE, and tenant isolation*
+
+- **Estimated time**: 10 min
+- **Packages**: @forge-fr/auth, @forge-fr/authorization
+- **Module files**: `src/playground-server/auth/auth.module.ts`, `src/playground-server/auth/auth.service.ts`, `src/playground-server/auth/auth.middleware.ts`, `src/playground-server/auth/auth.controller.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=auth_lab
+
+Production APIs rarely rely on a single auth mechanism. Browser portals use HttpOnly cookies or short-lived Bearer JWTs, CLI tools use scoped API keys, and federated logins rely on OAuth2 PKCE.
+
+@forge-fr/auth handles Argon2id hashing, JWT signing/verification, SHA-256 cookie/API key validation, and PKCE state generation, while @forge-fr/authorization enforces role permissions plus ABAC ownership and tenant isolation.
+
+### Key Architectural Highlights
+
+- Password hashing uses createPasswordHasher() with Argon2id defaults and constant-time comparison.
+- Scoped API keys enforce least privilege (e.g., tasks:read without tasks:delete or webhooks:read).
+- assertTenantIsolation() and admin-or-owner policies block IDOR and privilege escalation automatically.
+
+### Implementation Code
+
+**Auth & Policy Engine (`src/playground-server/auth/auth.service.ts`)**
+
+```ts
+import {
+  createJwtService,
+  createPasswordHasher,
+  createSessionManager,
+  createApiKeyService,
+  createOAuth2Client,
+} from '@forge-fr/auth';
+import {
+  assertTenantIsolation,
+  createAuthorizer,
+} from '@forge-fr/authorization';
+
+const passwordHasher = createPasswordHasher();
+const jwtService = createJwtService({
+  algorithm: 'HS256',
+  secret: process.env['JWT_SECRET'] ?? 'dev-secret-change-in-prod',
+  issuer: 'forgejs-playground',
+  audience: 'forgejs-api',
+});
+
+const authorizer = createAuthorizer({
+  roles: {
+    admin: ['tasks:read', 'tasks:create', 'tasks:update', 'tasks:delete', 'webhooks:manage'],
+    member: ['tasks:read', 'tasks:create', 'tasks:update:own', 'tasks:delete:own'],
+  },
+});
+
+export function assertTaskReadable(identity: AuthIdentity, task: TaskRecord): void {
+  assertTenantIsolation(identity.tenantId, task.tenantId);
+}
+```
+
+**Protected Route Group (`src/playground-server/auth/auth.middleware.ts`)**
+
+```ts
+import { createAuthMiddleware, extractBearerToken } from '@forge-fr/auth';
+import type { ForgeMiddleware } from '@forge-fr/http';
+import { AuthServiceToken } from './auth.service.ts';
+
+export const requireBearerAuth: ForgeMiddleware = async (ctx, next) => {
+  const auth = ctx.resolve(AuthServiceToken);
+  const middleware = createAuthMiddleware({
+    jwtService: auth.jwtService,
+    extractToken: (reqCtx) => extractBearerToken(reqCtx.request),
+  });
+  return middleware(ctx, next);
+};
+```
+
+### Verification Checklist
+
+- [ ] Mint an HttpOnly session cookie, rotate its refresh token, and call GET /auth/session-me.
+- [ ] Create a tasks:read-only API key and confirm read succeeds while unauthorized mutations reject.
+- [ ] Generate an OAuth2 PKCE authorize URL and verify state mismatch defense.
+
+## Step 05: Security Middleware & Defense-in-Depth Labs
+
+*Harden endpoints against CSRF, bursts, prototype pollution, SSRF, and path traversal*
+
+- **Estimated time**: 9 min
+- **Packages**: @forge-fr/security
+- **Module files**: `src/playground-server/security/security.module.ts`, `src/playground-server/security/security.service.ts`, `src/playground-server/security/security.controller.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=security
+
+Security controls must protect both the HTTP edge and application helpers. In this step you compose @forge-fr/security primitives directly into route middleware and domain validators.
+
+Every dangerous sink—JSON parsing, outbound webhook URLs, and file path assembly—runs through defensive allowlist utilities before touching business logic.
+
+### Key Architectural Highlights
+
+- createRateLimitMiddleware() attaches standard RateLimit-Limit, RateLimit-Remaining, and Retry-After headers on 429 responses.
+- createCsrfMiddleware() validates Fetch Metadata and X-CSRF-Token headers before accepting state-changing cookie requests.
+- safeJsonParse() strips __proto__ / constructor keys, assertSafeOutboundUrl() blocks metadata IPs, and resolveConfinedPath() stops ../ traversal.
+
+### Implementation Code
+
+**Rate Limit & CSRF (`src/playground-server/security/security.controller.ts`)**
+
+```ts
+import { requireAuth } from '@forge-fr/auth';
+import { createCsrfMiddleware, createRateLimitMiddleware } from '@forge-fr/security';
+import { validatedOpenApiHandler } from '@forge-fr/openapi';
+
+const demoRateLimit = createRateLimitMiddleware({
+  store: security.demoRateLimitStore,
+  max: 3,
+  windowMs: 15_000,
+  keyGenerator: (ctx) => `lab:${requireAuth(ctx).subject}`,
+  message: 'Security Lab rate limit exceeded (3 requests per 15s window)',
+});
+
+const demoCsrf = createCsrfMiddleware({
+  headerName: 'x-csrf-token',
+  enforceFetchMetadata: true,
+  getExpectedToken: (ctx) => security.getExpectedCsrfToken(requireAuth(ctx)),
+});
+
+group.get(
+  '/rate-limit-probe',
+  validatedOpenApiHandler({}, (ctx) => ctx.json({ allowed: true })),
+  { middleware: [requireBearerAuth, demoRateLimit] },
+);
+```
+
+**Input & Path Guards (`src/playground-server/security/security.service.ts`)**
+
+```ts
+import {
+  assertSafeOutboundUrl,
+  resolveConfinedPath,
+  safeJsonParse,
+} from '@forge-fr/security';
+
+// 1. Prototype-pollution safe JSON parsing
+const sanitized = safeJsonParse('{"role":"member","__proto__":{"isAdmin":true}}');
+
+// 2. SSRF URL inspection (blocks loopback, RFC1918, and 169.254.169.254 metadata)
+await assertSafeOutboundUrl(candidateUrl, { allowPrivateIps: false });
+
+// 3. Filesystem path-confinement guard (rejects ../../etc/passwd)
+const safeTarget = resolveConfinedPath('/srv/sandbox/uploads', requestedFilename);
+```
+
+### Verification Checklist
+
+- [ ] Trigger 4 consecutive rate-limit probes in Security Lab to observe 200 OK followed by 429 + Retry-After.
+- [ ] Run the CSRF, IDOR, SSRF, Path Traversal, and __proto__ probes and inspect blocked responses.
+
+## Step 06: Validated Tasks Module & Tag-Invalidated Caching
+
+*Validate HTTP schemas automatically and bust tenant caches via tags*
+
+- **Estimated time**: 8 min
+- **Packages**: @forge-fr/validation, @forge-fr/cache, @forge-fr/openapi
+- **Module files**: `src/playground-server/tasks/tasks.module.ts`, `src/playground-server/tasks/tasks.service.ts`, `src/playground-server/tasks/tasks.controller.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=tasks
+
+Controllers stay concise when schema parsing, error formatting, and OpenAPI metadata happen together via validatedOpenApiHandler().
+
+Read queries cache results under composite tenant+filter keys tagged with tenant:<id>:tasks. Every create, update, or delete calls invalidateByTag() so stale reads never leak across mutations.
+
+### Key Architectural Highlights
+
+- Standard Schema support lets Zod schemas validate query, params, and JSON body before entering your handler.
+- Cache lookup sets X-Cache-Status: MISS on first fetch and HIT on subsequent requests within TTL.
+- Every mutation invalidates the tenant cache tag, emits an SSE event, and enqueues matching webhooks.
+
+### Implementation Code
+
+**Tasks Controller (`src/playground-server/tasks/tasks.controller.ts`)**
+
+```ts
+import { requireAuth } from '@forge-fr/auth';
+import { validatedOpenApiHandler } from '@forge-fr/openapi';
+import { z } from 'zod';
+import { TasksServiceToken } from './tasks.service.ts';
+
+const CreateTaskSchema = z.object({
+  title: z.string().trim().min(3).max(140),
+  description: z.string().trim().max(1000).default(''),
+  status: z.enum(['todo', 'in_progress', 'done']).default('todo'),
+  priority: z.enum(['low', 'medium', 'high']).default('medium'),
+});
+
+group.get(
+  '/',
+  validatedOpenApiHandler({ query: ListTasksQuerySchema }, async (ctx, { query }) => {
+    const identity = requireAuth(ctx);
+    const result = await ctx.resolve(TasksServiceToken).list(identity, query);
+    ctx.setHeader('x-cache-status', result.cache.status);
+    ctx.setHeader('x-cache-key', result.cache.key);
+    return ctx.json(result);
+  }),
+);
+
+group.post(
+  '/',
+  validatedOpenApiHandler({ body: CreateTaskSchema }, async (ctx, { body }) => {
+    const identity = requireAuth(ctx);
+    const created = await ctx.resolve(TasksServiceToken).create(identity, body);
+    return ctx.json(created, { status: 201 });
+  }),
+);
+```
+
+**Tag-Scoped Cache Service (`src/playground-server/tasks/tasks.service.ts`)**
+
+```ts
+const tag = `tenant:${identity.tenantId}:tasks`;
+const cacheKey = `${tag}:${statusFilter}:${searchQuery}`;
+
+const cached = await cache.get<TaskListPayload>(cacheKey);
+if (cached) {
+  return { ...cached, cache: { status: 'HIT', key: cacheKey, tag } };
+}
+
+const items = store.listTasks(identity.tenantId, filters);
+await cache.set(cacheKey, { tasks: items }, { ttlMs: 30_000, tags: [tag] });
+return { tasks: items, cache: { status: 'MISS', key: cacheKey, tag } };
+
+// On create / update / delete:
+await cache.invalidateByTag(tag);
+```
+
+### Verification Checklist
+
+- [ ] Load Tasks twice and watch the cache indicator transition from MISS to HIT in the HTTP Inspector.
+- [ ] Create or update a task and confirm cache invalidation immediately returns fresh MISS data.
+
+## Step 07: Attachments Module & Magic-Byte Object Storage
+
+*Verify uploaded binary signatures before storing files per tenant*
+
+- **Estimated time**: 6 min
+- **Packages**: @forge-fr/storage, @forge-fr/http
+- **Module files**: `src/playground-server/attachments/attachments.module.ts`, `src/playground-server/attachments/attachments.service.ts`, `src/playground-server/attachments/attachments.controller.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=attachments
+
+Trusting client-supplied file extensions or Content-Type headers exposes applications to disguised executables and stored XSS.
+
+@forge-fr/storage inspects actual binary magic bytes during put() alongside size bounds and MIME allowlists, then serves downloads with nosniff and safe Content-Disposition headers.
+
+### Key Architectural Highlights
+
+- createMemoryStorageAdapter({ verifyMagicBytes: true, maxObjectBytes: 512 * 1024 }) blocks spoofed headers at the adapter boundary.
+- Multipart parsing is size-bounded via ctx.body.multipart({ maxFiles: 1, maxFileBytes: 512 * 1024 }).
+- Downloads emit x-content-type-options: nosniff and private cache headers after asserting tenant ownership.
+
+### Implementation Code
+
+**Storage Adapter Config (`src/playground-server/app.ts`)**
+
+```ts
+import { createMemoryStorageAdapter, createStoragePlugin } from '@forge-fr/storage';
+
+const storage = createMemoryStorageAdapter({
+  allowedMimeTypes: ['image/png', 'text/plain', 'application/json', 'application/pdf'],
+  verifyMagicBytes: true,
+  maxObjectBytes: 512 * 1024,
+});
+
+// Registered on createHttpApp plugins:
+createStoragePlugin({ adapter: storage });
+```
+
+**Multipart Upload Handler (`src/playground-server/attachments/attachments.controller.ts`)**
+
+```ts
+group.post(
+  '/',
+  validatedOpenApiHandler({ params: IdParamSchema }, async (ctx, { params }) => {
+    const identity = requireAuth(ctx);
+    const multipart = await ctx.body.multipart({
+      maxFiles: 1,
+      maxFileBytes: 512 * 1024,
+    });
+    const uploaded = multipart.files[0];
+    if (!uploaded) {
+      throw new ValidationError('Multipart upload requires a file field named "file"');
+    }
+
+    const record = await ctx.resolve(AttachmentsServiceToken).upload(identity, {
+      taskId: params.id,
+      filename: uploaded.name || 'attachment.bin',
+      mimeType: uploaded.type || 'application/octet-stream',
+      bytes: new Uint8Array(await uploaded.arrayBuffer()),
+    });
+
+    return ctx.json({ attachment: record }, { status: 201 });
+  }),
+);
+```
+
+### Verification Checklist
+
+- [ ] Upload a valid 1x1 PNG file in the Attachments tab and inspect its generated ETag and byte size.
+- [ ] Upload a spoofed payload (e.g., plain text claiming image/png) and confirm magic-byte rejection.
+
+## Step 08: Webhooks Module, Async Queue Worker & DLQ Replay
+
+*Deliver outbound webhooks asynchronously with retries and dead-letter recovery*
+
+- **Estimated time**: 9 min
+- **Packages**: @forge-fr/queue, @forge-fr/security
+- **Module files**: `src/playground-server/webhooks/webhooks.module.ts`, `src/playground-server/webhooks/webhooks.service.ts`, `src/playground-server/webhooks/webhooks.controller.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=webhooks
+
+Task mutations should never block HTTP response latency waiting on slow webhook receivers. Instead, the webhooks service enqueues durable jobs processed concurrently by createQueueWorker().
+
+Failed deliveries retry with configurable backoff and land in the Dead-Letter Queue (DLQ) after exhausting maxAttempts, ready for manual inspection and replay.
+
+### Key Architectural Highlights
+
+- createQueueWorker() exposes deterministic lifecycle callbacks: onCompleted, onFailed, and onDeadLetter.
+- Admin-only endpoint guards + SSRF checks prevent non-admins or unsafe URLs from registering webhooks.
+- Dead-letter jobs can be replayed directly from the API with optional healthy-sink override.
+
+### Implementation Code
+
+**Queue & Worker Setup (`src/playground-server/app.ts`)**
+
+```ts
+import { createMemoryQueueAdapter, createQueueWorker } from '@forge-fr/queue';
+
+const queue = createMemoryQueueAdapter({
+  maxQueueSize: 500,
+  defaultMaxAttempts: 2,
+  defaultBackoff: { type: 'fixed', delayMs: 60 },
+});
+
+const worker = createQueueWorker(
+  queue,
+  async (job, execCtx) => {
+    const payload = job.payload as WebhookJobPayload;
+    if (payload.targetUrl === 'sandbox://sink/fail') {
+      throw new Error('502 Bad Gateway from failing sink');
+    }
+    if (payload.targetUrl === 'sandbox://sink/flaky' && execCtx.attempt === 1) {
+      throw new Error('503 Service Unavailable on attempt 1');
+    }
+    return { delivered: true, statusCode: 200 };
+  },
+  {
+    pollIntervalMs: 20,
+    concurrency: 4,
+    onCompleted: (job) => store.updateDeliveryByJobId(job.id, { status: 'delivered', statusCode: 200 }),
+    onFailed: (job, err) => store.updateDeliveryByJobId(job.id, { status: 'retrying', lastError: String(err) }),
+    onDeadLetter: (job, err) => store.updateDeliveryByJobId(job.id, { status: 'dlq', lastError: String(err) }),
+  },
+);
+```
+
+**Webhook Registration & Replay (`src/playground-server/webhooks/webhooks.controller.ts`)**
+
+```ts
+group.post(
+  '/:id/test',
+  validatedOpenApiHandler({ params: IdParamSchema }, async (ctx, { params }) => {
+    const identity = requireAuth(ctx);
+    const result = await ctx.resolve(WebhooksServiceToken).triggerTest(identity, params.id);
+    return ctx.json(result, { status: 202 });
+  }),
+);
+
+group.post(
+  '/dlq/:jobId/replay',
+  validatedOpenApiHandler(
+    { params: JobIdParamSchema, body: ReplayBodySchema },
+    async (ctx, { params, body }) => {
+      const identity = requireAuth(ctx);
+      const replayed = await ctx.resolve(WebhooksServiceToken).replayDeadLetter(
+        identity,
+        params.jobId,
+        Boolean(body?.overrideHealthySink),
+      );
+      return ctx.json({ replayed });
+    },
+  ),
+);
+```
+
+### Verification Checklist
+
+- [ ] Register a failing webhook (sandbox://sink/fail), trigger a test event, and confirm it transitions into the Dead-Letter Queue.
+- [ ] Replay the failed DLQ job using the healthy sink override and verify 200 OK delivery.
+
+## Step 09: Realtime SSE/WebSocket, Edge HTTP, Observability & OpenAPI 3.1
+
+*Stream live room events, negotiate content, trace spans, and publish specs*
+
+- **Estimated time**: 10 min
+- **Packages**: @forge-fr/http, @forge-fr/logger, @forge-fr/openapi
+- **Module files**: `src/playground-server/realtime/realtime.controller.ts`, `src/playground-server/system/observability.ts`, `src/playground-server/system/system.controller.ts`
+- **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=events
+
+Rounding out the backend, @forge-fr/http handles authenticated app.ws() rooms, Server-Sent Events (SSE), weak ETag conditional caching (304 Not Modified vs 200 OK), and RFC-compliant Accept header negotiation.
+
+Simultaneously, @forge-fr/logger instruments OpenTelemetry HTTP spans alongside Pino logs correlated by x-request-id and x-trace-id, exposes /health/live and /health/ready Kubernetes probes, and @forge-fr/openapi auto-generates live OpenAPI 3.1 JSON.
+
+### Key Architectural Highlights
+
+- app.ws() authenticates handshakes with Bearer or query tokens before joining tenant-isolated rooms.
+- createEtagMiddleware({ weak: true }) returns 304 Not Modified on matching If-None-Match and 200 OK once bumped.
+- registerHealthRoutes() aggregates dependency checks (/health/ready flips between 200 ok and 503 unhealthy on fault injection).
+- registerOpenApiRoutes() introspects every validatedOpenApiHandler route automatically at /openapi.json.
+
+### Implementation Code
+
+**WebSocket & ETag Edge (`src/playground-server/realtime/realtime.controller.ts`)**
+
+```ts
+import { createEtagMiddleware, negotiateContentType } from '@forge-fr/http';
+
+const etagMiddleware = createEtagMiddleware({ weak: true });
+
+app.ws('/playground-api/ws', {
+  async authenticate(ctx) {
+    const token = extractBearerToken(ctx.request) ?? ctx.query['access_token'] ?? null;
+    if (!token) return false;
+    ctx.state.set('wsActor', await realtime.authorizeWsToken(token));
+    return true;
+  },
+  onOpen(ws, ctx) {
+    realtime.joinRoom(ws, ctx.state.get('wsActor') as WsActorMeta);
+  },
+  onMessage(ws, message) {
+    realtime.handleRoomMessage(ws, message);
+  },
+  onClose(ws) {
+    realtime.leaveRoom(ws);
+  },
+});
+
+group.get(
+  '/etag-resource',
+  validatedOpenApiHandler({}, (ctx) => ctx.json(realtime.getEtagResource())),
+  { middleware: [etagMiddleware] },
+);
+```
+
+**Health, OTel & OpenAPI (`src/playground-server/app.ts`)**
+
+```ts
+import {
+  createCorrelationIdMiddleware,
+  createOtelHttpMiddleware,
+  createRequestLoggingMiddleware,
+  registerHealthRoutes,
+} from '@forge-fr/logger';
+import { registerOpenApiRoutes } from '@forge-fr/openapi';
+
+kernel.health.register('demo_dependency', () =>
+  observability.isFaultInjected()
+    ? { status: 'unhealthy', message: 'Simulated dependency degradation' }
+    : { status: 'ok', details: { mode: 'nominal' } },
+);
+
+app.use(createCorrelationIdMiddleware());
+app.use(createOtelHttpMiddleware({ instrumentation: observability.instrumentation, exposeTraceIdHeader: true }));
+app.use(createRequestLoggingMiddleware({ logger }));
+
+registerHealthRoutes(app, {
+  registry: kernel.health,
+  livePath: '/playground-api/health/live',
+  readyPath: '/playground-api/health/ready',
+  exposeDetails: true,
+});
+
+registerOpenApiRoutes(app, {
+  title: 'ForgeJS Live Playground API',
+  version: '1.0.0-rc.1',
+  specPath: '/playground-api/openapi.json',
+  docsPath: '/playground-api/docs',
+});
+```
+
+### Verification Checklist
+
+- [ ] Connect the WebSocket client, send a live frame, and test ETag 304 Not Modified vs 200 OK after bumping.
+- [ ] Inject a dependency fault in Health & OpenAPI and verify /health/ready flips from 200 ok to 503 unhealthy.
+- [ ] Inspect live OpenTelemetry spans, PII-redacted Pino logs, and the generated OpenAPI 3.1 document.
+
+---
+
+# Introduction
+
+> What ForgeJS is, its architectural philosophy, honest comparisons with Express, Fastify, Hono, and NestJS, and verified runtime targets.
+
+- **Section**: Getting Started
+- **Packages**: @forge-fr/core, @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
+
+## What is ForgeJS?
+
+ForgeJS is an open-source, pure-ESM, strict-TypeScript backend framework built directly on Web Standards (Request, Response, Headers, ReadableStream, AbortSignal, CompressionStream, and Web Crypto).
+
+Rather than coupling application logic to node:http primitives or requiring runtime reflection decorators, ForgeJS separates domain code from host runtimes across 20 modular @forge-fr/* packages synchronized at v1.0.0-rc.1.
+
+- 16 of 20 packages ship with zero third-party runtime dependencies.
+- Verified locally on Node.js v22.23.5 and Bun 1.4.4, with a zero-global WinterCG Edge adapter (@forge-fr/edge).
+- 60/60 automated architectural boundary assertions enforce unidirectional layering across the workspace.
+
+## Design philosophy & framework comparison
+
+ForgeJS favors explicit composition over hidden magic: typed tokens (createToken<T>()), encapsulated modules (defineModule()), and capability-scoped plugins (definePlugin()) deliver predictable structure without sacrificing cold-start latency or request throughput.
+
+| Dimension | ForgeJS Approach | Trade-off to Consider |
+| --- | --- | --- |
+| DI & Modules | Composition-first typed tokens & defineModule() | No reflect-metadata or class decorator magic |
+| Runtime Portability | Web Standards core + thin Node/Bun/Edge adapters | Pure ESM only (Node.js >=22.18.0; no legacy CJS) |
+| Security Posture | Hardened HTTP defaults + composable OWASP ASVS 5.0.0 suite | App services still own authorization & domain policies |
+| Database Strategy | Native PostgreSQL, Drizzle, and Prisma plugins | TypeORM, MikroORM, Sequelize, and Knex are not built-in |
+
+## When not to use ForgeJS
+
+- If your codebase requires CommonJS require() output or Node.js versions older than 22.18.0.
+- If you specifically want decorator-driven NestJS class controllers or built-in TypeORM/MikroORM integration.
+- If you only need a single-file micro-router with zero lifecycle, DI, or security primitives.
+
+---
+
+# Installation
+
+> Runtime prerequisites, package manager commands for pnpm, npm, and Bun, CLI scaffolding, TypeScript settings, and troubleshooting.
+
+- **Section**: Getting Started
+- **Packages**: @forge-fr/core, @forge-fr/http, @forge-fr/node, @forge-fr/bun, @forge-fr/cli
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/installation
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/installation.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
+
+## Runtime & TypeScript prerequisites
+
+- Node.js >= 22.18.0 (verified locally on v22.23.5) OR Bun >= 1.4.0 (verified locally on 1.4.4).
+- Pure ESM package configuration ("type": "module" in package.json).
+- TypeScript 5.8+ / 7.x with strict: true and moduleResolution: "NodeNext" or "Bundler".
+
+> **WARNING: v1.0.0-rc.1 Pre-Publication Status**
+>
+> All 20 @forge-fr/* packages are verified locally via npm pack tarballs and isolated consumer smoke tests. Live publication to registry.npmjs.org under the @next tag awaits maintainer execution of .github/workflows/release.yml.
+
+## Install core packages or scaffold with CLI
+
+Install the HTTP core, a runtime adapter (@forge-fr/node, @forge-fr/bun, or @forge-fr/edge), and Standard Schema validation, or scaffold a complete ESM TypeScript project with @forge-fr/cli.
+
+**pnpm (`terminal`)**
+
+```bash
+pnpm add @forge-fr/core @forge-fr/http @forge-fr/node @forge-fr/validation zod
+
+# Scaffold a modular project with @forge-fr/cli
+pnpm dlx @forge-fr/cli@next new my-api --template modular --runtime node
+```
+
+**npm (`terminal`)**
+
+```bash
+npm install @forge-fr/core @forge-fr/http @forge-fr/node @forge-fr/validation zod
+
+# Scaffold a modular project with @forge-fr/cli
+npx @forge-fr/cli@next new my-api --template modular --runtime node
+```
+
+**bun (`terminal`)**
+
+```bash
+bun add @forge-fr/core @forge-fr/http @forge-fr/bun @forge-fr/validation zod
+
+# Scaffold a modular project with @forge-fr/cli
+bunx @forge-fr/cli@next new my-api --template modular --runtime bun
+```
+
+## Recommended tsconfig.json & environment doctor
+
+Run forge doctor inside your project directory to verify Node.js >=22, optional Bun availability, "type": "module", and strict TypeScript configuration.
+
+**File: `tsconfig.json`**
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true
+  }
+}
+```
+
+## Common installation pitfalls
+
+| Symptom | Cause | Resolution |
+| --- | --- | --- |
+| ERR_REQUIRE_ESM | Attempting to require() a @forge-fr/* package from CommonJS | Add "type": "module" to package.json and use ES import syntax |
+| TS2307 module not found | Relative imports missing .js extension under NodeNext | Import local TypeScript modules with .js specifiers (e.g. ./app.js) |
+| doctor FAIL on node-version | Running Node.js 18 or 20 | Upgrade to Node.js >= 22.18.0 or use Bun >= 1.4.0 |
+
+---
+
+# Quick Start
+
+> Build a schema-validated HTTP API with createHttpApp() and validatedHandler(), then swap seamlessly across Node.js, Bun, and WinterCG Edge.
+
+- **Section**: Getting Started
+- **Packages**: @forge-fr/http, @forge-fr/validation, @forge-fr/node, @forge-fr/bun, @forge-fr/edge
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
+
+## Create your first validated API
+
+Your routing, validation, middleware, and error-handling code stays 100% identical across runtimes. Only the runtime adapter import changes at the entrypoint.
+
+**Node.js (`src/server.ts`)**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createNodeAdapter, attachProcessShutdown } from '@forge-fr/node';
+import { validatedHandler } from '@forge-fr/validation';
+import { z } from 'zod';
+
+const app = createHttpApp();
+
+app.get('/health', (ctx) => ctx.json({ ok: true, runtime: 'node' }));
+
+app.post(
+  '/users',
+  validatedHandler(
+    {
+      body: z.object({
+        email: z.string().email(),
+        role: z.enum(['member', 'admin']).default('member'),
+      }),
+    },
+    (ctx, input) => ctx.json({ created: true, user: input.body }, { status: 201 }),
+  ),
+);
+
+const server = await app.listen(createNodeAdapter(), { host: '127.0.0.1', port: 3000 });
+attachProcessShutdown(server);
+```
+
+**Bun (`src/server.ts`)**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createBunAdapter, attachProcessShutdown } from '@forge-fr/bun';
+import { validatedHandler } from '@forge-fr/validation';
+import { z } from 'zod';
+
+const app = createHttpApp();
+
+app.get('/health', (ctx) => ctx.json({ ok: true, runtime: 'bun' }));
+
+app.post(
+  '/users',
+  validatedHandler(
+    {
+      body: z.object({
+        email: z.string().email(),
+        role: z.enum(['member', 'admin']).default('member'),
+      }),
+    },
+    (ctx, input) => ctx.json({ created: true, user: input.body }, { status: 201 }),
+  ),
+);
+
+const server = await app.listen(createBunAdapter(), { host: '127.0.0.1', port: 3000 });
+attachProcessShutdown(server);
+```
+
+**WinterCG Edge (`src/worker.ts`)**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createCloudflareWorkerHandler } from '@forge-fr/edge';
+import { validatedHandler } from '@forge-fr/validation';
+import { z } from 'zod';
+
+const app = createHttpApp();
+
+app.get('/health', (ctx) => ctx.json({ ok: true, runtime: 'edge' }));
+
+app.post(
+  '/users',
+  validatedHandler(
+    {
+      body: z.object({
+        email: z.string().email(),
+        role: z.enum(['member', 'admin']).default('member'),
+      }),
+    },
+    (ctx, input) => ctx.json({ created: true, user: input.body }, { status: 201 }),
+  ),
+);
+
+export default createCloudflareWorkerHandler(app);
+```
+
+## Test routes without binding a TCP port
+
+Pass your ForgeHttpApp directly to createTestClient(app) from @forge-fr/testing to exercise routing, middleware, body limits, and schema validation in memory.
+
+**File: `tests/health.test.ts`**
+
+```ts
+import assert from 'node:assert/strict';
+import { createHttpApp } from '@forge-fr/http';
+import { createTestClient } from '@forge-fr/testing';
+
+const app = createHttpApp();
+app.get('/health', (ctx) => ctx.json({ ok: true }));
+
+const client = createTestClient(app);
+const res = await client.get('/health');
+assert.equal(res.status, 200);
+assert.deepEqual(await res.json(), { ok: true });
+await client.close();
+```
+
+---
+
+# Your First Application
+
+> Step-by-step typed backend combining createKernel(), defineModule(), validatedHandler(), security headers, and graceful shutdown.
+
+- **Section**: Getting Started
+- **Packages**: @forge-fr/core, @forge-fr/http, @forge-fr/validation, @forge-fr/security, @forge-fr/node
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/first-application
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/first-application.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
+
+## Complete modular service
+
+This end-to-end service defines a private module state store, exports a typed service token, mounts security headers, validates request and response contracts, and drains gracefully on SIGTERM.
+
+**File: `src/app.ts`**
+
+```ts
+import { createKernel, createToken, defineModule } from '@forge-fr/core';
+import { createHttpApp } from '@forge-fr/http';
+import { createNodeAdapter, attachProcessShutdown } from '@forge-fr/node';
+import { createSecurityHeadersMiddleware } from '@forge-fr/security';
+import { validatedHandler } from '@forge-fr/validation';
+import { z } from 'zod';
+
+interface ProjectRecord {
+  id: string;
+  name: string;
+  ownerId: string;
+}
+
+interface ProjectService {
+  create(name: string, ownerId: string): ProjectRecord;
+  list(): ProjectRecord[];
+}
+
+const ProjectServiceToken = createToken<ProjectService>('ProjectService');
+
+const ProjectsModule = defineModule({
+  name: 'projects',
+  providers: [
+    {
+      token: ProjectServiceToken,
+      scope: 'singleton',
+      useFactory: () => {
+        const records: ProjectRecord[] = [];
+        return {
+          create(name, ownerId) {
+            const item = { id: crypto.randomUUID(), name, ownerId };
+            records.push(item);
+            return item;
+          },
+          list: () => [...records],
+        };
+      },
+    },
+  ],
+  exports: [ProjectServiceToken],
+});
+
+const kernel = createKernel({ modules: [ProjectsModule] });
+await kernel.start();
+
+const app = createHttpApp({ container: kernel.container });
+app.use(createSecurityHeadersMiddleware());
+
+app.get('/api/projects', async (ctx) => {
+  const projects = await ctx.container!.resolve(ProjectServiceToken);
+  return ctx.json({ items: projects.list() });
+});
+
+app.post(
+  '/api/projects',
+  validatedHandler(
+    {
+      body: z.object({
+        name: z.string().min(2).max(80),
+        ownerId: z.string().min(1),
+      }),
+      response: z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+      }),
+    },
+    async (ctx, input) => {
+      const projects = await ctx.container!.resolve(ProjectServiceToken);
+      const created = projects.create(input.body.name, input.body.ownerId);
+      // ownerId is automatically stripped by the response contract
+      return ctx.json({ id: created.id, name: created.name }, { status: 201 });
+    },
+  ),
+);
+
+const server = await app.listen(createNodeAdapter(), { host: '127.0.0.1', port: 3000 });
+attachProcessShutdown(server, { onShutdown: () => kernel.shutdown() });
+```
+
+## Recommended modular folder layout
+
+Running forge new <name> --template modular generates a clean domain-first structure where each feature module owns its tokens, services, and route registration factory.
+
+**File: `directory-tree`**
+
+```bash
+src/
+├── index.ts                 # Runtime entrypoint (Node/Bun/Edge adapter + shutdown)
+├── app.ts                   # createKernel() + createHttpApp() assembly
+└── modules/
+    └── tasks/
+        ├── tasks.module.ts      # defineModule() + private & exported tokens
+        ├── tasks.service.ts     # Pure domain logic (zero runtime globals)
+        └── tasks.controller.ts  # Route registration + validatedHandler()
+```
+
+## Response contract stripping
+
+> **SECURITY: Automatic PII Redaction on Response Schemas**
+>
+> When validatedHandler() receives a response schema, undeclared fields such as ownerId or internal database columns are stripped before JSON serialization. Schema mismatches fail closed with ResponseValidationError (HTTP 500, expose: false).
+
+---
+
+# Architecture
+
+> Unidirectional 6-layer architecture enforced by 60 automated boundary checks across all 20 @forge-fr/* workspace packages.
+
+- **Section**: Core Concepts
+- **Packages**: @forge-fr/core, @forge-fr/router, @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/architecture
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/architecture.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Six unidirectional layers
+
+ForgeJS isolates domain services from host runtimes and third-party drivers. Dependencies always point inward toward Web Standards and @forge-fr/core contracts.
+
+| Layer | Packages | Boundary Rule |
+| --- | --- | --- |
+| Application | User controllers + @forge-fr/http + @forge-fr/validation | Translates HTTP/WS inputs into typed domain calls |
+| Domain | User defineModule() services + @forge-fr/authorization | Zero node:* or Bun globals; depends only on DI tokens |
+| Infrastructure | database, drizzle, prisma, auth, security, logger, cache, queue, storage | Registers providers via capability-scoped PluginContext |
+| Framework Core | @forge-fr/core, @forge-fr/router, @forge-fr/http | Zero third-party runtime dependencies; Web Standards only |
+| Runtime Adapters | @forge-fr/node, @forge-fr/bun, @forge-fr/edge, @forge-fr/testing | Implements HttpRuntimeAdapter contract & graceful drain |
+
+## Automated boundary enforcement
+
+tests/architecture/boundaries.test.ts runs 60 assertions across all 20 packages verifying zero forbidden runtime globals (node:*, Bun, process) in core/router/http/edge packages, strict acyclic package DAGs, and pure-ESM exports.
+
+> **NOTE: Why zero node:* imports in @forge-fr/core matters**
+>
+> Keeping @forge-fr/core, @forge-fr/router, @forge-fr/http, and @forge-fr/validation strictly on Web Standards allows identical domain code and middleware to run on Node.js 22, Bun 1.4, and WinterCG Edge workers without polyfill shims.
+
+---
+
+# Application Lifecycle
+
+> Deterministic 7-stage ApplicationKernel lifecycle with boot-failure rollback, lifecycle events, and reverse-order graceful shutdown.
+
+- **Section**: Core Concepts
+- **Packages**: @forge-fr/core
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/lifecycle
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/lifecycle.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Seven deterministic stages
+
+| Stage | Kernel State Transition | Responsibility |
+| --- | --- | --- |
+| configure | created → configuring → configured | Validate kernel and plugin config schemas via Standard Schema v1 |
+| register | configured → registering → registered | Register module and plugin providers into the typed DI container |
+| initialize | registered → initializing → initialized | Run module/plugin initialization hooks in topological dependency order |
+| start | initialized → starting → started | Open database pools, queue workers, and transport listeners |
+| ready | started → ready | Application accepts live traffic and serves /health/ready |
+| shutdown | ready → shutting_down → shutdown | Drain in-flight connections and stop plugins in reverse topological order |
+| dispose | shutdown → disposing → disposed | Invoke LIFO async provider disposers and release container resources |
+
+## Observing lifecycle transitions & boot-failure rollback
+
+Subscribe to kernel.events.on("lifecycle:stage") or register stage hooks via kernel.hooks.add(). If any plugin fails during initialize or start, ApplicationKernel automatically triggers reverse-order rollback cleanup before rethrowing.
+
+**File: `src/kernel.ts`**
+
+```ts
+import { createKernel } from '@forge-fr/core';
+
+const kernel = createKernel();
+
+kernel.events.on('lifecycle:stage', ({ from, to }) => {
+  console.info('Kernel transition:', from, '->', to);
+});
+
+kernel.hooks.add('ready', async () => {
+  console.info('All modules and plugins are ready');
+});
+
+await kernel.start();
+await kernel.shutdown();
+```
+
+---
+
+# Configuration & Secrets
+
+> Typed configuration management via createConfigManager(), prototype-safe key guards, and credential masking with secret() and SecretValue.
+
+- **Section**: Core Concepts
+- **Packages**: @forge-fr/core
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/configuration
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/configuration.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Typed configuration manager
+
+createConfigManager() layers defaults, explicit runtime values, and optional Standard Schema validation while rejecting __proto__, constructor, and prototype key paths.
+
+**File: `src/config.ts`**
+
+```ts
+import { createConfigManager, secret, type SecretValue } from '@forge-fr/core';
+
+interface AppConfig {
+  readonly port: number;
+  readonly databaseUrl: SecretValue<string>;
+}
+
+const config = createConfigManager<AppConfig>({
+  defaults: {
+    port: 3000,
+    databaseUrl: secret('postgres://localhost:5432/dev'),
+  },
+  values: {
+    port: Number(process.env.PORT ?? 3000),
+    databaseUrl: secret(process.env.DATABASE_URL ?? 'postgres://localhost:5432/dev'),
+  },
+});
+
+const port = config.get<number>('port');
+const dbSecret = config.get<SecretValue<string>>('databaseUrl');
+// dbSecret.toString() === '[REDACTED]'
+// dbSecret.reveal() returns the raw string only at the driver boundary
+```
+
+## SecretValue redaction guarantees
+
+- Values wrapped with secret() serialize to REDACTED_PLACEHOLDER ("[REDACTED]") in JSON.stringify(), toString(), valueOf(), and Node/Bun inspect output.
+- Call .reveal() explicitly only when passing credentials to a database, JWT, or S3 client.
+- redactObject() recursively masks secret keys across nested configuration or telemetry objects.
+
+---
+
+# Dependency Injection
+
+> Typed DI tokens, singleton/transient/request scopes, captive-dependency detection, cycle errors, and LIFO async disposal.
+
+- **Section**: Core Concepts
+- **Packages**: @forge-fr/core, @forge-fr/testing
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Tokens, providers, and scopes
+
+- singleton — Instantiated once per root container and disposed in reverse LIFO order on container.dispose().
+- transient — Created fresh on every resolve() call.
+- request — Created once per child scope (container.createScope()) and disposed automatically at the end of the HTTP request.
+
+**File: `src/di.ts`**
+
+```ts
+import assert from 'node:assert/strict';
+import { createContainer, createToken } from '@forge-fr/core';
+
+const ConfigToken = createToken<{ appName: string }>('app.config');
+const RequestIdToken = createToken<string>('request.id');
+
+let seq = 0;
+const container = createContainer();
+
+container.register({
+  token: ConfigToken,
+  scope: 'singleton',
+  useValue: { appName: 'forge-orders' },
+});
+
+container.register({
+  token: RequestIdToken,
+  scope: 'request',
+  useFactory: () => `req-${++seq}`,
+});
+
+const scope = container.createScope();
+assert.equal(scope.resolve(RequestIdToken), 'req-1');
+assert.equal(scope.resolve(RequestIdToken), 'req-1');
+assert.equal(scope.resolve(ConfigToken).appName, 'forge-orders');
+await scope.dispose();
+await container.dispose();
+```
+
+## Captive-dependency & cycle guards
+
+| Error Class | Trigger Condition |
+| --- | --- |
+| ScopeViolationError | A singleton provider injects a request-scoped provider (captive dependency) |
+| CircularDependencyError | Provider A depends on B which depends back on A (includes full token cycle path) |
+| ProviderNotFoundError | Resolving a token that was never registered or exported |
+| ContainerDisposedError | Calling register() or resolve() after dispose() completed |
+
+---
+
+# Encapsulated Modules
+
+> Define modular boundaries with defineModule(), explicit exports, non-transitive encapsulation, and diamond deduplication.
+
+- **Section**: Core Concepts
+- **Packages**: @forge-fr/core
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/modules
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/modules.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Private providers vs. explicit exports
+
+Providers registered inside defineModule() are private by default. Downstream modules attempting to resolve an unexported token fail fast with ProviderNotVisibleError. Exports are non-transitive unless explicitly re-exported.
+
+**File: `src/modules/billing.module.ts`**
+
+```ts
+import { createKernel, createToken, defineModule } from '@forge-fr/core';
+
+const RepoToken = createToken<{ count(): number }>('BillingRepo');
+export const BillingServiceToken = createToken<{ total(): number }>('BillingService');
+
+export const BillingModule = defineModule({
+  name: 'billing',
+  providers: [
+    { token: RepoToken, scope: 'singleton', useValue: { count: () => 12 } },
+    {
+      token: BillingServiceToken,
+      scope: 'singleton',
+      inject: [RepoToken] as const,
+      useFactory: (repo) => ({ total: () => repo.count() * 100 }),
+    },
+  ],
+  exports: [BillingServiceToken],
+});
+
+const kernel = createKernel({ modules: [BillingModule] });
+await kernel.start();
+const billing = kernel.container.resolve(BillingServiceToken);
+console.info('Total cents:', billing.total());
+```
+
+## Diamond dependency deduplication & cycle checks
+
+- If Modules B and C both import SharedModule A, createModuleRegistry() instantiates and initializes SharedModule A exactly once.
+- Circular module imports throw CircularModuleDependencyError during boot before any providers run.
+
+---
+
+# Error Handling
+
+> Structured ForgeError hierarchy, production expose: false sanitization, normalizeError(), and HTTP onError hooks.
+
+- **Section**: Core Concepts
+- **Packages**: @forge-fr/core, @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/error-handling
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/error-handling.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Built-in ForgeError subclasses
+
+| Class | HTTP Status | Default expose | Typical Cause |
+| --- | --- | --- | --- |
+| ValidationError | 400 | true (sanitized issues) | Standard Schema validation failure on params/query/headers/body |
+| UnauthorizedError | 401 | true | Missing, expired, or invalid credentials |
+| ForbiddenError | 403 | true | Authenticated actor lacks role, policy, ownership, or tenant access |
+| NotFoundError | 404 | true | Domain entity or route resource does not exist |
+| ConflictError | 409 | true | Unique constraint or state conflict |
+| ConfigurationError | 500 (boot) | false | Invalid environment or plugin schema at startup |
+| InternalError | 500 | false | Unexpected runtime exception wrapped by normalizeError() |
+
+## Fail-closed production error serialization
+
+Unknown thrown errors are wrapped with normalizeError() into InternalError with expose: false. In production, HTTP responses emit only a generic message, code, and requestId — never stack traces or database URLs.
+
+**File: `src/errors.ts`**
+
+```ts
+import { NotFoundError } from '@forge-fr/core';
+import { createHttpApp } from '@forge-fr/http';
+
+const app = createHttpApp({ exposeErrorDetails: false });
+
+app.addHook('onError', ({ error, ctx }) => {
+  ctx.logger?.error('Request failed', { requestId: ctx.requestId, code: error.code });
+});
+
+app.get('/orders/:id', (ctx) => {
+  throw new NotFoundError(`Order ${ctx.params.id} not found`);
+});
+```
+
+---
+
+# Routing
+
+> O(1) static route lookup, constrained radix parameters, wildcards, nested groups, autoHead, and RFC 405 Allow generation.
+
+- **Section**: HTTP & API Development
+- **Packages**: @forge-fr/router, @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/routing
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/routing.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Static, parameterized, constrained, and wildcard routes
+
+@forge-fr/router compiles exact static paths into an O(1) method-indexed map checked prior to normalization, while dynamic segments and regex constraints traverse a compact Radix tree.
+
+**File: `src/routes.ts`**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+
+const app = createHttpApp();
+
+app.get('/health', (ctx) => ctx.json({ ok: true }));
+app.get('/users/:id{\\d+}', (ctx) => ctx.json({ id: ctx.params.id }));
+app.get('/files/*path', (ctx) => ctx.json({ path: ctx.params.path }));
+
+app.group('/api/v1', (api) => {
+  api.get('/status', (ctx) => ctx.json({ version: 'v1' }));
+});
+```
+
+## Route groups, autoHead & prototype-key protection
+
+- Nested app.group("/api/v1", (api) => ...) composes prefixes, scoped middleware, and route metadata cleanly.
+- Route params use null-prototype objects and reject __proto__, constructor, and prototype parameter keys.
+- Automatic HEAD handling (autoHead) and RFC 405 Allow header generation are enabled by default.
+- Duplicate or conflicting route definitions throw RouteConflictError at registration time.
+
+---
+
+# Controllers & Handlers
+
+> Composition-first route registration factories resolving typed DI services via ctx.container and generated via forge generate controller.
+
+- **Section**: HTTP & API Development
+- **Packages**: @forge-fr/http, @forge-fr/core, @forge-fr/cli
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/controllers
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/controllers.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Composition-first controllers
+
+Instead of decorator classes, ForgeJS encourages plain route-registration functions that accept ForgeHttpApp and resolve domain services from the request-scoped ctx.container.
+
+**File: `src/modules/users/users.controller.ts`**
+
+```ts
+import type { ForgeHttpApp } from '@forge-fr/http';
+import { NotFoundError } from '@forge-fr/core';
+import { UserServiceToken } from './users.module.js';
+
+export function registerUserRoutes(app: ForgeHttpApp): void {
+  app.group('/users', (users) => {
+    users.get('/:id', async (ctx) => {
+      const service = ctx.container!.resolve(UserServiceToken);
+      const user = await service.findById(ctx.params.id!);
+      if (!user) throw new NotFoundError('User not found');
+      return ctx.json(user);
+    });
+  });
+}
+```
+
+## Generating controllers with @forge-fr/cli
+
+**File: `terminal`**
+
+```bash
+forge generate module users
+forge generate controller users
+forge generate service users
+```
+
+---
+
+# Request & Response
+
+> Compact 13-field ForgeContext, bounded body readers (1 MiB default), RFC 9110 Accept negotiation, streaming, compression, and ETags.
+
+- **Section**: HTTP & API Development
+- **Packages**: @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/request-and-response
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/request-and-response.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Bounded body readers & response helpers
+
+- readBoundedJson, readBoundedText, readBoundedBytes, readBoundedUrlEncoded, and readBoundedMultipart enforce DEFAULT_MAX_BODY_BYTES (1 MiB) even when Content-Length is omitted or chunked.
+- Oversized payloads abort streaming immediately and return 413 PayloadTooLargeError.
+- ctx.json(), ctx.text(), ctx.html(), ctx.bytes(), ctx.empty(), and ctx.redirect() construct fast Web Standard responses.
+- ctx.requestId is generated lazily on read or error (or preserved from incoming headers only when trustRequestId: true).
+
+## Web Standards compression & conditional ETag middleware
+
+createCompressionMiddleware() uses native CompressionStream (gzip/deflate) with bounded byte caps, while createEtagMiddleware() computes SHA-256 ETags and serves 304 Not Modified responses.
+
+**File: `src/http.ts`**
+
+```ts
+import {
+  createCompressionMiddleware,
+  createEtagMiddleware,
+  createHttpApp,
+} from '@forge-fr/http';
+
+const app = createHttpApp();
+app.use(createCompressionMiddleware({ thresholdBytes: 64, maxBytes: 1_048_576 }));
+app.use(createEtagMiddleware());
+
+app.get('/catalog', (ctx) =>
+  ctx.json({ items: ['core', 'http', 'edge'], generatedAt: new Date().toISOString() }),
+);
+```
+
+---
+
+# Middleware & Hooks
+
+> Deterministic tiered middleware (global → module → group → route), double-next() guards, and 7 HTTP lifecycle hooks.
+
+- **Section**: HTTP & API Development
+- **Packages**: @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/middleware
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/middleware.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Tiered ordering & safety guards
+
+- Middleware executes deterministically by tier: global → module → group → route, ordered by numeric priority within each tier.
+- Calling next() twice throws ForgeMiddlewareError; mutating headers after commit throws ResponseCommittedError.
+- Compiled pipelines are cached directly on each route object (route._pipelineRun) for zero-allocation hot-path dispatch.
+
+## Seven HTTP lifecycle hooks
+
+| Hook | Execution Point | Typical Use Case |
+| --- | --- | --- |
+| onRequest | Before route matching | Request metrics, custom tracing span start |
+| preValidation | After route match, before schema validation | Header normalization or tenant extraction |
+| preHandler | After validation, before route handler | Route-level authorization checks |
+| preSerialization | After handler returns payload, before JSON stringify | Envelope formatting or field auditing |
+| onSend | Before final Response leaves app.fetch() | Appending custom response headers |
+| onError | When any middleware or handler throws | Structured error logging with ctx.requestId |
+| onResponse | After response is finalized | Latency histograms and access logs |
+
+---
+
+# Validation
+
+> Standard Schema v1 validation across params, query, headers, and body with Zod v4 fast path and prototype-pollution sanitization.
+
+- **Section**: HTTP & API Development
+- **Packages**: @forge-fr/validation
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/validation
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/validation.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Zod v4, Valibot v1 & Standard Schema v1
+
+@forge-fr/validation supports any @standard-schema/spec v1 schema natively (Zod v4, Valibot v1, ArkType) plus zodAdapter for legacy Zod v3 and customSchema() for bespoke validators. Incoming JSON bodies are scanned to strip __proto__, constructor, and prototype keys automatically.
+
+**File: `src/validated-route.ts`**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { validatedHandler } from '@forge-fr/validation';
+import * as v from 'valibot';
+import { z } from 'zod';
+
+const app = createHttpApp();
+
+app.post(
+  '/projects/:projectId/tasks',
+  validatedHandler(
+    {
+      params: z.object({ projectId: z.string().min(2) }),
+      query: v.object({ dryRun: v.optional(v.string()) }),
+      body: z.object({ title: z.string().min(3) }),
+    },
+    (ctx, input) =>
+      ctx.json(
+        {
+          projectId: input.params.projectId,
+          dryRun: input.query.dryRun === 'true',
+          title: input.body.title,
+        },
+        { status: 201 },
+      ),
+  ),
+);
+```
+
+## Compiled Zod v4 fast path
+
+compileFastValidator() detects synchronous Zod v4 schemas once at route registration and invokes safeParse() directly (2.6x faster than ~standard.validate), falling back automatically to Standard Schema validate() for async refinements, Valibot, or custom validators.
+
+---
+
+# Response Validation & Serialization
+
+> Enforce outgoing response contracts with validatedHandler({ response }) to strip accidental PII before serialization.
+
+- **Section**: HTTP & API Development
+- **Packages**: @forge-fr/validation, @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/serialization
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/serialization.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Fail-closed response schemas
+
+Passing a response schema to validatedHandler() validates and strips outgoing payloads before serialization. Contract violations throw ResponseValidationError (HTTP 500, expose: false) so internal schema defects are logged privately rather than leaked.
+
+**File: `src/response-contract.ts`**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { validatedHandler } from '@forge-fr/validation';
+import { z } from 'zod';
+
+const PublicUserSchema = z.object({
+  id: z.string(),
+  displayName: z.string(),
+});
+
+const app = createHttpApp();
+
+app.get(
+  '/users/:id',
+  validatedHandler(
+    {
+      params: z.object({ id: z.string() }),
+      response: PublicUserSchema,
+    },
+    (_ctx, input) => ({
+      id: input.params.id,
+      displayName: 'Ada Lovelace',
+      // passwordHash is stripped automatically by PublicUserSchema
+      passwordHash: '$argon2id$...',
+    }),
+  ),
+);
+```
+
+---
+
+# OpenAPI 3.1 & Swagger UI
+
+> Reflect Standard Schema routes into JSON Schema 2020-12 OpenAPI 3.1 documents and mount XSS-escaped Swagger UI with strict CSP.
+
+- **Section**: HTTP & API Development
+- **Packages**: @forge-fr/openapi, @forge-fr/validation
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/openapi
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/openapi.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Generating OpenAPI 3.1 specs & hardened Swagger UI
+
+validatedOpenApiHandler(schemas, handler, metadata) attaches typed OpenAPI metadata while enforcing runtime validation. registerOpenApiRoutes(app, { title, version }) serves /openapi.json and an XSS-escaped /docs Swagger UI page with strict Content-Security-Policy headers.
+
+**File: `src/openapi.ts`**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import {
+  generateOpenApiDocument,
+  registerOpenApiRoutes,
+  validatedOpenApiHandler,
+} from '@forge-fr/openapi';
+import { z } from 'zod';
+
+const app = createHttpApp();
+
+app.get(
+  '/items/:id',
+  validatedOpenApiHandler(
+    {
+      params: z.object({ id: z.string() }),
+      response: z.object({ id: z.string(), name: z.string() }),
+    },
+    (_ctx, input) => ({ id: input.params.id, name: 'Widget' }),
+    { operationId: 'getItem', summary: 'Fetch item by ID', tags: ['Items'] },
+  ),
+);
+
+registerOpenApiRoutes(app, {
+  title: 'Forge Store API',
+  version: '1.0.0',
+});
+
+const spec = generateOpenApiDocument(app, { title: 'Forge Store API', version: '1.0.0' });
+```
+
+## Swagger UI security posture
+
+> **SECURITY: XSS Escaping & Production Visibility**
+>
+> renderSwaggerUiHtml() escapes spec titles and URLs and sets object-src 'none' CSP headers. Consider gating /docs behind authentication or disabling Swagger UI in public internet deployments.
+
+---
+
+# Database Overview
+
+> DatabaseAdapter contract, SQLSTATE normalization, credential-redacted URLs, and supported PostgreSQL, Drizzle, and Prisma integrations.
+
+- **Section**: Database & Data Access
+- **Packages**: @forge-fr/database, @forge-fr/drizzle, @forge-fr/prisma
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/overview
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/overview.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## Verified official integrations
+
+- @forge-fr/database — Native PostgreSQL driver built on postgres (postgres-js) with pooling, transactions, migrations, and SQLSTATE error mapping.
+- @forge-fr/drizzle — First-class Drizzle ORM plugin preserving 100% native PostgresJsDatabase<TSchema> inference.
+- @forge-fr/prisma — Prisma ORM plugin supporting Prisma v5/v6/v7+ generated clients with P1xxx/P2xxx error normalization.
+
+> **NOTE: Explicit ORM Scope Disclosure**
+>
+> TypeORM, MikroORM, Sequelize, and Knex do not have official ForgeJS packages. Teams using other ORMs or SQL dialects can integrate them cleanly via the generic DatabaseAdapter contract and createDatabasePlugin().
+
+## Credential redaction & SQLSTATE normalization
+
+All database adapters sanitize connection strings via redactDatabaseUrl() and map raw driver errors into typed ForgeError subclasses with expose: false by default so SQL statements and credentials never leak.
+
+**File: `src/db/errors.ts`**
+
+```ts
+import assert from 'node:assert/strict';
+import {
+  DatabaseUniqueViolationError,
+  normalizeDatabaseError,
+  redactDatabaseUrl,
+} from '@forge-fr/database';
+
+const safeUrl = redactDatabaseUrl('postgres://admin:top_secret@db.internal:5432/prod');
+assert.ok(safeUrl.includes('admin:[REDACTED]@db.internal:5432/prod'));
+
+const normalized = normalizeDatabaseError({
+  code: '23505',
+  message: 'duplicate key value violates unique constraint',
+});
+assert.ok(normalized instanceof DatabaseUniqueViolationError);
+assert.equal(normalized.expose, false);
+```
+
+---
+
+# PostgreSQL
+
+> Native postgres-js pooling, allowlisted transaction isolation levels, SQLSTATE error mapping, and checksum-verified migrations.
+
+- **Section**: Database & Data Access
+- **Packages**: @forge-fr/database
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/postgresql
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/postgresql.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## Registering the PostgreSQL plugin & running transactions
+
+Pass createPostgresPlugin() and its runtime config tuple into createKernel({ plugins }) or call kernel.plugin(createPostgresPlugin(), config). The plugin automatically registers a health probe and closes the pool cleanly on kernel.shutdown().
+
+**File: `src/db/postgres.ts`**
+
+```ts
+import { createKernel, secret } from '@forge-fr/core';
+import {
+  createPostgresPlugin,
+  DefaultDatabaseTokens,
+  runInTransaction,
+} from '@forge-fr/database';
+
+const kernel = createKernel({
+  plugins: [
+    [
+      createPostgresPlugin(),
+      {
+        url: secret(process.env.DATABASE_URL ?? ''),
+        max: 20,
+      },
+    ],
+  ],
+});
+
+await kernel.start();
+const adapter = kernel.container.resolve(DefaultDatabaseTokens.adapter);
+
+await runInTransaction(
+  adapter,
+  async (tx) => {
+    await tx`INSERT INTO audit_events (event_type) VALUES (${'boot'})`;
+  },
+  { isolationLevel: 'read committed' },
+);
+```
+
+## Checksum-verified SQL migrations
+
+createMigrationRunner() tracks applied migrations with SHA-256 checksums, rejecting tampered historical migrations before executing new SQL files.
+
+| Isolation Level (Allowlisted) | SQLSTATE Mapped Errors |
+| --- | --- |
+| read uncommitted · read committed | 23505 → DatabaseUniqueViolationError (409 internal) |
+| repeatable read · serializable | 23503 → DatabaseForeignKeyError · 40001/40P01 → DatabaseSerializationError |
+
+---
+
+# Drizzle ORM
+
+> Preserve 100% native Drizzle schema and relational query inference with createDrizzlePostgresPlugin() and normalizeDrizzleError().
+
+- **Section**: Database & Data Access
+- **Packages**: @forge-fr/drizzle, @forge-fr/database
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/drizzle
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/drizzle.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## Zero-loss Drizzle TypeScript inference
+
+Passing your schema generic to createDrizzlePostgresPlugin<typeof schema>() preserves complete Drizzle query builder and relational db.query.* inference with zero wrapper abstractions.
+
+**File: `src/db/drizzle.ts`**
+
+```ts
+import { createKernel, secret } from '@forge-fr/core';
+import {
+  createDrizzlePostgresPlugin,
+  DefaultDrizzleTokens,
+} from '@forge-fr/drizzle';
+import * as schema from './schema.js';
+
+const kernel = createKernel({
+  plugins: [
+    [
+      createDrizzlePostgresPlugin<typeof schema>(),
+      {
+        url: secret(process.env.DATABASE_URL ?? ''),
+        schema,
+      },
+    ],
+  ],
+});
+
+await kernel.start();
+const db = kernel.container.resolve(DefaultDrizzleTokens.db);
+```
+
+## Transactions & error normalization
+
+- The Drizzle adapter implements DatabaseAdapter.transaction() with allowlisted isolation levels and wraps failures through normalizeDrizzleError().
+- Shutdown automatically closes the underlying postgres-js pool via LIFO kernel teardown.
+
+---
+
+# Prisma ORM
+
+> Integrate generated PrismaClient (v5/v6/v7+) with P1xxx/P2xxx error normalization and kernel $disconnect draining.
+
+- **Section**: Database & Data Access
+- **Packages**: @forge-fr/prisma, @forge-fr/database
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/prisma
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/prisma.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## Registering PrismaClient with the kernel
+
+@forge-fr/prisma accepts any duck-typed PrismaClientLike instance (supporting Prisma v5, v6, and v7+ driver adapters) without pinning @prisma/client as a hard runtime dependency.
+
+**File: `src/db/prisma.ts`**
+
+```ts
+import { createKernel } from '@forge-fr/core';
+import { createPrismaPlugin, DefaultPrismaTokens } from '@forge-fr/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const kernel = createKernel({
+  plugins: [
+    [createPrismaPlugin(), { client: new PrismaClient() }],
+  ],
+});
+
+await kernel.start();
+const prisma = kernel.container.resolve(DefaultPrismaTokens.client);
+```
+
+## Prisma P1xxx/P2xxx error mapping
+
+| Prisma Error Code | Mapped ForgeJS Database Error |
+| --- | --- |
+| P2002 | DatabaseUniqueViolationError |
+| P2003 | DatabaseForeignKeyError |
+| P2034 | DatabaseSerializationError |
+| P1001 / P1002 / P1008 | DatabaseConnectionError / DatabaseTimeoutError |
+
+---
+
+# Repository Pattern
+
+> Decouple domain services from ORM specifics using typed DI repository tokens and explicit transaction propagation.
+
+- **Section**: Database & Data Access
+- **Packages**: @forge-fr/core, @forge-fr/database, @forge-fr/testing
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## Port interfaces & provider overrides
+
+Define domain repository interfaces behind createToken<T>(), bind PostgreSQL/Drizzle/Prisma implementations inside infrastructure modules, and swap them cleanly in unit tests via overrideProvider().
+
+**File: `src/modules/orders/orders.repository.ts`**
+
+```ts
+import { createToken, defineModule } from '@forge-fr/core';
+import { DefaultDrizzleTokens } from '@forge-fr/drizzle';
+
+export interface OrderRecord {
+  readonly id: string;
+  readonly totalCents: number;
+}
+
+export interface OrderRepository {
+  findById(id: string): Promise<OrderRecord | null>;
+}
+
+export const OrderRepositoryToken = createToken<OrderRepository>('OrderRepository');
+
+export const OrderDataModule = defineModule({
+  name: 'orders-data',
+  providers: [
+    {
+      token: OrderRepositoryToken,
+      scope: 'singleton',
+      inject: [DefaultDrizzleTokens.db] as const,
+      useFactory: (_db): OrderRepository => ({
+        async findById(id) {
+          return { id, totalCents: 4200 };
+        },
+      }),
+    },
+  ],
+  exports: [OrderRepositoryToken],
+});
+```
+
+---
+
+# Database Testing
+
+> Run deterministic PostgreSQL 16 integration suites via FORGE_TEST_DATABASE_URL in CI and local Docker environments.
+
+- **Section**: Database & Data Access
+- **Packages**: @forge-fr/database, @forge-fr/testing
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/testing
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/testing.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## Real PostgreSQL 16 CI integration tests
+
+ForgeJS ships 4 live PostgreSQL integration suites (postgres, drizzle, prisma, and PostgreSQL SKIP LOCKED queue) wired to the postgres:16-alpine service container in .github/workflows/ci.yml. When FORGE_TEST_DATABASE_URL is unset locally, suites explicitly report SKIPPED rather than falsely passing.
+
+**File: `terminal`**
+
+```bash
+# Run live PostgreSQL 16 integration tests against local Docker
+docker run --rm -e POSTGRES_PASSWORD=forge -e POSTGRES_DB=forge_test -p 5432:5432 postgres:16-alpine
+FORGE_TEST_DATABASE_URL=postgres://postgres:forge@127.0.0.1:5432/forge_test npx vitest run
+```
+
+---
+
+# Authentication
+
+> Cross-runtime OWASP Argon2id hashing, algorithm-pinned JWT/JWKS, SHA-256 hashed sessions and API keys, OAuth 2.0 PKCE/OIDC, and Better Auth.
+
+- **Section**: Authentication & Security
+- **Packages**: @forge-fr/auth
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/authentication
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/authentication.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## Password hashing, algorithm-pinned JWTs & hashed sessions
+
+- createArgon2PasswordHasher() enforces OWASP Argon2id floors (memoryCost >= 12288 KiB, default 19456, timeCost >= 2, 1024-byte cap) and is verified cross-compatible between @node-rs/argon2 and Bun.password.
+- createJwtService() requires an explicit algorithms allowlist, rejects alg: none, and enforces >=32-byte HMAC secrets.
+- Session IDs and API keys are stored strictly as SHA-256 hex digests and verified in constant time.
+
+**File: `src/auth.ts`**
+
+```ts
+import { secret } from '@forge-fr/core';
+import {
+  createArgon2PasswordHasher,
+  createJwtService,
+  createMemorySessionStore,
+  createSessionManager,
+} from '@forge-fr/auth';
+
+const hasher = createArgon2PasswordHasher();
+const hash = await hasher.hash('CorrectHorseBattery99!');
+const valid = await hasher.verify('CorrectHorseBattery99!', hash);
+
+const jwt = createJwtService({
+  algorithms: ['HS256'],
+  secret: secret('super-secret-signing-key-at-least-32-bytes'),
+  issuer: 'https://auth.example.com',
+  audience: 'forge-api',
+});
+const token = await jwt.sign({ sub: 'user-1', role: 'editor' }, { expiresIn: '10m' });
+
+const sessions = createSessionManager({
+  store: createMemorySessionStore(),
+  idleTtlMs: 30 * 60_000,
+  absoluteTtlMs: 24 * 60 * 60_000,
+});
+```
+
+## OAuth 2.0 PKCE / OIDC & Better Auth bridge
+
+@forge-fr/auth includes createOAuthPkceClient() (S256 PKCE + state/nonce validation), createApiKeyService(), and mountBetterAuth() / createBetterAuthBridge() for teams adopting Better Auth.
+
+---
+
+# Authorization
+
+> Segment-strict RBAC, deny-overrides-allow ABAC policies, anti-IDOR assertOwnership(), and multi-tenant isolation checks.
+
+- **Section**: Authentication & Security
+- **Packages**: @forge-fr/authorization
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/authorization
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/authorization.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
+
+## RBAC, ABAC policies & multi-tenant isolation
+
+createAuthorizer() evaluates RBAC roles, explicit deniedPermissions, ABAC policies, and tenant isolation identically in both HTTP middleware and pure domain services via authorizer.forActor(actor). Deny always overrides allow.
+
+**File: `src/authz.ts`**
+
+```ts
+import {
+  assertOwnership,
+  createAuthorizer,
+  definePolicy,
+} from '@forge-fr/authorization';
+
+const authorizer = createAuthorizer({
+  enforceTenantIsolation: true,
+  roles: {
+    viewer: { permissions: ['invoice:read'] },
+    billingAdmin: {
+      inherits: ['viewer'],
+      permissions: ['invoice:*'],
+      deniedPermissions: ['invoice:delete'],
+    },
+  },
+  policies: [
+    definePolicy({
+      name: 'deny-suspended-actor',
+      effect: 'deny',
+      actions: ['*'],
+      condition: ({ actor }) => actor.attributes?.['suspended'] === true,
+    }),
+  ],
+});
+
+const billing = authorizer.forActor({
+  subject: 'u-10',
+  tenantId: 'tenant-a',
+  roles: ['billingAdmin'],
+  permissions: [],
+  scopes: [],
+});
+
+const decision = await billing.evaluate('invoice:update', { tenantId: 'tenant-a' });
+assertOwnership(billing.actor, { ownerId: 'u-10' });
+```
+
+---
+
+# Security Guide (OWASP ASVS 5.0.0)
+
+> Clear separation of built-in HTTP defaults, optional @forge-fr/security middleware, and application/infrastructure security responsibilities.
+
+- **Section**: Authentication & Security
+- **Packages**: @forge-fr/security, @forge-fr/http, @forge-fr/storage, @forge-fr/logger
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/security-and-observability.md
+
+## Composable OWASP ASVS 5.0.0 controls
+
+@forge-fr/security ships zero-dependency security middleware and utility guards aligned with OWASP ASVS 5.0.0 L1/L2 baseline controls.
+
+**File: `src/security.ts`**
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import {
+  createCorsMiddleware,
+  createCsrfMiddleware,
+  createRateLimitMiddleware,
+  createSafeFetch,
+  createSecurityHeadersMiddleware,
+  resolveConfinedPath,
+  sanitizeObject,
+} from '@forge-fr/security';
+
+const app = createHttpApp();
+app.use(createSecurityHeadersMiddleware());
+app.use(createCorsMiddleware({ origin: ['https://app.example.com'], credentials: true }));
+app.use(createCsrfMiddleware());
+app.use(createRateLimitMiddleware({ windowMs: 60_000, max: 120, trustProxy: false }));
+
+// SSRF-hardened outbound fetch (blocks loopback, link-local, RFC1918, cloud metadata)
+const safeFetch = createSafeFetch();
+const safePath = resolveConfinedPath('/var/app/uploads', '2026/avatar.png');
+const clean = sanitizeObject({ name: 'alice' });
+```
+
+## Built-in defaults vs. optional vs. application duties
+
+| Layer | Included Controls |
+| --- | --- |
+| Built-in Framework Defaults | 1 MiB bounded body readers (413), null-prototype params, prototype-pollution stripping, expose: false 5xx sanitization, CRLF log stripping, SecretValue redaction |
+| Optional @forge-fr/security & @forge-fr/auth | CSP/HSTS headers, strict CORS, double-submit CSRF, rate limiting, SSRF createSafeFetch(), Argon2id, algorithm-pinned JWT, RBAC/ABAC |
+| Application & Infrastructure Duties | Calling assertOwnership() & assertTenantIsolation() on every object fetch, TLS termination, WAF/DDoS, secret rotation, OS/container isolation |
+
+## Limitations & honest boundaries
+
+> **SECURITY: Honest Security Boundary**
+>
+> No framework automatically makes an application secure. Plugins run in-process (capability scoping prevents accidental coupling, not OS/VM sandboxing). Schema validation proves shape only; services must still enforce ownership and tenant checks.
+
+---
+
+# Plugin System
+
+> SemVer 2.0.0 compatibility engine, topological dependency DAG, conflict detection, and frozen capability-scoped PluginContext.
+
+- **Section**: Plugins & Extensions
+- **Packages**: @forge-fr/core
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/plugin-system
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/plugin-system.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Declared capabilities & frozen PluginContext
+
+Every ForgeJS plugin explicitly declares the capabilities it requires. During kernel boot, createPluginContext() creates a frozen context object whose methods enforce capability boundaries at runtime.
+
+| Capability | Permitted PluginContext Operation |
+| --- | --- |
+| di:register | Register private or explicitly exported providers into the container |
+| di:resolve | Resolve visible providers registered by core or declared plugin dependencies |
+| config:read | Read kernel configuration values via ConfigManager |
+| events:emit | Emit typed kernel events |
+| events:listen | Subscribe to kernel lifecycle or domain events |
+| hooks:register | Attach handlers to kernel lifecycle hooks |
+| health:register | Register readiness/liveness checks with HealthRegistry |
+
+## SemVer compatibility, dependencies & conflicts
+
+- forgeVersion ranges are checked against FORGE_CORE_VERSION using the built-in SemVer 2.0.0 engine before any plugin hook runs.
+- Plugin dependencies are topologically sorted at boot and shut down in exact reverse order.
+- Calling a PluginContext API outside declared capabilities throws PluginCapabilityError immediately.
+- Conflicting plugins or circular plugin dependencies fail fast with PluginConflictError or CircularPluginDependencyError.
+
+---
+
+# Creating Plugins
+
+> Author, validate, and test custom ForgeJS plugins with definePlugin(), Standard Schema config validation, and createPluginTestHarness().
+
+- **Section**: Plugins & Extensions
+- **Packages**: @forge-fr/core, @forge-fr/testing
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Authoring with definePlugin()
+
+Use definePlugin() with explicit capabilities, a forgeVersion SemVer range, and a Standard Schema v1 configSchema so invalid plugin configurations fail fast during the configure stage.
+
+**File: `src/plugins/metrics.plugin.ts`**
+
+```ts
+import { createToken, definePlugin, FORGE_CORE_VERSION } from '@forge-fr/core';
+import { z } from 'zod';
+
+export interface MetricsClient {
+  increment(metric: string): void;
+}
+
+export const MetricsToken = createToken<MetricsClient>('acme:metrics');
+
+export const metricsPlugin = definePlugin({
+  name: 'acme-metrics',
+  version: '1.0.0',
+  forgeVersion: `^${FORGE_CORE_VERSION}`,
+  capabilities: ['di:register', 'health:register'],
+  configSchema: z.object({
+    namespace: z.string().min(1).default('app'),
+  }),
+  register(ctx, config) {
+    ctx.registerProvider({
+      token: MetricsToken,
+      scope: 'singleton',
+      useValue: {
+        increment: (metric) => console.info(`[${config.namespace}] ${metric}`),
+      },
+    });
+    ctx.registerHealthCheck('acme-metrics', () => ({ status: 'up' }));
+  },
+});
+```
+
+## Isolated plugin testing with createPluginTestHarness()
+
+createPluginTestHarness({ plugin, config }) boots a real ApplicationKernel with your plugin, validates exported tokens via resolveExport(), checks health probes, and exercises teardown.
+
+**File: `tests/metrics.plugin.test.ts`**
+
+```ts
+import assert from 'node:assert/strict';
+import { createToken, definePlugin } from '@forge-fr/core';
+import { createPluginTestHarness } from '@forge-fr/testing';
+import { z } from 'zod';
+
+const MetricsPortToken = createToken<number>('metrics.port');
+
+const MetricsPlugin = definePlugin({
+  name: 'metrics-plugin',
+  version: '1.0.0',
+  forgeVersion: '^1.0.0-rc.1',
+  capabilities: ['di:register', 'health:register'],
+  configSchema: z.object({ port: z.number().int().min(1024).default(9090) }),
+  register(ctx, config) {
+    ctx.registerProvider({ token: MetricsPortToken, useValue: config.port }, { export: true });
+    ctx.registerHealthCheck('metrics', () => ({ status: 'ok' }));
+  },
+});
+
+const harness = createPluginTestHarness({
+  plugin: MetricsPlugin,
+  config: { port: 9100 },
+});
+
+await harness.start();
+assert.equal(harness.resolveExport(MetricsPortToken), 9100);
+assert.equal((await harness.health()).status, 'ok');
+await harness.shutdown();
+```
+
+---
+
+# Adapter Development
+
+> Implement custom HTTP runtime, database, cache, queue, or storage adapters and verify them against ForgeJS contract suites.
+
+- **Section**: Plugins & Extensions
+- **Packages**: @forge-fr/http, @forge-fr/database, @forge-fr/testing
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/adapter-development
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/adapter-development.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## Shared adapter contract verification
+
+Every official HTTP and WebSocket adapter passes the exact same behavioral contract suites exported by @forge-fr/testing: runHttpAdapterContractSuite() and runWebSocketContractSuite().
+
+**File: `tests/custom-adapter.contract.test.ts`**
+
+```ts
+import { runHttpAdapterContractSuite } from '@forge-fr/testing';
+import { createMyRuntimeAdapter } from '../src/my-adapter.js';
+
+const report = await runHttpAdapterContractSuite({
+  name: 'my-custom-runtime',
+  createAdapter: () => createMyRuntimeAdapter(),
+});
+
+if (!report.passed) {
+  throw new Error(`Adapter contract failed: ${JSON.stringify(report.results)}`);
+}
+```
+
+## Building custom DatabaseAdapter drivers
+
+- Implement connect(), disconnect(), ping(), transaction(fn, opts), and state transitions cleanly.
+- Normalize driver-specific error codes into @forge-fr/database ForgeError subclasses with expose: false.
+- Wrap your adapter with createDatabasePlugin() to automatically register DI tokens and health probes.
+
+---
+
+# Integrating External Libraries
+
+> Use optional peerDependencies and duck-typed interfaces (RedisClientLike, PrismaClientLike) to keep core packages dependency-free.
+
+- **Section**: Plugins & Extensions
+- **Packages**: @forge-fr/core, @forge-fr/cache, @forge-fr/prisma
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/external-libraries
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/external-libraries.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/PACKAGE_STRATEGY.md
+
+## Duck-typed peer integration pattern
+
+Packages like @forge-fr/cache, @forge-fr/queue, @forge-fr/prisma, and @forge-fr/auth accept narrow structural interfaces (RedisClientLike, PrismaClientLike, BetterAuthLike) so applications can upgrade peer clients cleanly without version-pin lock-in.
+
+| Package | Structural Interface / Peer Strategy |
+| --- | --- |
+| @forge-fr/cache & @forge-fr/queue | RedisClientLike — works with ioredis or node-redis wrappers without hard runtime coupling |
+| @forge-fr/prisma | PrismaClientLike — supports Prisma v5, v6, and v7+ generated clients |
+| @forge-fr/validation | @standard-schema/spec v1 — Zod v4, Valibot v1, ArkType, plus zodAdapter for Zod v3 |
+| @forge-fr/auth | Optional peer @node-rs/argon2 on Node.js; native Bun.password on Bun |
+
+---
+
+# Caching & Redis
+
+> O(1) LRU memory cache, cursor SCAN-based Redis cache, single-flight getOrSet() stampede protection, and tag/prefix invalidation.
+
+- **Section**: Advanced Features
+- **Packages**: @forge-fr/cache
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/caching
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/caching.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/infrastructure-and-cli.md
+
+## Single-flight caching & tag invalidation
+
+getOrSet() coalesces concurrent cache misses for the same key into a single in-flight loader promise, preventing thundering-herd spikes against upstream databases.
+
+**File: `src/cache.ts`**
+
+```ts
+import assert from 'node:assert/strict';
+import { createMemoryCacheAdapter } from '@forge-fr/cache';
+
+const cache = createMemoryCacheAdapter({ maxEntries: 2_000 });
+let loads = 0;
+
+const [a, b] = await Promise.all([
+  cache.getOrSet('profile:42', async () => {
+    loads += 1;
+    return { id: '42', tier: 'pro' };
+  }, { ttlMs: 60_000, tags: ['user:42'] }),
+  cache.getOrSet('profile:42', async () => {
+    loads += 1;
+    return { id: '42', tier: 'pro' };
+  }, { ttlMs: 60_000, tags: ['user:42'] }),
+]);
+
+assert.equal(loads, 1);
+assert.deepEqual(a, b);
+await cache.invalidateTag('user:42');
+```
+
+## Non-blocking Redis SCAN invalidation
+
+> **NOTE: Zero Blocking KEYS * Calls**
+>
+> createRedisCacheAdapter() uses incremental cursor SCAN batches for prefix and tag invalidation instead of blocking Redis KEYS * commands, and supports createCachePlugin() for kernel lifecycle wiring.
+
+---
+
+# Queues & Background Jobs
+
+> Memory, Redis sorted-set (atomic Lua pop), and PostgreSQL SKIP LOCKED job queues with retries, idempotency keys, DLQ replay, and graceful worker drain.
+
+- **Section**: Advanced Features
+- **Packages**: @forge-fr/queue
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/queues
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/queues.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/infrastructure-and-cli.md
+
+## Enqueueing jobs & draining workers gracefully
+
+@forge-fr/queue provides identical job semantics across createMemoryQueueAdapter(), createRedisQueueAdapter() (atomic Lua pop), and createPostgresQueueAdapter() (PostgreSQL FOR UPDATE SKIP LOCKED).
+
+**File: `src/worker.ts`**
+
+```ts
+import { createMemoryQueueAdapter, createQueueWorker } from '@forge-fr/queue';
+
+const queue = createMemoryQueueAdapter({ maxQueueSize: 1_000 });
+
+const worker = createQueueWorker<{ invoiceId: string }>(
+  queue,
+  async (job, ctx) => {
+    if (ctx.signal.aborted) return;
+    console.info('Rendering PDF for', job.payload.invoiceId);
+  },
+  { pollIntervalMs: 25, concurrency: 4 },
+);
+
+worker.start();
+await queue.enqueue(
+  'invoice.pdf',
+  { invoiceId: 'inv_99' },
+  { idempotencyKey: 'inv_99', priority: 10 },
+);
+
+// On SIGTERM, wait for active jobs to finish cleanly:
+await worker.stop({ timeoutMs: 5_000 });
+```
+
+## Retries, exponential backoff & Dead-Letter Queue (DLQ)
+
+- Failed jobs retry with bounded exponential backoff up to maxAttempts before moving to the Dead-Letter Queue.
+- Inspect or replay dead-letter jobs programmatically via adapter.listDeadLetters() and adapter.replayDeadLetter(id).
+- Note: ForgeJS ships durable job queues, not a built-in cron scheduler.
+
+---
+
+# Events & Hooks
+
+> Typed EventDispatcher (fail-fast, collect, isolate error strategies) and priority HookRegistry pipelines in @forge-fr/core.
+
+- **Section**: Advanced Features
+- **Packages**: @forge-fr/core
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/events-and-hooks
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/events-and-hooks.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
+
+## EventDispatcher error strategies
+
+| Strategy | Behavior when a listener throws |
+| --- | --- |
+| fail-fast (default) | Stops dispatching immediately and rejects with the first listener error |
+| collect | Runs all listeners and throws AggregateError if one or more fail |
+| isolate | Runs all listeners and routes errors to onError without failing emit() |
+
+**File: `src/events.ts`**
+
+```ts
+import { createEventDispatcher, createHookRegistry } from '@forge-fr/core';
+
+type AppEvents = { 'user.created': { id: string; email: string } };
+const events = createEventDispatcher<AppEvents>({ errorStrategy: 'collect' });
+
+events.on('user.created', ({ id }) => {
+  console.info('Audit user signup:', id);
+});
+await events.emit('user.created', { id: 'u_101', email: 'ada@example.com' });
+
+const hooks = createHookRegistry<{ beforeSave: { entityId: string } }>();
+hooks.add('beforeSave', (payload) => console.info('Saving', payload.entityId), { priority: 10 });
+await hooks.run('beforeSave', { entityId: 'ord_55' });
+```
+
+---
+
+# File Storage & S3
+
+> Memory, symlink-jailed local disk, and zero-SDK Web Crypto AWS SigV4 S3 object storage with magic-byte upload validation.
+
+- **Section**: Advanced Features
+- **Packages**: @forge-fr/storage
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/storage
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/storage.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/infrastructure-and-cli.md
+
+## Traversal-safe keys, symlink confinement & AWS SigV4
+
+- All storage adapters normalize keys and reject path traversal (../, null bytes, absolute paths) with StoragePathError.
+- createLocalStorageAdapter() jails writes inside the configured root using canonical realpath symlink verification.
+- createS3StorageAdapter() signs AWS SigV4 requests via Web Crypto with zero AWS SDK dependencies and HTTPS enforced by default.
+- verifyMagicBytesForMime() validates actual file binary headers against allowed MIME types.
+
+**File: `src/storage.ts`**
+
+```ts
+import assert from 'node:assert/strict';
+import {
+  createMemoryStorageAdapter,
+  StoragePathError,
+  verifyMagicBytesForMime,
+} from '@forge-fr/storage';
+
+const storage = createMemoryStorageAdapter();
+const pngHeader = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+assert.equal(verifyMagicBytesForMime(pngHeader, 'image/png'), true);
+await assert.rejects(
+  () => storage.put('../etc/passwd', 'blocked', { contentType: 'text/plain' }),
+  StoragePathError,
+);
+
+const stored = await storage.put('avatars/u1.png', pngHeader, { contentType: 'image/png' });
+assert.equal(stored.key, 'avatars/u1.png');
+```
+
+---
+
+# WebSockets & Server-Sent Events
+
+> Cross-runtime app.ws() (RFC 6455 Node, native Bun.serve, Edge) with pre-upgrade auth, CSWSH allowedOrigins, and createSseResponse() streaming.
+
+- **Section**: Advanced Features
+- **Packages**: @forge-fr/http, @forge-fr/node, @forge-fr/bun, @forge-fr/edge
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/realtime
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/realtime.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
+
+## Pre-upgrade WebSocket security & SSE streaming
+
+app.ws(path, handlers, options) validates Origin allowlists (preventing Cross-Site WebSocket Hijacking) and executes authenticate(ctx) before sending 101 Switching Protocols.
+
+**File: `src/realtime.ts`**
+
+```ts
+import { createHttpApp, createSseResponse } from '@forge-fr/http';
+
+const app = createHttpApp();
+
+app.ws(
+  '/ws/chat/:room',
+  {
+    authenticate(ctx) {
+      return ctx.headers.get('authorization') === 'Bearer secret';
+    },
+    onOpen(ws) {
+      ws.send(`joined:${ws.params['room']}`);
+    },
+    onMessage(ws, message) {
+      ws.send(`echo:${String(message)}`);
+    },
+  },
+  {
+    allowedOrigins: ['https://app.example.com'],
+    maxPayloadBytes: 64 * 1024,
+  },
+);
+
+app.get('/events', () =>
+  createSseResponse(async (stream) => {
+    await stream.send({ event: 'ready', data: { ok: true } });
+    stream.close();
+  }),
+);
+```
+
+---
+
+# Logging, Metrics, Tracing & Health Checks
+
+> Structured Pino logging with secret & URL redaction, CRLF neutralization, correlation IDs, OpenTelemetry tracing/metrics, and sanitized /health/live & /health/ready endpoints.
+
+- **Section**: Advanced Features
+- **Packages**: @forge-fr/logger
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/observability
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/observability.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/security-and-observability.md
+
+## Redacted Pino logging, correlation IDs & health probes
+
+@forge-fr/logger automatically redacts SecretValue objects, password/token keys, and credentialed database URLs, strips CRLF log-injection newlines, propagates x-correlation-id headers, and serves production-safe health endpoints.
+
+**File: `src/observability.ts`**
+
+```ts
+import { secret } from '@forge-fr/core';
+import { createHttpApp } from '@forge-fr/http';
+import {
+  createCorrelationIdMiddleware,
+  createMemoryLogSink,
+  createPinoLogger,
+  registerHealthRoutes,
+} from '@forge-fr/logger';
+
+const sink = createMemoryLogSink();
+const logger = createPinoLogger({ destination: sink.stream });
+
+logger.info('db.connect', {
+  databaseUrl: 'postgres://user:secretpass@db.local:5432/app',
+  apiKey: secret('sk_live_very_secret_value'),
+});
+
+const app = createHttpApp();
+app.use(createCorrelationIdMiddleware());
+registerHealthRoutes(app, { registry: app.kernel.health });
+```
+
+## OpenTelemetry tracing & metrics
+
+Mount createObservabilityPlugin() or createTelemetryMiddleware() to connect @opentelemetry/api tracer spans and HTTP latency histograms without hard-coupling your domain layer to a specific APM vendor.
+
+---
+
+# Testing
+
+> In-memory HTTP/WebSocket tests, DI provider overrides, plugin harnesses, and dual-runtime Node.js + Bun verification.
+
+- **Section**: Testing & Production
+- **Packages**: @forge-fr/testing
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/testing
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/testing.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/TESTING_STRATEGY.md
+
+## Fast in-memory HTTP, DI & WebSocket testing
+
+- createTestClient(app) exercises full routing, tiered middleware, hooks, body limits, and schema validation without binding TCP sockets.
+- overrideProvider() swaps repositories or external services cleanly inside the DI container.
+- createMemoryWebSocketPair() tests real-time WebSocket upgrades, auth guards, and message frames deterministically.
+- createPluginTestHarness() verifies plugin configuration schemas, exports, health probes, and shutdown hooks in isolation.
+
+**File: `tests/orders.test.ts`**
+
+```ts
+import assert from 'node:assert/strict';
+import { createKernel, createToken } from '@forge-fr/core';
+import { createHttpApp } from '@forge-fr/http';
+import { createTestClient, overrideProvider } from '@forge-fr/testing';
+
+const TaxRateToken = createToken<number>('TaxRate');
+const kernel = createKernel({
+  providers: [{ token: TaxRateToken, scope: 'singleton', useValue: 0.2 }],
+});
+
+overrideProvider(kernel.container, TaxRateToken, 0.1);
+await kernel.start();
+
+const app = createHttpApp({ kernel });
+app.get('/tax', (ctx) => ctx.json({ rate: ctx.container!.resolve(TaxRateToken) }));
+
+const client = createTestClient(app);
+const res = await client.get('/tax');
+assert.deepEqual(await res.json(), { rate: 0.1 });
+await client.close();
+```
+
+---
+
+# Runtime Compatibility
+
+> Transparent compatibility matrix separating locally verified runtimes (Node.js v22.23.5, Bun 1.4.4) from CI-configured targets.
+
+- **Section**: Testing & Production
+- **Packages**: @forge-fr/node, @forge-fr/bun, @forge-fr/edge
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/RUNTIME_COMPATIBILITY.md
+
+## Verified & configured runtime matrix
+
+| Runtime | Declared Target | Local Verification | CI Matrix |
+| --- | --- | --- | --- |
+| Node.js 22 LTS | >= 22.18.0 | Verified locally (v22.23.5 — 21/21 smoke) | ubuntu · macos · windows |
+| Bun 1.4+ | >= 1.4.0 | Verified locally (1.4.4 — 23/23 smoke) | ubuntu · macos (1.4.4) |
+| WinterCG Edge | Web Fetch API | Unit & contract verified (no local workerd/deno binary) | Included in Node & Bun jobs |
+| Node.js 24 LTS | >= 22.18.0 | Not installed locally | ubuntu-latest (Node 24) |
+| PostgreSQL 16 | postgres-js / Drizzle / Prisma | Skipped locally (no Docker daemon) | postgres:16-alpine service job |
+
+## Cloudflare Workers & Deno Deploy (@forge-fr/edge)
+
+**File: `src/edge.ts`**
+
+```ts
+import { createCloudflareWorkerHandler, createDenoHandler, getEdgeEnv } from '@forge-fr/edge';
+import { createHttpApp } from '@forge-fr/http';
+
+const app = createHttpApp();
+app.get('/region', (ctx) => {
+  const env = getEdgeEnv<{ readonly REGION: string }>(ctx.request);
+  return ctx.json({ runtime: ctx.runtime, region: env?.REGION ?? 'local' });
+});
+
+export default createCloudflareWorkerHandler<{ readonly REGION: string }>(app, {
+  trustCfConnectingIp: true,
+});
+export const denoHandler = createDenoHandler(app);
+```
+
+---
+
+# Production Deployment
+
+> Strict ESM builds, NODE_ENV=production hardening, POSIX graceful draining, health probes, and reverse-proxy configuration.
+
+- **Section**: Testing & Production
+- **Packages**: @forge-fr/node, @forge-fr/bun, @forge-fr/edge, @forge-fr/logger
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/production
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/production.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
+
+## Production deployment checklist
+
+- Run with NODE_ENV=production and exposeErrorDetails: false so unknown 5xx errors and readiness probes sanitize internal diagnostics.
+- Attach attachProcessShutdown(server, { timeoutMs: 10_000 }) alongside kernel.shutdown() for zero-drop SIGTERM/SIGINT draining.
+- Keep trustProxy: false unless behind a trusted reverse proxy (Nginx, Caddy, Envoy, Cloudflare) that overwrites client IP headers.
+- Mount /health/live (liveness) and /health/ready (readiness) via registerHealthRoutes() for container orchestrator probes.
+
+## Node.js & Bun production entrypoint
+
+**Node.js (`src/index.ts`)**
+
+```ts
+import { createNodeAdapter, attachProcessShutdown } from '@forge-fr/node';
+import { app, kernel } from './app.js';
+
+await kernel.start();
+const server = createNodeAdapter(app);
+await server.listen({ host: '0.0.0.0', port: Number(process.env.PORT ?? 3000) });
+
+attachProcessShutdown(server, {
+  timeoutMs: 10_000,
+  onAfterStop: async () => {
+    await kernel.shutdown();
+  },
+});
+```
+
+**Bun (`src/index.ts`)**
+
+```ts
+import { createBunAdapter, attachProcessShutdown } from '@forge-fr/bun';
+import { app, kernel } from './app.js';
+
+await kernel.start();
+const server = createBunAdapter(app);
+await server.listen({ host: '0.0.0.0', port: Number(process.env.PORT ?? 3000) });
+
+attachProcessShutdown(server, {
+  timeoutMs: 10_000,
+  onAfterStop: async () => {
+    await kernel.shutdown();
+  },
+});
+```
+
+---
+
+# Performance & Benchmarks
+
+> Hot-path HTTP optimizations and verbatim reproducible Node.js v22.23.5 & Bun 1.4.4 benchmark results from benchmarks/RESULTS.md.
+
+- **Section**: Testing & Production
+- **Packages**: @forge-fr/router, @forge-fr/http, @forge-fr/node, @forge-fr/bun
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/performance
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/performance.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/benchmarks/RESULTS.md
+
+## Hot-path engineering
+
+- Pre-normalization O(1) staticByMethod lookup and reused scratch-array radix matching in @forge-fr/router.
+- Compact 13-field ForgeContext with lazy on-demand requestId and inline route._pipelineRun caching in @forge-fr/http.
+- Direct-meta FastNodeRequest & FastResponse on Node.js; pure-HTTP Bun.serve mode with pre-allocated Headers presets on Bun.
+- compileFastValidator() direct Zod v4 safeParse fast path with automatic Standard Schema fallback.
+
+## Measured results (Node.js v22.23.5 & Bun 1.4.4)
+
+Measured on Linux 4.19.0-gvisor (x64, 2 vCPU, 4096 MB RAM) comparing ForgeJS against Hono ^4.13.22 and Fastify ^5.12.8 across identical 24-route tables (concurrency = 24, warmup = 600ms, duration = 1200ms).
+
+| Benchmark Scenario | ForgeJS | Hono | Fastify |
+| --- | --- | --- | --- |
+| Node 22 — In-Process Static JSON (ops/s) | 317,446 | 131,194 | 15,197 |
+| Node 22 — In-Process 5-Middleware (ops/s) | 254,577 | 97,585 | 22,392 |
+| Node 22 — Live HTTP Static JSON (req/s) | 3,867.36 | 3,724.83 | 3,864.97 |
+| Node 22 — Live HTTP 5-Middleware (req/s) | 3,977.83 | 3,755.81 | 3,898.31 |
+| Node 22 — Live HTTP Zod POST (req/s) | 3,336.7 | 3,062.38 | 3,435.71 |
+| Bun 1.4 — In-Process Static JSON (ops/s) | 721,724 | 525,907 | 44,613 |
+| Bun 1.4 — Live HTTP 5-Middleware (req/s) | 8,216.07 | 7,005.5 | 6,796.26 |
+| Bun 1.4 — Live HTTP Static JSON (req/s) | 7,275.57 | 7,570.29 | 6,538.15 |
+| Cold Start Median — Node 22 / Bun 1.4 (ms) | 61.01 / 11.08 | 61.44 / 10.79 | 163.92 / 112.25 |
+
+## Reproduce identically
+
+**File: `terminal`**
+
+```bash
+node benchmarks/run-all.mjs
+bun benchmarks/run-all.mjs
+```
+
+---
+
+# CLI Reference (@forge-fr/cli)
+
+> Complete reference for all 10 verified forge CLI commands, flags, templates, expected output, and error codes from packages/cli/src/commands.ts.
+
+- **Section**: CLI Reference
+- **Packages**: @forge-fr/cli
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/cli/reference
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/cli/reference.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/infrastructure-and-cli.md
+
+## All 10 verified commands
+
+@forge-fr/cli ships the cross-runtime forge binary (Node.js >=22.18 and Bun >=1.4) with zero third-party runtime dependencies, shell: false process execution, and prototype-safe package.json editing.
+
+| Command | Usage | Behavior |
+| --- | --- | --- |
+| forge new | forge new <name> [--template minimal\|api\|modular] [--runtime node\|bun\|edge] | Scaffold a strict-ESM TypeScript ForgeJS application with runtime adapter setup. |
+| forge generate | forge generate\|g <module\|controller\|service> <name> | Generate typed module, controller, or service boilerplate following layered boundaries. |
+| forge plugin add | forge plugin add <plugin> | Register an official @forge-fr/* plugin into your project configuration safely. |
+| forge dev | forge dev [--watch] [--runtime node\|bun] | Start the development server on Node.js or Bun with optional file watch mode. |
+| forge build | forge build | Compile TypeScript sources into production ESM artifacts. |
+| forge start | forge start | Launch the compiled production application entrypoint. |
+| forge test | forge test | Run the project test suite via the configured test runner. |
+| forge doctor | forge doctor [--json] | Inspect runtime versions, TypeScript configuration, ESM mode, and workspace health. |
+| forge help | forge help | Display CLI usage instructions and available flags. |
+| forge version | forge version | Print the installed @forge-fr/cli version. |
+
+## Command options & error codes
+
+| Command | Supported Options / Flags | Error Codes |
+| --- | --- | --- |
+| forge new <name> | --template <api\|modular>, --runtime <auto\|node\|bun\|edge>, --port <1..65535>, --dir <path>, --dry-run, --force | CLI_INVALID_ARGUMENT, CLI_FILE_EXISTS |
+| forge generate <type> <name> | type: module \| controller \| service (alias: g); --dir <path>, --dry-run, --force | CLI_INVALID_ARGUMENT, CLI_FILE_EXISTS |
+| forge plugin add <plugin> | --dir <path>, --dry-run (sanitizes & sorts package.json dependencies) | CLI_INVALID_ARGUMENT, CLI_EXECUTION_FAILED |
+| forge dev / build / start / test | --runtime <auto\|node\|bun>, --watch (dev), --dir <path> | CLI_INVALID_ARGUMENT |
+| forge doctor | --json (machine-readable DoctorReport), --dir <path> | Exits 1 if Node.js < 22 |
+
+## Common CLI workflows & expected output
+
+**File: `terminal`**
+
+```bash
+# 1. Scaffold a modular backend
+npx @forge-fr/cli@next new payments-api --template modular --runtime node
+# => Created ForgeJS project "payments-api" at ./payments-api
+
+# 2. Generate typed feature artifacts (alias: forge g)
+forge generate module webhooks
+forge generate controller webhooks
+forge generate service webhooks
+
+# 3. Register an official plugin & inspect workspace health
+forge plugin add security
+forge doctor --json
+```
+
+---
+
+# Contributing
+
+> Monorepo workspace layout, strict TypeScript standards, architectural boundary tests, and verification commands for contributors.
+
+- **Section**: Community & Contributing
+- **Packages**: @forge-fr/core
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/contributing
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/contributing.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/README.md
+
+## Repository standards & boundary rules
+
+- Strict TypeScript: strict: true, exactOptionalPropertyTypes: true, noUncheckedIndexedAccess: true, pure ESM only.
+- Zero node:* or Bun globals in core, router, http, validation, openapi, authorization, security, or edge packages.
+- All 20 packages share synchronized versions and must remain acyclic in the workspace dependency graph.
+
+## Running the full verification suite
+
+**File: `terminal`**
+
+```bash
+npx vitest run
+node scripts/verify-packaging.mjs
+node scripts/verify-docs-examples.mjs
+bun scripts/verify-docs-examples.mjs
+```
+
+---
+
+# Plugin Author Guide
+
+> Checklist for publishing pure-ESM, capability-scoped third-party ForgeJS plugins with SemVer safety and clean npm pack tarballs.
+
+- **Section**: Community & Contributing
+- **Packages**: @forge-fr/core, @forge-fr/testing
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/PACKAGE_STRATEGY.md
+
+## Publication & hygiene checklist
+
+- Declare minimum required capabilities in definePlugin() and validate config with Standard Schema v1.
+- Ship pure ESM with strict exports map ("exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } }).
+- Declare heavy client libraries (e.g., ioredis, @prisma/client) as optional peerDependencies using narrow duck-typed interfaces.
+- Verify lifecycle, health probes, and teardown via createPluginTestHarness() and inspect npm pack --dry-run before publishing.
+
+## Reference package.json exports map
+
+**File: `package.json`**
+
+```json
+{
+  "name": "forgejs-plugin-example",
+  "version": "1.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "@forge-fr/core": "^1.0.0-rc.1"
+  }
+}
+```
+
+---
+
+# Release & Versioning
+
+> SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.1 status, and OIDC Trusted Publishing workflow.
+
+- **Section**: Community & Contributing
+- **Packages**: @forge-fr/core
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/release-and-versioning
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/CHANGELOG.md
+
+## OIDC Trusted Publishing & topological order
+
+.github/workflows/release.yml publishes all 20 @forge-fr/* packages in strict topological order (core → router → http → ... → cli) with npm OIDC provenance enabled and dry_run: true by default.
+
+| Release Property | Verified Value |
+| --- | --- |
+| Current Workspace Version | 1.0.0-rc.1 (synchronized across all 20 packages) |
+| License | MIT |
+| Tarball Verification | 20/20 packages verified via npm pack + isolated Node 22 & Bun 1.4 consumer installs |
+| Registry Publication Status | Ready for maintainer dispatch under @next tag (no live npm publish executed automatically) |
+
+---
+
+# Frequently Asked Questions
+
+> Direct answers on runtime compatibility, ORM choices, decorators vs. typed tokens, security boundaries, and benchmark reproduction.
+
+- **Section**: Community & Contributing
+- **Packages**: @forge-fr/core, @forge-fr/http
+- **Version**: v1.0.0-rc.1
+- **Updated**: 2026-11-26
+- **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/faq
+- **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/faq.md
+- **Source**: https://github.com/forge-fr/forgejs/blob/main/FRAMEWORK_FEATURE_INVENTORY.md
+
+## Why does ForgeJS use typed tokens instead of decorators?
+
+Explicit createToken<T>() and defineModule() avoid experimental decorator metadata overhead, preserve strict TypeScript inference without reflection polyfills, and keep cold starts fast across Node.js, Bun, and Edge.
+
+## Which ORMs and databases are officially supported?
+
+ForgeJS provides official packages for native PostgreSQL (@forge-fr/database via postgres-js), Drizzle ORM (@forge-fr/drizzle), and Prisma ORM (@forge-fr/prisma). TypeORM, MikroORM, Sequelize, and Knex are not shipped officially, though teams can integrate them via DatabaseAdapter.
+
+## Is v1.0.0-rc.1 published on npm yet?
+
+All 20 packages are verified locally via npm pack tarballs and isolated Node 22 & Bun 1.4 consumer tests, with .github/workflows/release.yml configured for OIDC Trusted Publishing. Live registry publication awaits maintainer dispatch.
+
+## Does ForgeJS guarantee my application is secure out of the box?
+
+No framework can guarantee application security alone. ForgeJS enforces hardened HTTP defaults (bounded bodies, prototype sanitization, redacted errors) and ships OWASP ASVS 5.0.0 primitives, while your team remains responsible for calling ownership/tenant checks, TLS termination, secret management, and WAF/DDoS infrastructure.
+
+---
+
+# ForgeJS API Reference (20 Packages)
+
+> Complete package directory and public TypeScript API overview for ForgeJS v1.0.0-rc.1.
+
+- **HTML URL**: https://github.com/forge-fr/forgejs/api
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api.md
+
+| Package | Layer | Tarball | Runtime Deps | Markdown Docs |
+| --- | --- | --- | --- | --- |
+| `@forge-fr/core` | Framework Core | 50.5 kB | Zero deps | [core.md](https://github.com/forge-fr/forgejs/api/core.md) |
+| `@forge-fr/router` | Framework Core | 16.4 kB | Zero deps | [router.md](https://github.com/forge-fr/forgejs/api/router.md) |
+| `@forge-fr/http` | Framework Core | 52.5 kB | Zero deps | [http.md](https://github.com/forge-fr/forgejs/api/http.md) |
+| `@forge-fr/node` | Adapter Layer | 22.6 kB | Zero deps | [node.md](https://github.com/forge-fr/forgejs/api/node.md) |
+| `@forge-fr/bun` | Adapter Layer | 11.9 kB | Zero deps | [bun.md](https://github.com/forge-fr/forgejs/api/bun.md) |
+| `@forge-fr/edge` | Adapter Layer | 8.8 kB | Zero deps | [edge.md](https://github.com/forge-fr/forgejs/api/edge.md) |
+| `@forge-fr/testing` | Adapter Layer | 17.2 kB | Zero deps | [testing.md](https://github.com/forge-fr/forgejs/api/testing.md) |
+| `@forge-fr/validation` | Adapter Layer | 13.6 kB | @standard-schema/spec ^1.1.0 | [validation.md](https://github.com/forge-fr/forgejs/api/validation.md) |
+| `@forge-fr/database` | Adapter Layer | 17.9 kB | postgres ^3.4.0 \|\| ^4.0.0 | [database.md](https://github.com/forge-fr/forgejs/api/database.md) |
+| `@forge-fr/drizzle` | Adapter Layer | 8.6 kB | Zero deps | [drizzle.md](https://github.com/forge-fr/forgejs/api/drizzle.md) |
+| `@forge-fr/prisma` | Adapter Layer | 9.1 kB | Zero deps | [prisma.md](https://github.com/forge-fr/forgejs/api/prisma.md) |
+| `@forge-fr/auth` | Adapter Layer | 27.6 kB | jose ^6.2.18 | [auth.md](https://github.com/forge-fr/forgejs/api/auth.md) |
+| `@forge-fr/authorization` | Adapter Layer | 19.2 kB | Zero deps | [authorization.md](https://github.com/forge-fr/forgejs/api/authorization.md) |
+| `@forge-fr/security` | Adapter Layer | 25.8 kB | Zero deps | [security.md](https://github.com/forge-fr/forgejs/api/security.md) |
+| `@forge-fr/logger` | Infrastructure | 21.4 kB | pino ^10.4.0, @opentelemetry/api ^1.10.0 | [logger.md](https://github.com/forge-fr/forgejs/api/logger.md) |
+| `@forge-fr/cache` | Infrastructure | 13.2 kB | Zero deps | [cache.md](https://github.com/forge-fr/forgejs/api/cache.md) |
+| `@forge-fr/queue` | Infrastructure | 25.1 kB | Zero deps | [queue.md](https://github.com/forge-fr/forgejs/api/queue.md) |
+| `@forge-fr/storage` | Infrastructure | 22.5 kB | Zero deps | [storage.md](https://github.com/forge-fr/forgejs/api/storage.md) |
+| `@forge-fr/openapi` | Adapter Layer | 17.5 kB | Zero deps | [openapi.md](https://github.com/forge-fr/forgejs/api/openapi.md) |
+| `@forge-fr/cli` | Tooling / CLI | 20.5 kB | Zero deps | [cli.md](https://github.com/forge-fr/forgejs/api/cli.md) |
+
+---
+
+# @forge-fr/core
+
+> 7-stage application kernel, typed dependency injection container, encapsulated modules, SemVer capability-scoped plugin runtime, errors, secrets, config, events, hooks, and health checks.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Framework Core
+- **Category**: core
+- **Tarball**: 50.5 kB (56 files)
+- **Internal deps**: none
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/core
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/core.md
+
+## Installation
+
+```bash
+npm install @forge-fr/core
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies and zero node:* or Bun globals. Runs identically on Node.js >=22.18.0, Bun >=1.4.0, and WinterCG Edge.
+- **Errors**: All framework errors inherit from ForgeError. Production serialization strips details when expose is false (default for 5xx errors).
+
+## Usage Example
+
+```ts
+import { createKernel, createToken, defineModule, secret } from '@forge-fr/core';
+
+const ApiKeyToken = createToken<string>('ApiKey');
+
+const ConfigModule = defineModule({
+  name: 'app-config',
+  providers: [
+    { token: ApiKeyToken, scope: 'singleton', useValue: secret(process.env.API_KEY ?? 'dev').reveal() },
+  ],
+  exports: [ApiKeyToken],
+});
+
+const kernel = createKernel({ modules: [ConfigModule] });
+await kernel.start();
+```
+
+## Public Exports
+
+### Application Kernel
+
+- **Values**: `createKernel`, `KernelConfigToken`, `KernelEventsToken`, `KernelLoggerToken`, `LifecycleError`
+- **Types**: `AnyForgePlugin`, `ApplicationKernel`, `KernelEventMap`, `KernelHookContext`, `KernelHooks`, `KernelOptions`, `KernelPluginInput`, `KernelState`, `LifecycleErrorEvent`, `LifecycleStage`, `LifecycleStageEvent`
+
+### Dependency Injection
+
+- **Values**: `createContainer`, `createToken`, `isToken`, `CircularDependencyError`, `ContainerDisposedError`, `ProviderNotFoundError`, `ScopeViolationError`
+- **Types**: `AliasProvider`, `ClassProvider`, `Container`, `DependencyResolver`, `Disposer`, `FactoryProvider`, `InjectableConstructor`, `InjectionToken`, `ProviderDefinition`, `ProviderScope`, `RegisterOptions`, `ValueProvider`
+
+### Modules
+
+- **Values**: `defineModule`, `createModuleRegistry`, `CircularModuleDependencyError`, `ModuleConfigurationError`, `ProviderNotVisibleError`
+- **Types**: `AnyProviderDefinition`, `ForgeModule`, `ModuleConfigureContext`, `ModuleDefinition`, `ModuleLifecycleContext`, `ModuleRegistry`, `ModuleRegistryOptions`
+
+### Plugins & SemVer
+
+- **Values**: `FORGE_CORE_VERSION`, `definePlugin`, `createPluginRegistry`, `createPluginContext`, `validatePluginConfig`, `parseSemVer`, `isValidSemVer`, `compareSemVer`, `isValidSemVerRange`, `satisfiesRange`, `CircularPluginDependencyError`, `PluginCapabilityError`, `PluginCompatibilityError`, `PluginConfigError`, `PluginConflictError`, `PluginDefinitionError`, `PluginDependencyError`, `PluginEncapsulationError`, `PluginLifecycleError`
+- **Types**: `ForgePlugin`, `ForgePluginDefinition`, `PluginCapability`, `PluginConfigIssue`, `PluginContext`, `PluginContextRuntimeBridge`, `PluginDependencySpec`, `PluginHookEvent`, `PluginHookStage`, `PluginProviderRegisterOptions`, `PluginRegistry`, `PluginRegistryOptions`, `RegisteredPlugin`, `ResolvedPluginEntry`, `SemVer`, `StandardSchemaIssueLike`, `StandardSchemaLike`
+
+### Errors & Secrets
+
+- **Values**: `ForgeError`, `ValidationError`, `UnauthorizedError`, `ForbiddenError`, `NotFoundError`, `ConflictError`, `ConfigurationError`, `InternalError`, `isForgeError`, `normalizeError`, `secret`, `isSecretValue`, `REDACTED_PLACEHOLDER`
+- **Types**: `ForgeErrorOptions`, `PublicErrorBody`, `PublicErrorSerializationOptions`, `SecretValue`
+
+### Configuration, Logging, Events, Hooks & Health
+
+- **Values**: `createConfigManager`, `createConsoleLogger`, `createNoopLogger`, `createEventDispatcher`, `createHookRegistry`, `createHealthRegistry`
+- **Types**: `ConfigManager`, `ConfigManagerOptions`, `ConsoleLoggerOptions`, `ForgeLogger`, `LogContext`, `LogEntry`, `LogLevel`, `LogSink`, `EventDispatcher`, `EventDispatcherOptions`, `EventErrorStrategy`, `EventHandler`, `EventMap`, `HookEntryInfo`, `HookHandler`, `HookMap`, `HookRegistrationOptions`, `HookRegistry`, `HealthCheckFn`, `HealthCheckResult`, `HealthRegistry`, `HealthReport`, `HealthStatus`
+
+---
+
+# @forge-fr/router
+
+> Zero-dependency radix router with O(1) static route lookup, constrained parameters, wildcard matching, nested groups, automatic HEAD, and RFC 405 Allow generation.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Framework Core
+- **Category**: core
+- **Tarball**: 16.4 kB (24 files)
+- **Internal deps**: none
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/router
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/router.md
+
+## Installation
+
+```bash
+npm install @forge-fr/router
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero runtime dependencies. Pure ESM radix tree with O(1) static route lookup and reused scratch arrays.
+- **Errors**: Throws RouterError on duplicate static routes, invalid parameter names (including prototype keys), or malformed constraints.
+
+## Usage Example
+
+```ts
+import { createRouter } from '@forge-fr/router';
+
+const router = createRouter();
+router.get('/users/:id{\\d+}', { name: 'getUser' });
+
+const matched = router.match('GET', '/users/42');
+// matched.status === 'found', matched.params.id === '42'
+```
+
+## Public Exports
+
+### Router Engine
+
+- **Values**: `createRouter`, `HTTP_METHODS`, `RouterError`
+- **Types**: `GroupOptions`, `HttpMethod`, `ParamConstraint`, `RegisteredRoute`, `RouteBuilder`, `RouteMatchResult`, `RouteOptions`, `Router`, `RouterErrorCode`, `RouterOptions`
+
+---
+
+# @forge-fr/http
+
+> Web Standards HTTP engine with tiered middleware, 7 lifecycle hooks, bounded body parsers, SSE, Web Streams compression, conditional ETags, and WebSocket route registry.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Framework Core
+- **Category**: core
+- **Tarball**: 52.5 kB (56 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/router
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/http
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/http.md
+
+## Installation
+
+```bash
+npm install @forge-fr/http
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Built on Web Standards (Request, Response, Headers, ReadableStream, CompressionStream). Zero third-party dependencies.
+- **Errors**: Enforces 1 MiB default body limit (PayloadTooLargeError 413), CR/LF/NUL rejection in FastHeaders, and double-next() / post-commit middleware guards.
+
+## Usage Example
+
+```ts
+import { createHttpApp, createCompressionMiddleware, createEtagMiddleware } from '@forge-fr/http';
+
+const app = createHttpApp();
+app.use(createCompressionMiddleware());
+app.use(createEtagMiddleware());
+
+app.get('/ping', (ctx) => ctx.json({ pong: true }));
+```
+
+## Public Exports
+
+### Application & Middleware
+
+- **Values**: `createHttpApp`, `composeMiddleware`, `sortMiddleware`, `createCompressionMiddleware`, `createEtagMiddleware`
+- **Types**: `ForgeHttpApp`, `ForgeContext`, `ForgeMiddleware`, `ForgeRouteHandler`, `HttpAppOptions`, `HttpGroupOptions`, `HttpMethod`, `HttpRouteOptions`, `HttpRuntimeAdapter`, `ListenOptions`, `MiddlewareNext`, `MiddlewareRegistrationOptions`, `MiddlewareTier`, `RegisteredMiddleware`, `RegisteredRoute`, `ResponseHelperInit`, `RouteHandlerResult`, `ServerAddress`, `CompressionOptions`, `SupportedCompressionEncoding`, `EtagOptions`, `FetchHandler`, `RedirectStatusCode`, `RuntimeRequestMeta`
+
+### Fast Path, Body Parsers, Negotiation & SSE
+
+- **Values**: `FastHeaders`, `FastResponse`, `attachFastBody`, `copyFastBody`, `createFastResponse`, `getFastBody`, `DEFAULT_MAX_BODY_BYTES`, `DEFAULT_MAX_MULTIPART_FIELDS`, `DEFAULT_MAX_MULTIPART_FILES`, `DEFAULT_MAX_MULTIPART_FILE_BYTES`, `readBoundedBytes`, `readBoundedJson`, `readBoundedMultipart`, `readBoundedText`, `readBoundedUrlEncoded`, `negotiateContentType`, `parseAcceptHeader`, `createSseResponse`, `formatSseEvent`
+- **Types**: `BodyParseOptions`, `ParsedMultipart`, `UploadedFile`, `RequestBodyReader`, `AcceptMediaRange`, `CreateSseResponseOptions`, `SseEvent`, `SseProducer`, `SseStreamController`
+
+### Hooks, WebSockets & HTTP Errors
+
+- **Values**: `DEFAULT_WS_MAX_PAYLOAD_BYTES`, `WebSocketRouteRegistry`, `BadRequestError`, `ForgeHttpError`, `ForgeMiddlewareError`, `MethodNotAllowedError`, `NotAcceptableError`, `PayloadTooLargeError`, `ResponseCommittedError`, `UnsupportedMediaTypeError`
+- **Types**: `HttpHookHandlerMap`, `HttpHookName`, `HttpHookOptions`, `OnErrorHookPayload`, `OnRequestHookPayload`, `OnResponseHookPayload`, `OnSendHookPayload`, `PreHandlerHookPayload`, `PreSerializationHookPayload`, `PreValidationHookPayload`, `ForgeHttpErrorOptions`, `MiddlewareErrorCode`, `RegisteredWebSocketRoute`, `WebSocketCloseInfo`, `WebSocketConnection`, `WebSocketHandlers`, `WebSocketMessageData`, `WebSocketRouteOptions`, `WebSocketUpgradeCheckResult`, `WebSocketUpgradeContext`
+
+---
+
+# @forge-fr/node
+
+> Native node:http runtime adapter with direct-dispatch request metadata, synchronous FastResponse writes, RFC 6455 WebSocket upgrade codec, and POSIX graceful shutdown.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: runtime
+- **Tarball**: 22.6 kB (20 files)
+- **Internal deps**: @forge-fr/http
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/node
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/node.md
+
+## Installation
+
+```bash
+npm install @forge-fr/node
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Requires Node.js >=22.18.0 (verified locally on v22.23.5). Uses native node:http and zero-dep RFC 6455 WebSockets.
+- **Errors**: Propagates client disconnects via AbortSignal and drains active connections cleanly on SIGINT/SIGTERM via attachProcessShutdown.
+
+## Usage Example
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createNodeAdapter, attachProcessShutdown } from '@forge-fr/node';
+
+const app = createHttpApp();
+app.get('/health', (ctx) => ctx.json({ ok: true }));
+
+const server = await app.listen(createNodeAdapter(), { host: '127.0.0.1', port: 3000 });
+attachProcessShutdown(server);
+```
+
+## Public Exports
+
+### Node.js Runtime Adapter & Shutdown
+
+- **Values**: `NodeAdapter`, `createNodeAdapter`, `attachProcessShutdown`
+- **Types**: `NodeAdapterOptions`, `ProcessLike`, `ProcessShutdownHandle`, `ProcessShutdownOptions`, `ProcessShutdownTarget`, `ShutdownSignal`
+
+---
+
+# @forge-fr/bun
+
+> Native Bun.serve() runtime adapter with pure-HTTP fast mode, native Bun WebSockets, in-flight request draining, and POSIX shutdown handling.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: runtime
+- **Tarball**: 11.9 kB (16 files)
+- **Internal deps**: @forge-fr/http
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/bun
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/bun.md
+
+## Installation
+
+```bash
+npm install @forge-fr/bun
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Requires Bun >=1.4.0 (verified locally on Bun 1.4.4). Automatically selects pure-HTTP mode when no WebSocket routes exist.
+- **Errors**: Enforces maxRequestBodySize and clamped idleTimeout while draining active integer inFlightCount during shutdown.
+
+## Usage Example
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createBunAdapter, attachProcessShutdown } from '@forge-fr/bun';
+
+const app = createHttpApp();
+app.get('/health', (ctx) => ctx.json({ ok: true }));
+
+const server = await app.listen(createBunAdapter(), { host: '127.0.0.1', port: 3000 });
+attachProcessShutdown(server);
+```
+
+## Public Exports
+
+### Bun Runtime Adapter & Shutdown
+
+- **Values**: `BunAdapter`, `createBunAdapter`, `attachProcessShutdown`
+- **Types**: `BunAdapterOptions`, `BunServeLike`, `BunServeOptionsLike`, `BunServerLike`, `BunSocketAddressLike`, `ProcessLike`, `ProcessShutdownHandle`, `ProcessShutdownOptions`, `ProcessShutdownTarget`, `ShutdownSignal`
+
+---
+
+# @forge-fr/edge
+
+> WinterCG Fetch adapter for Cloudflare Workers, Deno, and isolate runtimes with zero node:* or Bun globals and waitUntil background task helpers.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: runtime
+- **Tarball**: 8.8 kB (12 files)
+- **Internal deps**: @forge-fr/http
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/edge
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/edge.md
+
+## Installation
+
+```bash
+npm install @forge-fr/edge
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero node:* or Bun globals. Unit and Fetch/WebSocketPair contract verified; live workerd/deno binaries are not installed in local sandbox.
+- **Errors**: Background promises submitted via runInEdgeBackground() use executionCtx.waitUntil when available.
+
+## Usage Example
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createCloudflareWorkerHandler, getEdgeEnv } from '@forge-fr/edge';
+
+const app = createHttpApp();
+app.get('/env', (ctx) => ctx.json({ hasEnv: Boolean(getEdgeEnv(ctx.request)) }));
+
+export default createCloudflareWorkerHandler(app);
+```
+
+## Public Exports
+
+### WinterCG Edge Handlers & Context Helpers
+
+- **Values**: `EdgeAdapter`, `createEdgeAdapter`, `createEdgeHandler`, `createCloudflareWorkerHandler`, `createDenoHandler`, `getEdgeEnv`, `getEdgeExecutionContext`, `runInEdgeBackground`
+- **Types**: `CloudflareWorkerHandlerOptions`, `CloudflareWorkerModule`, `DenoHandlerOptions`, `DenoServeAddrLike`, `DenoServeHandlerInfoLike`, `DenoUpgradeWebSocketFn`, `EdgeAdapterOptions`, `EdgeAppTarget`, `EdgeExecutionContextLike`, `EdgeHandlerOptions`, `EdgeServerWebSocketLike`, `EdgeWebSocketPairConstructor`, `EdgeWebSocketPairLike`
+
+---
+
+# @forge-fr/testing
+
+> In-memory HTTP and WebSocket test harness, DI provider overrides, capability-scoped plugin test harness, and shared adapter contract verification suites.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: tooling
+- **Tarball**: 17.2 kB (32 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/http
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/testing
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/testing.md
+
+## Installation
+
+```bash
+npm install @forge-fr/testing
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party dependencies. Runs in-memory HTTP, WebSocket, DI override, and plugin tests without binding TCP sockets.
+- **Errors**: Adapter contract suites report detailed per-check failure objects rather than silent skips.
+
+## Usage Example
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createTestClient } from '@forge-fr/testing';
+
+const app = createHttpApp();
+app.get('/ping', (ctx) => ctx.json({ ok: true }));
+
+const client = createTestClient(app);
+const res = await client.get('/ping');
+await client.close();
+```
+
+## Public Exports
+
+### Test Clients, Harnesses & Contract Suites
+
+- **Values**: `MemoryAdapter`, `createTestClient`, `overrideProvider`, `runHttpAdapterContractSuite`, `createPluginTestHarness`, `createMemoryWebSocketPair`, `runWebSocketContractSuite`
+- **Types**: `TestClient`, `TestClientOptions`, `TestRequestOptions`, `TestResponse`, `ProviderTarget`, `AdapterContractCheckResult`, `PluginTestHarness`, `PluginTestHarnessOptions`, `MemoryWebSocketClient`, `MemoryWebSocketPair`
+
+---
+
+# @forge-fr/validation
+
+> Standard Schema v1 validation engine with Zod v4 direct fast path, typed route handler wrapper, response schema stripping, and recursive prototype-pollution sanitization.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: validation
+- **Tarball**: 13.6 kB (24 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/http
+- **Runtime deps**: @standard-schema/spec ^1.1.0
+- **Peer deps**: zod >=3.24 || >=4 (optional), valibot >=1 (optional)
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/validation
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/validation.md
+
+## Installation
+
+```bash
+npm install @forge-fr/validation
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Built on @standard-schema/spec v1 with a direct Zod v4 safeParse fast path and automatic Standard Schema fallback.
+- **Errors**: Invalid request inputs throw ValidationError (400). Invalid outgoing responses throw ResponseValidationError (500, expose: false) to prevent accidental PII leakage.
+
+## Usage Example
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { validatedHandler } from '@forge-fr/validation';
+import { z } from 'zod';
+
+const app = createHttpApp();
+app.post(
+  '/items',
+  validatedHandler(
+    {
+      body: z.object({ name: z.string().min(2) }),
+      response: z.object({ ok: z.literal(true), name: z.string() }),
+    },
+    (ctx, input) => ctx.json({ ok: true, name: input.body.name }),
+  ),
+);
+```
+
+## Public Exports
+
+### Validation Engine & Schema Adapters
+
+- **Values**: `validate`, `validateOrThrow`, `createSchemaValidator`, `formatStandardIssues`, `isStandardSchema`, `ResponseValidationError`, `zodAdapter`, `valibotAdapter`, `customSchema`, `fromStandardSchema`
+- **Types**: `AnySchema`, `CustomValidateFn`, `InferInput`, `InferOutput`, `LegacySafeParseIssue`, `LegacyZodLikeSchema`, `SchemaValidator`, `StandardSchemaV1`, `ValidateOptions`, `ValidationFailure`, `ValidationIssue`, `ValidationResult`, `ValidationSuccess`
+
+### HTTP Validation Helpers
+
+- **Values**: `validatedHandler`, `validateRequest`, `getValidated`, `VALIDATED_STATE_KEY`
+- **Types**: `HttpValidationOptions`, `RouteValidationSchemas`, `ValidatedInput`, `ValidatedRouteHandler`, `ValidationTarget`
+
+---
+
+# @forge-fr/database
+
+> Native PostgreSQL adapter built on postgres-js with SQLSTATE error normalization, credential-redacted URLs, allowlisted transaction isolation, and checksum-verified migrations.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: database
+- **Tarball**: 17.9 kB (28 files)
+- **Internal deps**: @forge-fr/core
+- **Runtime deps**: postgres ^3.4.0 || ^4.0.0
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/database
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/database.md
+
+## Installation
+
+```bash
+npm install @forge-fr/database
+```
+
+## Plugin Metadata
+
+- **Factory**: `createPostgresPlugin / createDatabasePlugin`
+- **Tokens**: `DefaultDatabaseTokens`
+- **Health probe**: `database`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Built on postgres (postgres-js). Live PostgreSQL 16 integration tests run in CI when FORGE_TEST_DATABASE_URL is configured.
+- **Errors**: Normalizes SQLSTATE codes (23505, 23503, 23502, 23514, 40001) into typed DatabaseError subclasses with expose: false by default.
+
+## Usage Example
+
+```ts
+import { createKernel, secret } from '@forge-fr/core';
+import { createPostgresPlugin, DefaultDatabaseTokens } from '@forge-fr/database';
+
+const kernel = createKernel({
+  plugins: [[createPostgresPlugin(), { url: secret(process.env.DATABASE_URL ?? '') }]],
+});
+await kernel.start();
+const adapter = kernel.container.resolve(DefaultDatabaseTokens.adapter);
+```
+
+## Public Exports
+
+### PostgreSQL Adapter, Plugins & Migrations
+
+- **Values**: `createDatabasePlugin`, `createPostgresAdapter`, `createPostgresPlugin`, `postgresConfigSchema`, `DefaultDatabaseTokens`, `createDatabaseToken`, `runInTransaction`, `createMigrationCoordinator`
+- **Types**: `DatabaseAdapter`, `DatabaseConnectionState`, `DatabasePingResult`, `DatabasePluginOptions`, `DatabaseTokens`, `Migration`, `MigrationCoordinator`, `MigrationCoordinatorOptions`, `MigrationHooks`, `MigrationRecord`, `MigrationRunResult`, `MigrationStateStore`, `PostgresAdapterOptions`, `PostgresClientLike`, `PostgresDriverFactory`, `PostgresPluginOptions`, `PostgresSslMode`, `TransactionIsolationLevel`, `TransactionOptions`
+
+### Database Errors & URL Redaction
+
+- **Values**: `DatabaseError`, `DatabaseConnectionError`, `DatabaseUniqueViolationError`, `DatabaseForeignKeyViolationError`, `DatabaseNotNullViolationError`, `DatabaseCheckViolationError`, `DatabaseSerializationError`, `DatabaseTimeoutError`, `normalizeDatabaseError`, `redactDatabaseUrl`, `MigrationChecksumError`, `MigrationRollbackError`
+- **Types**: `DatabaseErrorOptions`
+
+---
+
+# @forge-fr/drizzle
+
+> First-class Drizzle ORM plugin preserving native PostgresJsDatabase<TSchema> inference, typed transactions, and DrizzleQueryError SQLSTATE normalization.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: database
+- **Tarball**: 8.6 kB (16 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/database
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: drizzle-orm >=0.40.0 <1.0.0
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/drizzle
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/drizzle.md
+
+## Installation
+
+```bash
+npm install @forge-fr/drizzle
+```
+
+## Plugin Metadata
+
+- **Factory**: `createDrizzlePostgresPlugin`
+- **Tokens**: `DefaultDrizzleTokens`
+- **Health probe**: `drizzle`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies; peer depends on drizzle-orm >=0.40.0 <1.0.0. Preserves 100% native PostgresJsDatabase<TSchema> inference.
+- **Errors**: normalizeDrizzleError unwraps DrizzleQueryError causes so SQLSTATE violations map cleanly to ForgeJS DatabaseError classes.
+
+## Usage Example
+
+```ts
+import { createDrizzlePostgresPlugin, DefaultDrizzleTokens } from '@forge-fr/drizzle';
+import { createKernel, secret } from '@forge-fr/core';
+import * as schema from './schema.js';
+
+const kernel = createKernel({
+  plugins: [
+    [createDrizzlePostgresPlugin<typeof schema>(), { url: secret(process.env.DATABASE_URL ?? ''), schema }],
+  ],
+});
+await kernel.start();
+const db = kernel.container.resolve(DefaultDrizzleTokens.db);
+```
+
+## Public Exports
+
+### Drizzle ORM Adapter & Plugin
+
+- **Values**: `DefaultDrizzleTokens`, `createDrizzleToken`, `createDrizzleAdapter`, `createDrizzlePostgresAdapter`, `createDrizzlePostgresPlugin`, `drizzlePostgresConfigSchema`, `normalizeDrizzleError`
+- **Types**: `DrizzleCasing`, `DrizzlePostgresAdapter`, `DrizzlePostgresClient`, `DrizzlePostgresConfig`, `DrizzlePostgresPluginOptions`, `DrizzlePostgresTx`, `DrizzleTokens`, `GenericDrizzleAdapterOptions`, `InferDrizzleTx`
+
+---
+
+# @forge-fr/prisma
+
+> Prisma ORM adapter supporting Prisma v5/v6/v7+ generated clients, P1xxx/P2xxx error normalization, isolation-level transactions, and $disconnect draining.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: database
+- **Tarball**: 9.1 kB (16 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/database
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: @prisma/client >=5 || >=6 || >=7 (optional)
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/prisma
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/prisma.md
+
+## Installation
+
+```bash
+npm install @forge-fr/prisma
+```
+
+## Plugin Metadata
+
+- **Factory**: `createPrismaPlugin`
+- **Tokens**: `DefaultPrismaTokens`
+- **Health probe**: `prisma`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies; optional peer @prisma/client >=5 || >=6 || >=7. Preserves generated PrismaClient typing.
+- **Errors**: normalizePrismaError maps P1xxx connection errors and P2xxx constraint violations to typed ForgeJS database errors.
+
+## Usage Example
+
+```ts
+import { createPrismaPlugin, DefaultPrismaTokens } from '@forge-fr/prisma';
+import { createKernel } from '@forge-fr/core';
+import { PrismaClient } from '@prisma/client';
+
+const kernel = createKernel({
+  plugins: [[createPrismaPlugin(), { client: new PrismaClient() }]],
+});
+await kernel.start();
+const prisma = kernel.container.resolve(DefaultPrismaTokens.client);
+```
+
+## Public Exports
+
+### Prisma ORM Adapter & Plugin
+
+- **Values**: `DefaultPrismaTokens`, `createPrismaToken`, `createPrismaAdapter`, `createPrismaPlugin`, `prismaConfigSchema`, `normalizePrismaError`
+- **Types**: `PrismaAdapterOptions`, `PrismaClientLike`, `PrismaIsolationLevel`, `PrismaPluginOptions`, `PrismaTokens`, `PrismaTransactionOptions`
+
+---
+
+# @forge-fr/auth
+
+> OWASP Argon2id password hashing (Node & Bun cross-compatible), algorithm-pinned JWT/JWKS, SHA-256 hashed sessions & API keys, OAuth 2.0 PKCE/OIDC, and Better Auth bridge.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: security
+- **Tarball**: 27.6 kB (48 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/http
+- **Runtime deps**: jose ^6.2.18
+- **Peer deps**: @node-rs/argon2 >=2.0.0 (optional), better-auth >=1.0.0 (optional)
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/auth
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/auth.md
+
+## Installation
+
+```bash
+npm install @forge-fr/auth
+```
+
+## Plugin Metadata
+
+- **Factory**: `createAuthPlugin`
+- **Tokens**: `AuthTokens`
+- **Health probe**: `auth`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Uses jose for JWT/JWKS. Argon2id password hashing is verified cross-compatible between @node-rs/argon2 (Node.js) and native Bun.password (Bun).
+- **Errors**: Blocks alg: none, requires explicit JWT algorithms allowlist and >=32-byte HMAC secrets, hashes session IDs and API keys with SHA-256 before persistence.
+
+## Usage Example
+
+```ts
+import { createArgon2PasswordHasher, createJwtService } from '@forge-fr/auth';
+
+const hasher = createArgon2PasswordHasher();
+const hash = await hasher.hash('correct-horse-battery-staple');
+const valid = await hasher.verify('correct-horse-battery-staple', hash);
+```
+
+## Public Exports
+
+### Passwords, Crypto & Identity
+
+- **Values**: `createAuthIdentity`, `createArgon2PasswordHasher`, `base64UrlDecode`, `base64UrlEncode`, `constantTimeEqual`, `generateRandomBytes`, `generateSecureToken`, `sha256Base64Url`, `sha256Bytes`, `sha256Hex`
+- **Types**: `AuthIdentity`, `AuthIdentityInput`, `AuthMethod`, `AuthStrategy`, `Argon2PasswordHasherOptions`, `PasswordHasher`
+
+### JWT, Sessions, API Keys, OAuth/OIDC & Better Auth
+
+- **Values**: `createJwtService`, `createJwtAuthStrategy`, `extractBearerToken`, `createSessionManager`, `createMemorySessionStore`, `createSessionAuthStrategy`, `parseCookies`, `serializeCookie`, `createApiKeyManager`, `createMemoryApiKeyStore`, `createApiKeyAuthStrategy`, `createPkceChallenge`, `createOAuthState`, `buildAuthorizationUrl`, `verifyOAuthCallbackState`, `verifyOidcIdToken`, `mountBetterAuth`, `createBetterAuthStrategy`
+- **Types**: `JwtAlgorithm`, `JwtAuthStrategyOptions`, `JwtService`, `JwtServiceOptions`, `JwtSignOptions`, `JwtVerifyResult`, `CookieSameSite`, `SessionCookieOptions`, `SessionCreateInput`, `SessionCreateResult`, `SessionManager`, `SessionManagerOptions`, `SessionRecord`, `SessionStore`, `ApiKeyAuthStrategyOptions`, `ApiKeyManager`, `ApiKeyManagerOptions`, `ApiKeyRecord`, `ApiKeyStore`, `CreateApiKeyInput`, `IssuedApiKey`, `BuildAuthorizationUrlOptions`, `OAuthStateBundle`, `OidcAsymmetricAlgorithm`, `PkceChallenge`, `VerifiedOidcIdToken`, `VerifyOidcIdTokenOptions`, `BetterAuthInstanceLike`, `BetterAuthSessionLike`, `BetterAuthSessionResult`, `BetterAuthStrategyOptions`, `BetterAuthUserLike`
+
+### HTTP Auth Middleware & Plugin
+
+- **Values**: `createAuthMiddleware`, `getAuth`, `requireAuth`, `setAuthIdentity`, `AuthTokens`, `createAuthPlugin`
+- **Types**: `AuthMiddlewareOptions`, `AuthPluginConfig`, `AuthPluginOptions`
+
+---
+
+# @forge-fr/authorization
+
+> Segment-strict RBAC, deny-overrides ABAC policy engine, anti-IDOR resource ownership guards, multi-tenant isolation checks, and service-layer actor authorizers.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: security
+- **Tarball**: 19.2 kB (40 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/http, @forge-fr/auth
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/authorization
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/authorization.md
+
+## Installation
+
+```bash
+npm install @forge-fr/authorization
+```
+
+## Plugin Metadata
+
+- **Factory**: `createAuthorizationPlugin`
+- **Tokens**: `AuthorizationTokens`
+- **Health probe**: `authorization`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies. Supports both HTTP route guards and service-layer actor authorization.
+- **Errors**: Policy evaluation is fail-closed with universal deny-overrides-allow semantics and throws ForbiddenError (403) on denials.
+
+## Usage Example
+
+```ts
+import { createRbacRegistry, assertOwnership, actorFromIdentity } from '@forge-fr/authorization';
+
+const rbac = createRbacRegistry({
+  roles: {
+    member: { permissions: ['project:read'] },
+    admin: { inherits: ['member'], permissions: ['project:*'] },
+  },
+});
+```
+
+## Public Exports
+
+### RBAC, ABAC Policies, Ownership & Tenant Isolation
+
+- **Values**: `FORBIDDEN_KEYS`, `actorFromIdentity`, `createDecision`, `isForbiddenKey`, `isValidActor`, `createRbacRegistry`, `matchesPermission`, `checkTenantIsolation`, `assertTenantIsolation`, `assertTenantParamMatch`, `checkOwnership`, `assertOwnership`, `definePolicy`, `createPolicyEngine`, `createAuthorizer`
+- **Types**: `Actor`, `ActorAuthorizer`, `AuthorizationAuditEvent`, `AuthorizationAuditHook`, `AuthorizationDecision`, `AuthorizationEffect`, `Authorizer`, `AuthorizerOptions`, `EffectivePermissions`, `OwnedResource`, `OwnershipOptions`, `PolicyEngine`, `PolicyEngineOptions`, `PolicyEvaluationInput`, `PolicyRule`, `RbacRegistry`, `RoleDefinition`, `RoleDefinitionsMap`, `TenantScopedResource`
+
+### HTTP Guards & Plugin
+
+- **Values**: `createAuthorizationMiddleware`, `requireRoles`, `requirePermissions`, `requireTenantParam`, `AuthorizationTokens`, `createAuthorizationPlugin`
+- **Types**: `AuthorizationMiddlewareOptions`, `AuthorizationPluginConfig`, `AuthorizationPluginOptions`, `PermissionGuardOptions`, `RoleGuardOptions`, `TenantGuardOptions`
+
+---
+
+# @forge-fr/security
+
+> OWASP ASVS 5.0.0 security headers & CSP, strict CORS, CSRF protection, hardened cookies, proxy-safe rate limiting, SSRF-blocking safe fetch, and symlink-jailed path resolution.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: security
+- **Tarball**: 25.8 kB (44 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/http
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/security
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/security.md
+
+## Installation
+
+```bash
+npm install @forge-fr/security
+```
+
+## Plugin Metadata
+
+- **Factory**: `createSecurityPlugin`
+- **Tokens**: `SecurityTokens`
+- **Health probe**: `security`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies. Aligns with OWASP ASVS 5.0.0 controls across headers, CORS, CSRF, rate limits, and SSRF.
+- **Errors**: Throws ConfigurationError at boot if CORS combines wildcard * with credentials: true; blocks private/loopback/link-local SSRF targets with SsrfBlockedError.
+
+## Usage Example
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { createSecurityHeadersMiddleware, createCorsMiddleware, createSafeFetch } from '@forge-fr/security';
+
+const app = createHttpApp();
+app.use(createSecurityHeadersMiddleware());
+app.use(createCorsMiddleware({ origin: 'https://app.example.com', credentials: true }));
+
+const safeFetch = createSafeFetch();
+```
+
+## Public Exports
+
+### HTTP Security Middleware, SSRF & Path Confinement
+
+- **Values**: `buildCspHeader`, `createSecurityHeadersMiddleware`, `createCorsMiddleware`, `generateCsrfToken`, `createCsrfMiddleware`, `serializeHardenedCookie`, `createMemoryRateLimitStore`, `createRateLimitMiddleware`, `extractClientIp`, `isDangerousPropertyKey`, `sanitizeObject`, `safeJsonParse`, `sanitizeFilename`, `resolveConfinedPath`, `isPrivateOrReservedIp`, `validateOutboundUrl`, `createSafeFetch`, `SecurityTokens`, `createSecurityPlugin`, `PathTraversalError`, `RateLimitExceededError`, `SsrfBlockedError`
+- **Types**: `ClientIpOptions`, `CorsOptions`, `CorsOriginRule`, `CspDirectives`, `CsrfMiddlewareOptions`, `HardenedCookieOptions`, `HstsOptions`, `MemoryRateLimitStoreOptions`, `RateLimitConsumeResult`, `RateLimitMiddlewareOptions`, `RateLimitStore`, `SafeFetch`, `SafeFetchOptions`, `SafeOutboundUrlOptions`, `SanitizeFilenameOptions`, `SanitizeObjectOptions`, `SecurityHeadersOptions`, `SecurityPluginConfig`, `SecurityPluginOptions`
+
+---
+
+# @forge-fr/logger
+
+> Structured Pino logging with recursive secret redaction and CRLF neutralization, correlation IDs, OpenTelemetry W3C tracing/metrics, and sanitized /health/live & /health/ready routes.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Infrastructure
+- **Category**: infrastructure
+- **Tarball**: 21.4 kB (32 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/http
+- **Runtime deps**: pino ^10.4.0, @opentelemetry/api ^1.10.0
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/logger
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/logger.md
+
+## Installation
+
+```bash
+npm install @forge-fr/logger
+```
+
+## Plugin Metadata
+
+- **Factory**: `createObservabilityPlugin`
+- **Tokens**: `ObservabilityTokens`
+- **Health probe**: `observability:logger`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Uses pino ^10.4.0 and @opentelemetry/api ^1.10.0. Neutralizes CRLF log injection and redacts secrets recursively.
+- **Errors**: /health/live and /health/ready endpoints sanitize check errors in production mode.
+
+## Usage Example
+
+```ts
+import { createPinoLogger, createCorrelationIdMiddleware, registerHealthRoutes } from '@forge-fr/logger';
+
+const logger = createPinoLogger({ serviceName: 'orders-api', level: 'info' });
+logger.info('Service initialized');
+```
+
+## Public Exports
+
+### Pino Logging, Redaction & Correlation
+
+- **Values**: `DEFAULT_PINO_REDACT_PATHS`, `DEFAULT_REDACT_KEYS`, `buildRedactionSet`, `normalizeRedactKey`, `redactInlineSecrets`, `sanitizeLogContext`, `sanitizeLogMessage`, `createPinoLogger`, `createMemoryLogSink`, `createCorrelationIdMiddleware`, `createRequestLoggingMiddleware`, `attachObservabilityHooks`, `bindCorrelationId`, `getCorrelationId`, `getRequestLogger`, `isValidCorrelationId`, `resolveCorrelationId`
+- **Types**: `ContextAccessor`, `CorrelationIdOptions`, `MemoryLogSink`, `ObservabilityHooksOptions`, `PinoForgeLogger`, `PinoLoggerOptions`, `RequestLoggingOptions`, `SanitizeContextOptions`
+
+### OpenTelemetry, Health Routes & Plugin
+
+- **Values**: `createOtelInstrumentation`, `createOtelHttpMiddleware`, `getActiveTraceContext`, `createLivenessHandler`, `createReadinessHandler`, `registerHealthRoutes`, `ObservabilityTokens`, `createObservabilityPlugin`
+- **Types**: `ActiveTraceContext`, `HealthEndpointsOptions`, `HttpMetricRecord`, `ObservabilityPluginOptions`, `OtelHttpMiddlewareOptions`, `OtelInstrumentation`, `OtelInstrumentationOptions`, `SanitizedHealthCheck`, `SanitizedHealthPayload`
+
+---
+
+# @forge-fr/cache
+
+> O(1) LRU in-memory and cursor SCAN-based Redis cache adapters with single-flight getOrSet, tag invalidation, prefix deletion, and CRLF/NUL key validation.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Infrastructure
+- **Category**: infrastructure
+- **Tarball**: 13.2 kB (32 files)
+- **Internal deps**: @forge-fr/core
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: ioredis >=5 || >=6 (optional)
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/cache
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/cache.md
+
+## Installation
+
+```bash
+npm install @forge-fr/cache
+```
+
+## Plugin Metadata
+
+- **Factory**: `createCachePlugin`
+- **Tokens**: `CacheTokens`
+- **Health probe**: `cache`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies; optional peer ioredis >=5 || >=6. Redis invalidation uses cursor SCAN (never KEYS).
+- **Errors**: Rejects CR/LF/NUL cache keys with CacheKeyError and prevents prototype pollution on deserialization.
+
+## Usage Example
+
+```ts
+import { createMemoryCacheAdapter } from '@forge-fr/cache';
+
+const cache = createMemoryCacheAdapter({ maxEntries: 1_000 });
+const value = await cache.getOrSet('user:42', async () => ({ id: '42' }), { ttlMs: 30_000 });
+```
+
+## Public Exports
+
+### Cache Adapters, Safety & Plugin
+
+- **Values**: `CacheError`, `CacheKeyError`, `normalizeTtlMs`, `parseSafeJson`, `redactCacheUrl`, `sanitizeCacheValue`, `validateCacheKey`, `validatePrefixOrTag`, `createMemoryCacheAdapter`, `createRedisCacheAdapter`, `CacheTokens`, `createCachePlugin`
+- **Types**: `CacheAdapter`, `CacheDriver`, `CachePluginOptions`, `CacheSetOptions`, `CacheStats`, `MemoryCacheOptions`, `RedisCacheOptions`, `RedisClientLike`
+
+---
+
+# @forge-fr/queue
+
+> Background job queues for Memory, Redis (sorted sets + atomic Lua pop), and PostgreSQL (FOR UPDATE SKIP LOCKED) with retries, DLQ replay, idempotency, and graceful worker draining.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Infrastructure
+- **Category**: infrastructure
+- **Tarball**: 25.1 kB (40 files)
+- **Internal deps**: @forge-fr/core
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/queue
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/queue.md
+
+## Installation
+
+```bash
+npm install @forge-fr/queue
+```
+
+## Plugin Metadata
+
+- **Factory**: `createQueuePlugin`
+- **Tokens**: `QueueTokens`
+- **Health probe**: `queue`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies. Duck-typed clients support Memory, Redis (Lua pop), and PostgreSQL (FOR UPDATE SKIP LOCKED).
+- **Errors**: Enforces payload size limits (QueueValidationError), bounded queues (QueueFullError), exponential backoff retries, and DLQ replay.
+
+## Usage Example
+
+```ts
+import { createMemoryQueueAdapter, createQueueWorker } from '@forge-fr/queue';
+
+const queue = createMemoryQueueAdapter();
+const worker = createQueueWorker(queue, async (job) => {
+  console.info('Processed', job.name, job.payload);
+});
+await queue.enqueue('email.welcome', { userId: 'u_1' });
+```
+
+## Public Exports
+
+### Queue Adapters, Workers & Plugin
+
+- **Values**: `QueueError`, `QueueFullError`, `QueueValidationError`, `assertPayloadSizeLimit`, `computeBackoffDelayMs`, `sanitizePayload`, `validateIdempotencyKey`, `validateJobName`, `createMemoryQueueAdapter`, `createRedisQueueAdapter`, `createPostgresQueueAdapter`, `createQueueWorker`, `QueueTokens`, `createQueuePlugin`
+- **Types**: `BackoffPolicy`, `EnqueueOptions`, `FailJobOutcome`, `JobExecutionContext`, `JobHandler`, `JobStatus`, `MemoryQueueOptions`, `PersistentQueueAdapter`, `PostgresQueryResult`, `PostgresQueueAdapter`, `PostgresQueueOptions`, `PostgresQueueSqlLike`, `QueueAdapter`, `QueueJob`, `QueuePluginOptions`, `QueueStats`, `QueueWorker`, `QueueWorkerOptions`, `QueueWorkerStopOptions`, `RedisQueueClientLike`, `RedisQueueOptions`
+
+---
+
+# @forge-fr/storage
+
+> Object storage adapters for Memory, symlink-jailed local disk, and zero-SDK Web Crypto AWS SigV4 S3 with MIME allowlists, binary magic-byte inspection, and presigned URLs.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Infrastructure
+- **Category**: infrastructure
+- **Tarball**: 22.5 kB (36 files)
+- **Internal deps**: @forge-fr/core
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/storage
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/storage.md
+
+## Installation
+
+```bash
+npm install @forge-fr/storage
+```
+
+## Plugin Metadata
+
+- **Factory**: `createStoragePlugin`
+- **Tokens**: `StorageTokens`
+- **Health probe**: `storage`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies. S3 adapter signs AWS SigV4 requests via Web Crypto with HTTPS enforced by default.
+- **Errors**: Local storage enforces canonical symlink confinement (StoragePathError) and optional MIME allowlist + magic-byte checks (StorageValidationError).
+
+## Usage Example
+
+```ts
+import { createMemoryStorageAdapter } from '@forge-fr/storage';
+
+const storage = createMemoryStorageAdapter();
+await storage.put('avatars/u42.txt', new TextEncoder().encode('hello'), {
+  contentType: 'text/plain',
+});
+```
+
+## Public Exports
+
+### Storage Adapters, Validation & Plugin
+
+- **Values**: `StorageError`, `StorageObjectNotFoundError`, `StoragePathError`, `StorageValidationError`, `canonicalizeStorageKey`, `computeSha256Hex`, `createStorageObject`, `sanitizeUserMetadata`, `toArrayBufferCopy`, `toUint8Array`, `validateObjectUpload`, `verifyMagicBytesForMime`, `createMemoryStorageAdapter`, `createLocalStorageAdapter`, `createS3StorageAdapter`, `StorageTokens`, `createStoragePlugin`
+- **Types**: `LocalStorageOptions`, `MemoryStorageOptions`, `S3StorageOptions`, `StorageAdapter`, `StorageDriver`, `StorageListOptions`, `StorageListResult`, `StorageObject`, `StorageObjectMetadata`, `StoragePluginOptions`, `StoragePutOptions`, `StorageSignedUrlOptions`, `StorageUploadData`, `StorageValidationConfig`
+
+---
+
+# @forge-fr/openapi
+
+> OpenAPI 3.1 generator reflecting Standard Schema v1 routes into JSON Schema 2020-12 with validatedOpenApiHandler and XSS-escaped Swagger UI routes.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Adapter Layer
+- **Category**: validation
+- **Tarball**: 17.5 kB (36 files)
+- **Internal deps**: @forge-fr/core, @forge-fr/http, @forge-fr/validation
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/openapi
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/openapi.md
+
+## Installation
+
+```bash
+npm install @forge-fr/openapi
+```
+
+## Plugin Metadata
+
+- **Factory**: `createOpenApiPlugin`
+- **Tokens**: `OpenApiTokens`
+- **Health probe**: `openapi`
+- **Capabilities**: `di:register`, `health:register`
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies. Reflects Standard Schema v1 routes into JSON Schema 2020-12 OpenAPI 3.1 documents.
+- **Errors**: Swagger UI HTML output is XSS-escaped and served with strict Content-Security-Policy headers.
+
+## Usage Example
+
+```ts
+import { createHttpApp } from '@forge-fr/http';
+import { registerOpenApiRoutes } from '@forge-fr/openapi';
+
+const app = createHttpApp();
+registerOpenApiRoutes(app, {
+  title: 'Billing API',
+  version: '1.0.0',
+});
+```
+
+## Public Exports
+
+### OpenAPI 3.1 Generator, Swagger UI & Plugin
+
+- **Values**: `OpenApiError`, `sanitizeJsonSchema`, `schemaToJsonSchema`, `OPENAPI_META_KEY`, `attachOpenApiMetadata`, `getAttachedOpenApiMetadata`, `openApiMeta`, `validatedOpenApiHandler`, `generateOpenApiDocument`, `registerOpenApiRoutes`, `renderSwaggerUiHtml`, `OpenApiTokens`, `createOpenApiPlugin`
+- **Types**: `OpenApiComponents`, `OpenApiDocument`, `OpenApiGeneratorOptions`, `OpenApiHandlerMetadata`, `OpenApiInfo`, `OpenApiMediaType`, `OpenApiOperation`, `OpenApiParameter`, `OpenApiPathItem`, `OpenApiPathMethod`, `OpenApiPluginOptions`, `OpenApiRequestBody`, `OpenApiResponse`, `OpenApiRouteDoc`, `OpenApiSchemaObject`, `OpenApiSecurityScheme`, `OpenApiServer`, `OpenApiTag`, `RegisterOpenApiRoutesOptions`, `SchemaReflectOptions`, `SwaggerUiOptions`
+
+---
+
+# @forge-fr/cli
+
+> Official zero-dependency forge CLI for project scaffolding (minimal, api, modular), artifact generators, official plugin registration, dev/build/start/test orchestration, and doctor checks.
+
+- **Version**: v1.0.0-rc.1
+- **Layer**: Tooling / CLI
+- **Category**: tooling
+- **Tarball**: 20.5 kB (40 files)
+- **Internal deps**: @forge-fr/core
+- **Runtime deps**: zero runtime dependencies
+- **Peer deps**: none
+- **HTML URL**: https://github.com/forge-fr/forgejs/api/cli
+- **Markdown URL**: https://github.com/forge-fr/forgejs/api/cli.md
+
+## Installation
+
+```bash
+npm install @forge-fr/cli
+```
+
+## Runtime & Error Semantics
+
+- **Runtime**: Zero third-party runtime dependencies (uses node:* built-ins). Exposes bin "forge" for scaffolding, generation, plugin registration, and diagnostics.
+- **Errors**: Validates project/symbol names and blocks directory traversal via resolveSafeTargetPath and CliError.
+
+## Usage Example
+
+```ts
+# Scaffold a modular backend
+npx @forge-fr/cli@next new billing-api --template modular --runtime node
+
+# Generate a typed feature module
+forge generate module invoices
+
+# Inspect runtime and ESM readiness
+forge doctor --json
+```
+
+## Public Exports
+
+### CLI Programmatic API & Safety Helpers
+
+- **Values**: `runCli`, `parseCliArgs`, `HELP_TEXT`, `OFFICIAL_FORGE_PLUGINS`, `resolvePluginPackageSpec`, `resolveSafeTargetPath`, `sanitizeJsonObject`, `validateProjectName`, `validateSymbolName`, `buildProjectTemplateFiles`, `generateArtifactFiles`, `defaultSpawnCommand`, `executeNewCommand`, `executeGenerateCommand`, `executePluginCommand`, `executeDoctorCommand`, `executeLifecycleCommand`, `CliError`
+- **Types**: `CliErrorCode`, `CliExecutionContext`, `CliResult`, `CliRuntimeTarget`, `CliSpawnFn`, `DoctorCheckResult`, `DoctorReport`, `GeneratedFileEntry`, `GeneratorArtifactKind`, `NormalizedSymbolName`, `ParsedCliArgs`, `ProjectTemplateKind`, `ProjectTemplateOptions`, `SpawnCommandOptions`, `SpawnCommandResult`

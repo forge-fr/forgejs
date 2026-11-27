@@ -1,0 +1,53 @@
+{
+  "name": "@forge-fr/router",
+  "version": "1.0.0-rc.1",
+  "description": "Zero-dependency, runtime-agnostic radix-tree HTTP router for ForgeJS with static, dynamic, constrained, and wildcard matching, nested groups, and RFC 405 Allow resolution.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "router",
+    "http",
+    "radix-tree",
+    "typescript",
+    "bun",
+    "nodejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/router"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

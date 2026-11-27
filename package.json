@@ -1,0 +1,41 @@
+{
+  "name": "@forge-fr/monorepo",
+  "private": true,
+  "version": "1.0.0-rc.1",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git"
+  },
+  "scripts": {
+    "build": "tsc -b --force packages/*/tsconfig.json",
+    "typecheck": "tsc -b packages/*/tsconfig.json --noEmit",
+    "packages:build": "node scripts/prepare-github-packages.mjs --build",
+    "packages:verify": "node scripts/verify-packaging.mjs",
+    "packages:prepare:github": "node scripts/prepare-github-packages.mjs --build --verify --pack --out-dir dist-packages",
+    "packages:publish:github": "node scripts/prepare-github-packages.mjs --build --publish --registry https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.2.2",
+    "@opentelemetry/api": "^1.10.0",
+    "@standard-schema/spec": "^1.1.0",
+    "drizzle-orm": "^0.45.4",
+    "jose": "^6.2.18",
+    "pino": "^10.4.0",
+    "postgres": "^4.1.1",
+    "valibot": "^1.5.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "esbuild": "^0.28.0",
+    "fast-check": "^4.11.0",
+    "tsx": "^4.21.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2"
+  }
+}

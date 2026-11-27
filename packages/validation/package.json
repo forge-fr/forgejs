@@ -1,0 +1,70 @@
+{
+  "name": "@forge-fr/validation",
+  "version": "1.0.0-rc.1",
+  "description": "Standard Schema v1 validation engine for ForgeJS with Zod, Valibot, and custom schema adapters plus type-safe HTTP body, query, params, headers, and response validation.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "validation",
+    "standard-schema",
+    "zod",
+    "valibot",
+    "typescript",
+    "bun",
+    "nodejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/validation"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@forge-fr/core": "^1.0.0-rc.1",
+    "@forge-fr/http": "^1.0.0-rc.1",
+    "@standard-schema/spec": "^1.1.0"
+  },
+  "peerDependencies": {
+    "zod": ">=3.24.0 || >=4.0.0",
+    "valibot": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    },
+    "valibot": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

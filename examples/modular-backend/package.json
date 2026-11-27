@@ -1,0 +1,29 @@
+{
+  "name": "@forge-fr-example-modular-backend",
+  "private": true,
+  "version": "1.0.0-rc.1",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "start": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@forge-fr/auth": "^1.0.0-rc.1",
+    "@forge-fr/authorization": "^1.0.0-rc.1",
+    "@forge-fr/cache": "^1.0.0-rc.1",
+    "@forge-fr/core": "^1.0.0-rc.1",
+    "@forge-fr/http": "^1.0.0-rc.1",
+    "@forge-fr/logger": "^1.0.0-rc.1",
+    "@forge-fr/node": "^1.0.0-rc.1",
+    "@forge-fr/openapi": "^1.0.0-rc.1",
+    "@forge-fr/queue": "^1.0.0-rc.1",
+    "@forge-fr/security": "^1.0.0-rc.1",
+    "@forge-fr/storage": "^1.0.0-rc.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "tsx": "^4.21.0",
+    "typescript": "^7.0.2"
+  }
+}

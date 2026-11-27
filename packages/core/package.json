@@ -1,0 +1,53 @@
+{
+  "name": "@forge-fr/core",
+  "version": "1.0.0-rc.1",
+  "description": "Runtime-agnostic core engine for ForgeJS — structured errors, redacting logger abstraction, immutable configuration, typed event dispatcher, and deterministic hook registry.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "backend",
+    "framework",
+    "typescript",
+    "bun",
+    "nodejs",
+    "modular"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

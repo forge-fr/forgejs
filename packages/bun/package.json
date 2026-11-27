@@ -1,0 +1,54 @@
+{
+  "name": "@forge-fr/bun",
+  "version": "1.0.0-rc.1",
+  "description": "Native Bun (Bun.serve) runtime adapter for ForgeJS with Web Standard Request/Response, client IP mapping, body size enforcement, and graceful server draining.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "bun",
+    "http",
+    "adapter",
+    "web-standards",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/bun"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@forge-fr/http": "^1.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

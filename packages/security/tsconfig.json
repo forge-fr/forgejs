@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "composite": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "tests"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../http" }
+  ]
+}

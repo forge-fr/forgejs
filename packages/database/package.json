@@ -1,0 +1,56 @@
+{
+  "name": "@forge-fr/database",
+  "version": "1.0.0-rc.1",
+  "description": "Database lifecycle plugin, health checks, normalized error mapping, transaction & migration contracts, and native PostgreSQL (postgres-js) adapter for ForgeJS.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "database",
+    "postgresql",
+    "postgres",
+    "typescript",
+    "bun",
+    "nodejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/database"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@forge-fr/core": "^1.0.0-rc.1",
+    "postgres": "^3.4.0 || ^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

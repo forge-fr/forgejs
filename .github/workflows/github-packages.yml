@@ -1,0 +1,168 @@
+name: Publish to GitHub Packages
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      dist_tag:
+        description: 'npm dist-tag for GitHub Packages (next for RC, latest for stable)'
+        required: true
+        default: 'next'
+        type: choice
+        options:
+          - next
+          - latest
+      dry_run:
+        description: 'Run build, tarball verification, and npm publish --dry-run without publishing'
+        required: true
+        default: true
+        type: boolean
+      attach_release_tarballs:
+        description: 'Attach all 20 .tgz tarballs and SHA256SUMS.txt to GitHub Release (on v* tags)'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: github-packages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-and-pack:
+    name: Build, Verify & Pack 20 Tarballs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Build all 20 packages (strict tsc project references)
+        run: npx tsc -b --force packages/*/tsconfig.json
+
+      - name: Verify tarball hygiene & Node/Bun consumer imports
+        run: node scripts/verify-packaging.mjs
+
+      - name: Align npm scope to GitHub repository owner when forked/hosted outside @forgejs
+        run: |
+          OWNER_LOWER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+          REPO_NAME="${{ github.event.repository.name }}"
+          if [ "${OWNER_LOWER}" != "forgejs" ]; then
+            echo "Detected repository owner '${OWNER_LOWER}' — aligning @scope and repository URLs for GitHub Packages..."
+            node scripts/prepare-github-packages.mjs --owner "${OWNER_LOWER}" --repo "${REPO_NAME}" --apply --build
+          fi
+
+      - name: Pack 20 tarballs + SHA256SUMS.txt bundle
+        run: node scripts/prepare-github-packages.mjs --pack --out-dir dist-packages
+
+      - name: Upload packed tarballs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-packages-tarballs
+          path: dist-packages/
+          retention-days: 14
+
+  publish-github-packages:
+    name: Publish to npm.pkg.github.com
+    needs: verify-and-pack
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@${{ github.repository_owner }}'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Align scope (if needed) and build all 20 packages
+        run: |
+          OWNER_LOWER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+          REPO_NAME="${{ github.event.repository.name }}"
+          if [ "${OWNER_LOWER}" != "forgejs" ]; then
+            node scripts/prepare-github-packages.mjs --owner "${OWNER_LOWER}" --repo "${REPO_NAME}" --apply
+          fi
+          npx tsc -b --force packages/*/tsconfig.json
+
+      - name: Publish 20 packages in topological dependency order
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IS_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+          INPUT_DIST_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.dist_tag || '' }}
+        run: |
+          set -euo pipefail
+          TAG_NAME="${GITHUB_REF_NAME}"
+          if [ -n "${INPUT_DIST_TAG}" ]; then
+            DIST_TAG="${INPUT_DIST_TAG}"
+          elif [[ "${TAG_NAME}" == *"-"* ]]; then
+            DIST_TAG="next"
+          else
+            DIST_TAG="latest"
+          fi
+
+          DRY_FLAG=""
+          if [ "${IS_DRY_RUN}" = "true" ]; then
+            DRY_FLAG="--dry-run"
+          fi
+
+          OWNER_LOWER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+          npm config set "@${OWNER_LOWER}:registry" "https://npm.pkg.github.com"
+
+          node scripts/prepare-github-packages.mjs \
+            --publish \
+            --registry https://npm.pkg.github.com \
+            --tag "${DIST_TAG}" \
+            ${DRY_FLAG}
+
+      - name: Download packed tarballs for GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'workflow_dispatch' || inputs.attach_release_tarballs)
+        uses: actions/download-artifact@v4
+        with:
+          name: github-packages-tarballs
+          path: dist-packages
+
+      - name: Create GitHub Release with .tgz tarballs & SHA256SUMS.txt
+        if: startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'workflow_dispatch' || inputs.attach_release_tarballs)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PRERELEASE_FLAG=""
+          if [[ "${TAG}" == *"-"* ]]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release upload "${TAG}" dist-packages/*.tgz dist-packages/SHA256SUMS.txt dist-packages/release-manifest.json --clobber
+          else
+            gh release create "${TAG}" dist-packages/*.tgz dist-packages/SHA256SUMS.txt dist-packages/release-manifest.json \
+              --generate-notes \
+              ${PRERELEASE_FLAG} \
+              --title "ForgeJS ${TAG}"
+          fi

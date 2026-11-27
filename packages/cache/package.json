@@ -1,0 +1,65 @@
+{
+  "name": "@forge-fr/cache",
+  "version": "1.0.0-rc.1",
+  "description": "Cache abstraction with bounded in-memory LRU, single-flight stampede protection, tag invalidation, prototype-safe serialization, Redis (ioredis) adapter, and ForgeJS plugin.",
+  "type": "module",
+  "sideEffects": false,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "cache",
+    "lru",
+    "redis",
+    "ioredis",
+    "ttl",
+    "typescript",
+    "bun",
+    "nodejs"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@forge-fr/core": "^1.0.0-rc.1"
+  },
+  "peerDependencies": {
+    "ioredis": ">=5.0.0 || >=6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/cache"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

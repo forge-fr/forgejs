@@ -1,0 +1,58 @@
+{
+  "name": "@forge-fr/storage",
+  "version": "1.0.0-rc.1",
+  "description": "Object storage contract with root-jailed traversal-safe local filesystem adapter, zero-dep Web Crypto SigV4 S3-compatible adapter, in-memory adapter, MIME/magic-byte validation, and ForgeJS plugin.",
+  "type": "module",
+  "sideEffects": false,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "storage",
+    "s3",
+    "r2",
+    "minio",
+    "filesystem",
+    "uploads",
+    "typescript",
+    "bun",
+    "nodejs"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@forge-fr/core": "^1.0.0-rc.1"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/storage"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

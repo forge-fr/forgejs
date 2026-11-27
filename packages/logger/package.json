@@ -1,0 +1,63 @@
+{
+  "name": "@forge-fr/logger",
+  "version": "1.0.0-rc.1",
+  "description": "Structured Pino logging with automatic secret redaction, request correlation IDs, OpenTelemetry tracing/metrics hooks, and liveness/readiness health endpoints for ForgeJS.",
+  "type": "module",
+  "sideEffects": false,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "logger",
+    "pino",
+    "observability",
+    "opentelemetry",
+    "telemetry",
+    "health-check",
+    "correlation-id",
+    "redaction",
+    "typescript",
+    "bun",
+    "nodejs"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@forge-fr/core": "^1.0.0-rc.1",
+    "@forge-fr/http": "^1.0.0-rc.1",
+    "@opentelemetry/api": "^1.10.0",
+    "pino": "^10.4.0"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/logger"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

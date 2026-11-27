@@ -1,0 +1,60 @@
+{
+  "name": "@forge-fr/drizzle",
+  "version": "1.0.0-rc.1",
+  "description": "Drizzle ORM adapter and ForgeJS plugin preserving native typed Drizzle client APIs, lifecycle pooling, health checks, and SQLSTATE error normalization.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "drizzle",
+    "drizzle-orm",
+    "postgresql",
+    "orm",
+    "typescript",
+    "bun",
+    "nodejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/drizzle"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@forge-fr/core": "^1.0.0-rc.1",
+    "@forge-fr/database": "^1.0.0-rc.1"
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.40.0 <1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
