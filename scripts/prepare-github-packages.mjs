@@ -143,6 +143,26 @@ export async function applyGithubOwnerScope({
       '',
     ].join('\n');
     await fs.writeFile(npmrcExamplePath, npmrcContent, 'utf8');
+
+    const tsconfigBasePath = path.join(rootDir, 'tsconfig.base.json');
+    try {
+      const tsconfigRaw = await fs.readFile(tsconfigBasePath, 'utf8');
+      const tsconfigJson = JSON.parse(tsconfigRaw);
+      if (tsconfigJson?.compilerOptions?.paths && typeof tsconfigJson.compilerOptions.paths === 'object') {
+        const nextPaths = {};
+        for (const [key, val] of Object.entries(tsconfigJson.compilerOptions.paths)) {
+          if (key.startsWith('@') && key.endsWith('/*')) {
+            nextPaths[`${targetScope}/*`] = val;
+          } else {
+            nextPaths[key] = val;
+          }
+        }
+        tsconfigJson.compilerOptions.paths = nextPaths;
+        await fs.writeFile(tsconfigBasePath, `${JSON.stringify(tsconfigJson, null, 2)}\n`, 'utf8');
+      }
+    } catch {
+      // Optional in standalone consumer directories
+    }
   }
 
   return {

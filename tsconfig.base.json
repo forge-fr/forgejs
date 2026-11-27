@@ -19,6 +19,9 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@forge-fr/*": ["./packages/*/dist/index.d.ts"]
+    }
   }
 }
