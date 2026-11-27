@@ -232,8 +232,10 @@ export async function publishPackagesToGithub({
   dryRun = true,
 }) {
   const results = [];
+  const total = TOPOLOGICAL_PUBLISH_ORDER.length;
 
-  for (const dir of TOPOLOGICAL_PUBLISH_ORDER) {
+  for (let i = 0; i < total; i += 1) {
+    const dir = TOPOLOGICAL_PUBLISH_ORDER[i];
     const pkgDir = path.join(rootDir, 'packages', dir);
     const manifest = JSON.parse(await fs.readFile(path.join(pkgDir, 'package.json'), 'utf8'));
 
@@ -249,6 +251,10 @@ export async function publishPackagesToGithub({
     if (dryRun) {
       args.push('--dry-run');
     }
+
+    console.error(
+      `[publish ${i + 1}/${total}] ${manifest.name}@${manifest.version} -> ${registry} (tag=${tag}, dryRun=${dryRun})`,
+    );
 
     const { stdout, stderr } = await execFileAsync('npm', args, { cwd: rootDir });
     results.push({

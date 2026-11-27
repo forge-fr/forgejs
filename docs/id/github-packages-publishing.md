@@ -57,11 +57,14 @@ Metode ini memakai `GITHUB_TOKEN` bawaan GitHub Actions (`permissions: packages:
 
 1. Push repositori ini ke GitHub (`main` branch).
 2. Di GitHub, buka **Settings → Actions → General → Workflow permissions**, pastikan **Read and write permissions** diaktifkan.
-3. **Uji coba aman (`dry_run`):**
+3. **Publikasi manual langsung dari GitHub:**
    - Buka tab **Actions → Publish to GitHub Packages → Run workflow**.
    - Pilih `dist_tag`: `next` (untuk `1.0.0-rc.1`) atau `latest` (untuk rilis stabil `1.0.0`).
-   - Biarkan `dry_run: true`, lalu jalankan workflow untuk memverifikasi seluruh build dan simulasi publish.
-4. **Publikasi live via tag SemVer:**
+   - Biarkan `dry_run` **tidak dicentang** (`false`) untuk langsung publish sungguhan (centang `dry_run` hanya jika ingin simulasi tanpa mengunggah paket).
+4. **Cek hasil & tautkan paket di halaman repo organisasi:**
+   - Setelah job **Publish to npm.pkg.github.com** selesai, cek ringkasan job (**Summary**) untuk memastikan mode adalah `LIVE PUBLISH`.
+   - Jika paket sudah muncul di `https://github.com/orgs/<org>/packages` tetapi belum tampil di sidebar **Packages** halaman repositori, buka paket tersebut → **Package settings** → **Connect repository** → pilih repositori target (mis. `forge-fr/forgejs`), lalu atur visibility menjadi **Public** bila diinginkan.
+5. **Publikasi otomatis + GitHub Release via tag SemVer:**
    ```bash
    git tag v1.0.0-rc.1
    git push origin v1.0.0-rc.1

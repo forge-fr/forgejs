@@ -15,9 +15,9 @@ on:
           - next
           - latest
       dry_run:
-        description: 'Run build, tarball verification, and npm publish --dry-run without publishing'
+        description: 'Dry run only (check to simulate npm publish without uploading packages)'
         required: true
-        default: true
+        default: false
         type: boolean
       attach_release_tarballs:
         description: 'Attach all 20 .tgz tarballs and SHA256SUMS.txt to GitHub Release (on v* tags)'
@@ -38,8 +38,8 @@ jobs:
     name: Build, Verify & Pack 20 Tarballs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
       - uses: oven-sh/setup-bun@v2
@@ -73,7 +73,7 @@ jobs:
         run: node scripts/prepare-github-packages.mjs --pack --out-dir dist-packages
 
       - name: Upload packed tarballs artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: github-packages-tarballs
           path: dist-packages/
@@ -87,8 +87,8 @@ jobs:
       contents: write
       packages: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
           registry-url: 'https://npm.pkg.github.com'
@@ -114,7 +114,8 @@ jobs:
       - name: Publish 20 packages in topological dependency order
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IS_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
           INPUT_DIST_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.dist_tag || '' }}
         run: |
           set -euo pipefail
@@ -127,9 +128,12 @@ jobs:
             DIST_TAG="latest"
           fi
 
+          IS_DRY_RUN="false"
           DRY_FLAG=""
-          if [ "${IS_DRY_RUN}" = "true" ]; then
+          if [ "${EVENT_NAME}" = "workflow_dispatch" ] && [ "${INPUT_DRY_RUN}" = "true" ]; then
+            IS_DRY_RUN="true"
             DRY_FLAG="--dry-run"
+            echo "::notice::dry_run=true — running simulation only; NO packages will be uploaded to GitHub Packages."
           fi
 
           OWNER_LOWER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
@@ -141,9 +145,27 @@ jobs:
             --tag "${DIST_TAG}" \
             ${DRY_FLAG}
 
+          {
+            echo "## GitHub Packages Publish Summary"
+            echo ""
+            if [ "${IS_DRY_RUN}" = "true" ]; then
+              echo "> **Mode:** \`DRY RUN\` (simulasi — tidak ada paket yang di-upload. Untuk publish sungguhan, jalankan ulang tanpa mencentang \`dry_run\`)."
+            else
+              echo "> **Mode:** \`LIVE PUBLISH\` (20 paket \`@${OWNER_LOWER}/*\` telah di-publish ke \`https://npm.pkg.github.com\` dengan tag \`${DIST_TAG}\`)."
+            fi
+            echo ""
+            echo "- **Repository:** \`${{ github.repository }}\`"
+            echo "- **npm Scope:** \`@${OWNER_LOWER}/*\`"
+            echo "- **Dist-Tag:** \`${DIST_TAG}\`"
+            echo "- **Repo Packages:** https://github.com/${{ github.repository }}/packages"
+            echo "- **Owner/Org Packages:** https://github.com/orgs/${OWNER_LOWER}/packages"
+            echo ""
+            echo "_Catatan organisasi GitHub: jika paket sudah ada di halaman Packages organisasi tetapi belum tampil di sidebar repository, buka paket terkait → **Package settings** → **Connect repository** → pilih \`${{ github.repository }}\` (dan atur Visibility ke Public jika diperlukan)._"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
       - name: Download packed tarballs for GitHub Release
         if: startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'workflow_dispatch' || inputs.attach_release_tarballs)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: github-packages-tarballs
           path: dist-packages
