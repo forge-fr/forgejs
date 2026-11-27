@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/prisma",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Prisma ORM adapter and ForgeJS plugin managing PrismaClient connect/disconnect lifecycle, health probes, transactions, and Prisma error normalization.",
   "license": "MIT",
   "type": "module",
@@ -46,8 +46,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/database": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/database": "^1.0.0-rc.2"
   },
   "peerDependencies": {
     "@prisma/client": ">=5.0.0 || >=6.0.0 || >=7.0.0"

@@ -82,6 +82,6 @@
 
 - [Contributing](./guides/community/contributing.md) — Monorepo workspace layout, strict TypeScript standards, architectural boundary tests, and verification commands for contributors.
 - [Plugin Author Guide](./guides/community/plugin-author-guide.md) — Checklist for publishing pure-ESM, capability-scoped third-party ForgeJS plugins with SemVer safety and clean npm pack tarballs.
-- [Release & Versioning](./guides/community/release-and-versioning.md) — SemVer 2.0.0 versioning across all 20 @forgejs/* packages, v1.0.0-rc.1 status, and OIDC Trusted Publishing workflow.
+- [Release & Versioning](./guides/community/release-and-versioning.md) — SemVer 2.0.0 versioning across all 20 @forgejs/* packages, v1.0.0-rc.2 changelog, and GitHub Packages / npm OIDC Trusted Publishing workflow.
 - [Frequently Asked Questions](./guides/community/faq.md) — Direct answers on runtime compatibility, ORM choices, decorators vs. typed tokens, security boundaries, and benchmark reproduction.
 

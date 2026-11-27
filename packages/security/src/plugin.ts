@@ -47,7 +47,7 @@ export function createSecurityPlugin(
 ): ForgePlugin<SecurityPluginConfig, SecurityPluginConfig> {
   return definePlugin<SecurityPluginConfig, SecurityPluginConfig>({
     name: options.name ?? '@forge-fr/security',
-    version: options.version ?? '1.0.0-rc.1',
+    version: options.version ?? '1.0.0-rc.2',
     forgeVersion: options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1',
     capabilities: ['di:register'],
 

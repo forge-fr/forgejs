@@ -36,19 +36,19 @@ export function buildProjectTemplateFiles(
   }
 
   const dependencies: Record<string, string> = {
-    [pkgSpec('core')]: '^1.0.0-rc.1',
-    [pkgSpec('http')]: '^1.0.0-rc.1',
+    [pkgSpec('core')]: '^1.0.0-rc.2',
+    [pkgSpec('http')]: '^1.0.0-rc.2',
     ...(runtime === 'bun'
-      ? { [pkgSpec('bun')]: '^1.0.0-rc.1' }
+      ? { [pkgSpec('bun')]: '^1.0.0-rc.2' }
       : runtime === 'edge'
-        ? { [pkgSpec('edge')]: '^1.0.0-rc.1' }
-        : { [pkgSpec('node')]: '^1.0.0-rc.1' }),
+        ? { [pkgSpec('edge')]: '^1.0.0-rc.2' }
+        : { [pkgSpec('node')]: '^1.0.0-rc.2' }),
   };
 
   if (template === 'api') {
-    dependencies[pkgSpec('openapi')] = '^1.0.0-rc.1';
-    dependencies[pkgSpec('security')] = '^1.0.0-rc.1';
-    dependencies[pkgSpec('validation')] = '^1.0.0-rc.1';
+    dependencies[pkgSpec('openapi')] = '^1.0.0-rc.2';
+    dependencies[pkgSpec('security')] = '^1.0.0-rc.2';
+    dependencies[pkgSpec('validation')] = '^1.0.0-rc.2';
     dependencies['zod'] = '^4.6.7';
   }
 
@@ -91,7 +91,7 @@ export function buildProjectTemplateFiles(
     scripts,
     dependencies,
     devDependencies: {
-      [pkgSpec('testing')]: '^1.0.0-rc.1',
+      [pkgSpec('testing')]: '^1.0.0-rc.2',
       typescript: '^5.8.0',
       ...(runtime === 'node'
         ? { '@types/node': '^22.15.0', tsx: '^4.19.0', vitest: '^3.1.0' }

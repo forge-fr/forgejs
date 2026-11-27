@@ -4,7 +4,7 @@
 
 - **Section**: Community & Contributing
 - **Packages**: @forge-fr/core, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide.md
@@ -34,7 +34,7 @@
     }
   },
   "peerDependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2"
   }
 }
 ```

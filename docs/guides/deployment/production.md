@@ -4,7 +4,7 @@
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/node, @forge-fr/bun, @forge-fr/edge, @forge-fr/logger
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/production
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/production.md

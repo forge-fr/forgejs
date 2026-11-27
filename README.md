@@ -1,4 +1,4 @@
-# ForgeJS (`@forge-fr/*` · `v1.0.0-rc.1`)
+# ForgeJS (`@forge-fr/*` · `v1.0.0-rc.2`)
 
 [![CI](https://github.com/forge-fr/forgejs/actions/workflows/ci.yml/badge.svg)](https://github.com/forge-fr/forgejs/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)

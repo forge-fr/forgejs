@@ -84,9 +84,9 @@ describe('@forge-fr/cli — Scaffolding, Generators, Plugin Registry, Diagnostic
     ) as { name: string; type: string; dependencies: Record<string, string> };
     expect(pkgJson.name).toBe('orders-app');
     expect(pkgJson.type).toBe('module');
-    expect(pkgJson.dependencies['@forge-fr/core']).toBe('^1.0.0-rc.1');
-    expect(pkgJson.dependencies['@forge-fr/openapi']).toBe('^1.0.0-rc.1');
-    expect(pkgJson.dependencies['@forge-fr/node']).toBe('^1.0.0-rc.1');
+    expect(pkgJson.dependencies['@forge-fr/core']).toBe('^1.0.0-rc.2');
+    expect(pkgJson.dependencies['@forge-fr/openapi']).toBe('^1.0.0-rc.2');
+    expect(pkgJson.dependencies['@forge-fr/node']).toBe('^1.0.0-rc.2');
 
     const entrySource = await fs.readFile(path.join(projectDir, 'src/index.ts'), 'utf8');
     expect(entrySource).toContain('createHttpApp');
@@ -123,7 +123,7 @@ describe('@forge-fr/cli — Scaffolding, Generators, Plugin Registry, Diagnostic
     const projectDir = await makeTempDir('forge-cli-plugin-');
     await fs.writeFile(
       path.join(projectDir, 'package.json'),
-      JSON.stringify({ name: 'demo-app', type: 'module', dependencies: { '@forge-fr/core': '^1.0.0-rc.1' } }, null, 2),
+      JSON.stringify({ name: 'demo-app', type: 'module', dependencies: { '@forge-fr/core': '^1.0.0-rc.2' } }, null, 2),
       'utf8',
     );
     await fs.writeFile(
@@ -141,8 +141,8 @@ describe('@forge-fr/cli — Scaffolding, Generators, Plugin Registry, Diagnostic
     const updatedPkg = JSON.parse(
       await fs.readFile(path.join(projectDir, 'package.json'), 'utf8'),
     ) as { dependencies: Record<string, string> };
-    expect(updatedPkg.dependencies['@forge-fr/security']).toBe('^1.0.0-rc.1');
-    expect(updatedPkg.dependencies['@forge-fr/edge']).toBe('^1.0.0-rc.1');
+    expect(updatedPkg.dependencies['@forge-fr/security']).toBe('^1.0.0-rc.2');
+    expect(updatedPkg.dependencies['@forge-fr/edge']).toBe('^1.0.0-rc.2');
 
     const edgeScaffold = await runCli(
       ['new', 'edge-worker', '--template', 'minimal', '--runtime', 'edge'],
@@ -154,7 +154,7 @@ describe('@forge-fr/cli — Scaffolding, Generators, Plugin Registry, Diagnostic
     const edgePkg = JSON.parse(
       await fs.readFile(path.join(projectDir, 'edge-worker/package.json'), 'utf8'),
     ) as { dependencies: Record<string, string> };
-    expect(edgePkg.dependencies['@forge-fr/edge']).toBe('^1.0.0-rc.1');
+    expect(edgePkg.dependencies['@forge-fr/edge']).toBe('^1.0.0-rc.2');
 
     const invalidPluginRes = await runCli(['plugin', 'add', 'unknown;rm -rf /'], {
       cwd: projectDir,

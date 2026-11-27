@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/node",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Native Node.js (node:http) runtime adapter for ForgeJS with backpressure-safe Web Streams, client abort propagation, body size enforcement, and graceful connection draining.",
   "license": "MIT",
   "type": "module",
@@ -45,7 +45,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/http": "^1.0.0-rc.1"
+    "@forge-fr/http": "^1.0.0-rc.2"
   },
   "publishConfig": {
     "access": "public",

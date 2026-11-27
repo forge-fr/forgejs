@@ -2,7 +2,7 @@
 
 > In-memory HTTP and WebSocket test harness, DI provider overrides, capability-scoped plugin test harness, and shared adapter contract verification suites.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: tooling
 - **Tarball**: 17.2 kB (32 files)

@@ -2,7 +2,7 @@
 
 > Prisma ORM adapter supporting Prisma v5/v6/v7+ generated clients, P1xxx/P2xxx error normalization, isolation-level transactions, and $disconnect draining.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 9.1 kB (16 files)

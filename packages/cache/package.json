@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/cache",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Cache abstraction with bounded in-memory LRU, single-flight stampede protection, tag invalidation, prototype-safe serialization, Redis (ioredis) adapter, and ForgeJS plugin.",
   "type": "module",
   "sideEffects": false,
@@ -34,7 +34,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2"
   },
   "peerDependencies": {
     "ioredis": ">=5.0.0 || >=6.0.0"

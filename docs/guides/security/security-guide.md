@@ -4,7 +4,7 @@
 
 - **Section**: Authentication & Security
 - **Packages**: @forge-fr/security, @forge-fr/http, @forge-fr/storage, @forge-fr/logger
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide.md

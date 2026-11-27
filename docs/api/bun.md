@@ -2,7 +2,7 @@
 
 > Native Bun.serve() runtime adapter with pure-HTTP fast mode, native Bun WebSockets, in-flight request draining, and POSIX shutdown handling.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 11.9 kB (16 files)

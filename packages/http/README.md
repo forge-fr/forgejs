@@ -10,6 +10,7 @@ Web Standards HTTP engine for **ForgeJS**, built on standard `Request`, `Respons
 - **7 HTTP Lifecycle Hooks:** `onRequest`, `preValidation`, `preHandler`, `preSerialization`, `onSend`, `onError`, and `onResponse`.
 - **Bounded Body & Multipart Parsing:** Streaming byte enforcement (`413 PayloadTooLargeError`), prototype-pollution key stripping for JSON/forms, and strict field/file/size limits for `multipart/form-data`.
 - **Content Negotiation & SSE:** RFC 9110 `Accept` quality/specificity negotiation (`ctx.accepts()`) and CRLF-safe Server-Sent Events (`ctx.sse()`).
+- **Native Edge & Cloudflare Workers `Response`:** Automatically emits true native `globalThis.Response` instances on Bun, Deno, and Cloudflare Workers (`workerd`), and exports `toNativeResponse()` to normalize any `FastResponse` cleanly across strict WebIDL boundaries.
 
 ## Usage
 

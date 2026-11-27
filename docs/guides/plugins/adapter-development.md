@@ -4,7 +4,7 @@
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/http, @forge-fr/database, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/adapter-development
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/adapter-development.md

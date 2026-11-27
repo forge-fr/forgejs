@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/validation",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Standard Schema v1 validation engine for ForgeJS with Zod, Valibot, and custom schema adapters plus type-safe HTTP body, query, params, headers, and response validation.",
   "license": "MIT",
   "type": "module",
@@ -47,8 +47,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/http": "^1.0.0-rc.1",
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/http": "^1.0.0-rc.2",
     "@standard-schema/spec": "^1.1.0"
   },
   "peerDependencies": {

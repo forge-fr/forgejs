@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/cli",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Official cross-runtime ForgeJS CLI: project scaffolding (new), dev/build/start/test orchestration, module/controller/service code generators, plugin management, and environment diagnostics (doctor).",
   "type": "module",
   "sideEffects": false,
@@ -36,7 +36,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2"
   },
   "scripts": {
     "build": "tsc -b tsconfig.json",

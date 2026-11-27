@@ -4,7 +4,7 @@
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/core, @forge-fr/http, @forge-fr/node, @forge-fr/bun, @forge-fr/cli
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/installation
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/installation.md
@@ -16,7 +16,7 @@
 - Pure ESM package configuration ("type": "module" in package.json).
 - TypeScript 5.8+ / 7.x with strict: true and moduleResolution: "NodeNext" or "Bundler".
 
-> **WARNING: v1.0.0-rc.1 Pre-Publication Status**
+> **WARNING: v1.0.0-rc.2 Pre-Publication Status**
 >
 > All 20 @forge-fr/* packages are verified locally via npm pack tarballs and isolated consumer smoke tests. Live publication to registry.npmjs.org under the @next tag awaits maintainer execution of .github/workflows/release.yml.
 

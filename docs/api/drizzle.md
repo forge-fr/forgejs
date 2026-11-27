@@ -2,7 +2,7 @@
 
 > First-class Drizzle ORM plugin preserving native PostgresJsDatabase<TSchema> inference, typed transactions, and DrizzleQueryError SQLSTATE normalization.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 8.6 kB (16 files)

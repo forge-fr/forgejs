@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/security",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "OWASP ASVS 5.0.0 backend security suite for ForgeJS: hardened headers, strict CORS, CSRF protection, rate limiting, prototype pollution & path traversal defenses, hardened cookies, and SSRF-safe fetch guard.",
   "type": "module",
   "sideEffects": false,
@@ -37,8 +37,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/http": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/http": "^1.0.0-rc.2"
   },
   "scripts": {
     "build": "tsc -b tsconfig.json",

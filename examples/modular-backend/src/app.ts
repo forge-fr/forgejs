@@ -386,7 +386,7 @@ export function createPlaygroundBackend(
   // Register live auto-introspected OpenAPI 3.1 spec + Swagger UI (@forge-fr/openapi)
   registerOpenApiRoutes(app, {
     title: 'ForgeJS Live Playground — Multi-Tenant Task & Webhook API',
-    version: '1.0.0-rc.1',
+    version: '1.0.0-rc.2',
     description:
       'Complete reference ForgeJS backend showcasing @forge-fr/core, @forge-fr/http, @forge-fr/validation, @forge-fr/auth, @forge-fr/authorization, @forge-fr/security, @forge-fr/cache, @forge-fr/queue, @forge-fr/storage, @forge-fr/logger, and @forge-fr/openapi.',
     specPath: '/playground-api/openapi.json',

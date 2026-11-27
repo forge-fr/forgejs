@@ -46,7 +46,7 @@ export function createObservabilityPlugin(
 
   return definePlugin({
     name: '@forge-fr/logger',
-    version: '1.0.0-rc.1',
+    version: '1.0.0-rc.2',
     forgeVersion: '^0.1.0 || ^1.0.0-rc.1',
     capabilities: ['di:register', 'health:register'],
     register(ctx) {

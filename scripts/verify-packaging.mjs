@@ -8,7 +8,7 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 
 const ROOT = process.cwd();
-const EXPECTED_VERSION = '1.0.0-rc.1';
+const EXPECTED_VERSION = '1.0.0-rc.2';
 const EXPECTED_REPO_URL = 'https://github.com/forge-fr/forgejs.git';
 
 const PACKAGES = [

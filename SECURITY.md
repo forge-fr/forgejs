@@ -9,8 +9,8 @@
 
 | Version | Supported |
 | :--- | :--- |
-| `1.0.0-rc.1` (`main`) | :white_check_mark: Yes |
-| `< 1.0.0-rc.1` | :x: No |
+| `1.0.0-rc.2` (`main`) | :white_check_mark: Yes |
+| `< 1.0.0-rc.2` | :x: No |
 
 ## Reporting a Vulnerability
 

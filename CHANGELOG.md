@@ -5,6 +5,23 @@ All notable changes to ForgeJS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-rc.2] — 2026-11-27
+
+### Edge Runtime Production Fixes, Node.js ESM Parity & CI Hardening
+- **Native `Response` Materialization for Cloudflare Workers, Deno & Bun (`@forge-fr/http`, `@forge-fr/edge`):**
+  - Updated `packages/http/src/fast-body.ts` (`IS_NATIVE_RESPONSE_RUNTIME`) to detect Cloudflare Workers (`WebSocketPair` / `navigator.userAgent === 'Cloudflare-Workers'`), Deno, and Bun so `createFastResponse` / `createFastStaticResponse` return native `globalThis.Response` instances directly (preventing HTTP `500` WebIDL `TypeError` failures on `workerd` when returning custom `FastResponse` instances), while safely omitting bodies on `204`/`304` responses.
+  - Added `FastResponse.prototype.toNative()` and exported `toNativeResponse()` from `@forge-fr/http`, and wrapped all responses in `@forge-fr/edge` (`createEdgeHandler`, `createCloudflareWorkerHandler`, `createDenoHandler`) so Edge handlers always emit genuine native `Response` objects.
+- **Edge & Browser Log Sink Support (`@forge-fr/logger`):**
+  - Configured `browser.write` in `createPinoLogger()` (`packages/logger/src/pino-logger.ts`) whenever a custom `destination` stream (such as `MemoryLogSink`) is supplied, ensuring structured PII-redacted logs are captured identically under `pino/browser.js` in Cloudflare Workers bundles.
+- **Playground Backend Production Reliability (`server.ts`, `src/playground-server/*`, `src/worker.ts`):**
+  - Added Edge-mode detection (`edgeMode ?? adapter?.name === 'edge'`) in `createPlaygroundBackend()` to avoid spawning persistent `setTimeout` background polling loops inside Cloudflare Worker isolates, draining webhook jobs and DLQ replays inline with zero leaked timers.
+  - Made `resolveJwtSecret()` (`TextEncoder` + Web Crypto) and `system.service.ts` runtime detection portable across Node.js and WinterCG Edge.
+  - Added explicit `.ts`/`.tsx` extensions to all relative imports across `src/website/data/*.ts` so `NODE_ENV=production node server.ts` runs natively on Node.js 22 without `tsx` (`ERR_MODULE_NOT_FOUND` resolved), and surfaced clear API error banners in `PlaygroundPage.tsx`.
+- **Packaging, Monorepo TypeScript Build & GitHub Actions Node 24 Upgrades:**
+  - Synchronized all 20 `@forge-fr/*` packages, internal `^1.0.0-rc.2` dependency ranges, `FORGE_CORE_VERSION`, official plugin versions, and `@forge-fr/cli` starter templates to `1.0.0-rc.2`.
+  - Added `@forge-fr/*` `paths` fallback in `tsconfig.base.json`, regenerated cross-platform `package-lock.json`, and upgraded GitHub Actions workflows to Node 24-native action releases (`actions/checkout@v6`, `actions/setup-node@v6`, `actions/upload-artifact@v6`, `actions/download-artifact@v7`, `cloudflare/wrangler-action@v4`).
+  - Exported the standalone backend-only Playground reference app to `examples/playground/` during public-org synchronization (`scripts/sync-public-org.ts`).
+
 ## [1.0.0-rc.1] — 2026-11-26
 
 ### Phase 7 — Milestone 7.3: Packaging Verification, OWASP ASVS 5.0.0 Audit & OIDC Release Candidate

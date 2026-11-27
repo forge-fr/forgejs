@@ -33,7 +33,7 @@ export function createDatabasePlugin<
   options: DatabasePluginOptions<TClient, TTxClient, TConfig, TConfigInput>,
 ): ForgePlugin<TConfig, TConfigInput> {
   const pluginName = options.name ?? '@forge-fr/database';
-  const pluginVersion = options.version ?? '1.0.0-rc.1';
+  const pluginVersion = options.version ?? '1.0.0-rc.2';
   const forgeVersion = options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1';
   const adapterToken = (options.adapterToken ??
     DefaultDatabaseTokens.adapter) as InjectionToken<DatabaseAdapter<TClient, TTxClient>>;

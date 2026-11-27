@@ -2,7 +2,7 @@
 
 > OpenAPI 3.1 generator reflecting Standard Schema v1 routes into JSON Schema 2020-12 with validatedOpenApiHandler and XSS-escaped Swagger UI routes.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: validation
 - **Tarball**: 17.5 kB (36 files)

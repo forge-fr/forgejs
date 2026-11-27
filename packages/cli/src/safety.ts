@@ -85,7 +85,7 @@ export function resolvePluginPackageSpec(rawPlugin: string): {
   if (official) {
     return {
       packageName: official,
-      versionRange: '^1.0.0-rc.1',
+      versionRange: '^1.0.0-rc.2',
       isOfficial: true,
     };
   }

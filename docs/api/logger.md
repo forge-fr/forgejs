@@ -2,7 +2,7 @@
 
 > Structured Pino logging with recursive secret redaction and CRLF neutralization, correlation IDs, OpenTelemetry W3C tracing/metrics, and sanitized /health/live & /health/ready routes.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 21.4 kB (32 files)
@@ -27,7 +27,7 @@ npm install @forge-fr/logger
 
 ## Runtime & Error Semantics
 
-- **Runtime**: Uses pino ^10.4.0 and @opentelemetry/api ^1.10.0. Neutralizes CRLF log injection and redacts secrets recursively.
+- **Runtime**: Uses pino ^10.4.0 and @opentelemetry/api ^1.10.0. Neutralizes CRLF log injection, redacts secrets recursively, and forwards structured entries to custom destinations on Cloudflare Workers / browser bundles.
 - **Errors**: /health/live and /health/ready endpoints sanitize check errors in production mode.
 
 ## Usage Example

@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/edge",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "WinterCG Edge runtime adapter and deployment handlers for ForgeJS (Cloudflare Workers, Deno, Vercel Edge, and standard Fetch runtimes).",
   "license": "MIT",
   "type": "module",
@@ -46,7 +46,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/http": "^1.0.0-rc.1"
+    "@forge-fr/http": "^1.0.0-rc.2"
   },
   "publishConfig": {
     "access": "public",

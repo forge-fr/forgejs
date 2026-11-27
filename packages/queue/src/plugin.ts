@@ -31,7 +31,7 @@ export function createQueuePlugin(
 
   return definePlugin({
     name: '@forge-fr/queue',
-    version: '1.0.0-rc.1',
+    version: '1.0.0-rc.2',
     forgeVersion: '^0.1.0 || ^1.0.0-rc.1',
     capabilities: ['di:register', 'health:register'],
     register(ctx) {

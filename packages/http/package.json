@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/http",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Web Standards HTTP engine for ForgeJS with ForgeContext, deterministic tiered middleware, bounded body/multipart parsers, content negotiation, SSE/streaming, and request-scoped DI.",
   "license": "MIT",
   "type": "module",
@@ -47,8 +47,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/router": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/router": "^1.0.0-rc.2"
   },
   "publishConfig": {
     "access": "public",

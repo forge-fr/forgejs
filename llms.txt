@@ -2,7 +2,7 @@
 
 > Build structured, modular TypeScript backends for Bun, Node.js, and WinterCG Edge with typed DI, capability-scoped plugins, and OWASP ASVS 5.0.0 defaults.
 
-ForgeJS v1.0.0-rc.1 is an opinionated, modular, pure-ESM TypeScript backend framework built on Web Standards for Node.js (>=22.18.0), Bun (>=1.4.0), and WinterCG Edge runtimes across 20 focused `@forge-fr/*` packages.
+ForgeJS v1.0.0-rc.2 is an opinionated, modular, pure-ESM TypeScript backend framework built on Web Standards for Node.js (>=22.18.0), Bun (>=1.4.0), and WinterCG Edge runtimes across 20 focused `@forge-fr/*` packages.
 
 - Full unified documentation corpus: [llms-full.txt](https://github.com/forge-fr/forgejs/llms-full.txt)
 - XML Sitemap: [sitemap.xml](https://github.com/forge-fr/forgejs/sitemap.xml)
@@ -86,7 +86,7 @@ ForgeJS v1.0.0-rc.1 is an opinionated, modular, pure-ESM TypeScript backend fram
 
 - [Contributing](https://github.com/forge-fr/forgejs/docs/community/contributing.md): Monorepo workspace layout, strict TypeScript standards, architectural boundary tests, and verification commands for contributors.
 - [Plugin Author Guide](https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide.md): Checklist for publishing pure-ESM, capability-scoped third-party ForgeJS plugins with SemVer safety and clean npm pack tarballs.
-- [Release & Versioning](https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md): SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.1 status, and OIDC Trusted Publishing workflow.
+- [Release & Versioning](https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md): SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.2 changelog, and GitHub Packages / npm OIDC Trusted Publishing workflow.
 - [Frequently Asked Questions](https://github.com/forge-fr/forgejs/docs/community/faq.md): Direct answers on runtime compatibility, ORM choices, decorators vs. typed tokens, security boundaries, and benchmark reproduction.
 
 ## API Reference (20 @forge-fr/* Packages)

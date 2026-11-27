@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/storage",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Object storage contract with root-jailed traversal-safe local filesystem adapter, zero-dep Web Crypto SigV4 S3-compatible adapter, in-memory adapter, MIME/magic-byte validation, and ForgeJS plugin.",
   "type": "module",
   "sideEffects": false,
@@ -35,7 +35,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2"
   },
   "scripts": {
     "build": "tsc -b tsconfig.json",

@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/openapi",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Zero-dependency OpenAPI 3.1 generator, Zod v4 / Valibot v1 / Standard Schema JSON Schema reflection, Swagger UI endpoint with strict CSP/HTML escaping, and ForgeJS plugin.",
   "type": "module",
   "sideEffects": false,
@@ -36,9 +36,9 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/http": "^1.0.0-rc.1",
-    "@forge-fr/validation": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/http": "^1.0.0-rc.2",
+    "@forge-fr/validation": "^1.0.0-rc.2"
   },
   "scripts": {
     "build": "tsc -b tsconfig.json",

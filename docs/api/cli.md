@@ -2,7 +2,7 @@
 
 > Official zero-dependency forge CLI for project scaffolding (minimal, api, modular), artifact generators, official plugin registration, dev/build/start/test orchestration, and doctor checks.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Tooling / CLI
 - **Category**: tooling
 - **Tarball**: 20.5 kB (40 files)

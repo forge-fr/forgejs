@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/drizzle",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Drizzle ORM adapter and ForgeJS plugin preserving native typed Drizzle client APIs, lifecycle pooling, health checks, and SQLSTATE error normalization.",
   "license": "MIT",
   "type": "module",
@@ -47,8 +47,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/database": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/database": "^1.0.0-rc.2"
   },
   "peerDependencies": {
     "drizzle-orm": ">=0.40.0 <1.0.0"

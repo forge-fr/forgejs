@@ -4,7 +4,7 @@
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/core, @forge-fr/database, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern.md

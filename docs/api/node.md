@@ -2,7 +2,7 @@
 
 > Native node:http runtime adapter with direct-dispatch request metadata, synchronous FastResponse writes, RFC 6455 WebSocket upgrade codec, and POSIX graceful shutdown.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 22.6 kB (20 files)

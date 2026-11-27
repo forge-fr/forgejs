@@ -2,7 +2,7 @@
 
 > Object storage adapters for Memory, symlink-jailed local disk, and zero-SDK Web Crypto AWS SigV4 S3 with MIME allowlists, binary magic-byte inspection, and presigned URLs.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 22.5 kB (36 files)

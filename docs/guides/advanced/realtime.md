@@ -4,7 +4,7 @@
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/http, @forge-fr/node, @forge-fr/bun, @forge-fr/edge
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/realtime
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/realtime.md

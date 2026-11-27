@@ -2,7 +2,7 @@
 
 > Native PostgreSQL adapter built on postgres-js with SQLSTATE error normalization, credential-redacted URLs, allowlisted transaction isolation, and checksum-verified migrations.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 17.9 kB (28 files)

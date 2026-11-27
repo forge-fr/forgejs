@@ -4,7 +4,7 @@
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/openapi, @forge-fr/validation
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/openapi
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/openapi.md

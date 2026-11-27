@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/logger",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Structured Pino logging with automatic secret redaction, request correlation IDs, OpenTelemetry tracing/metrics hooks, and liveness/readiness health endpoints for ForgeJS.",
   "type": "module",
   "sideEffects": false,
@@ -37,8 +37,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/http": "^1.0.0-rc.1",
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/http": "^1.0.0-rc.2",
     "@opentelemetry/api": "^1.10.0",
     "pino": "^10.4.0"
   },

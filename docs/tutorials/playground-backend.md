@@ -2,7 +2,7 @@
 
 > Build the full opinionated modular ForgeJS backend step by step — from workspace setup and Kernel DI to auth strategies, OWASP security, caching, magic-byte storage, webhook queues with DLQ replay, SSE/WebSockets, OpenTelemetry, and OpenAPI 3.1.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Steps**: 9 interactive steps
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend.md
@@ -727,7 +727,7 @@ registerHealthRoutes(app, {
 
 registerOpenApiRoutes(app, {
   title: 'ForgeJS Live Playground API',
-  version: '1.0.0-rc.1',
+  version: '1.0.0-rc.2',
   specPath: '/playground-api/openapi.json',
   docsPath: '/playground-api/docs',
 });

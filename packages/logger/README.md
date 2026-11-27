@@ -1,10 +1,10 @@
 # @forge-fr/logger
 
-Structured logging, request correlation, OpenTelemetry instrumentation, and health endpoints for **ForgeJS** running natively on **Node.js 22+/24+** and **Bun 1.4+**.
+Structured logging, request correlation, OpenTelemetry instrumentation, and health endpoints for **ForgeJS** running natively on **Node.js 22+/24+**, **Bun 1.4+**, and **WinterCG Edge / Cloudflare Workers**.
 
 ## Features
 
-- **Pino-Backed `ForgeLogger`:** High-performance JSON structured logging implementing `@forge-fr/core`'s `ForgeLogger` contract with graceful `flush()` support.
+- **Pino-Backed `ForgeLogger`:** High-performance JSON structured logging implementing `@forge-fr/core`'s `ForgeLogger` contract with graceful `flush()` support and automatic `pino/browser.js` forwarding to custom destinations (`MemoryLogSink`) on Cloudflare Workers and browser bundles.
 - **Automatic Secret & PII Redaction:** Recursively redacts `SecretValue`, sensitive keys (`authorization`, `cookie`, `password`, `token`, `apiKey`, `secret`, etc.), embedded database URL credentials, inline Bearer/Basic tokens, and neutralizes CRLF log injection.
 - **Request Correlation & Access Logging:** Safe correlation ID propagation (`createCorrelationIdMiddleware`) and structured request completion logging (`createRequestLoggingMiddleware`) with slow-request warnings and header allowlisting.
 - **OpenTelemetry (`@opentelemetry/api`) Hooks:** Automatic `trace_id`/`span_id` injection into Pino logs, `withSpan()` helper, W3C `traceparent` extraction, HTTP server spans, and standard HTTP metrics (`http.server.requests`, `http.server.request.duration`, `http.server.active_requests`).

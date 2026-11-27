@@ -26,7 +26,7 @@ export function createStoragePlugin(
 
   return definePlugin({
     name: '@forge-fr/storage',
-    version: '1.0.0-rc.1',
+    version: '1.0.0-rc.2',
     forgeVersion: '^0.1.0 || ^1.0.0-rc.1',
     capabilities: ['di:register', 'health:register'],
     register(ctx) {

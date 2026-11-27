@@ -2,7 +2,7 @@
 
 > WinterCG Fetch adapter for Cloudflare Workers, Deno, and isolate runtimes with zero node:* or Bun globals and waitUntil background task helpers.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 8.8 kB (12 files)
@@ -20,7 +20,7 @@ npm install @forge-fr/edge
 
 ## Runtime & Error Semantics
 
-- **Runtime**: Zero node:* or Bun globals. Unit and Fetch/WebSocketPair contract verified; live workerd/deno binaries are not installed in local sandbox.
+- **Runtime**: Zero node:* or Bun globals. Normalizes all responses via toNativeResponse() for strict Cloudflare Workers (workerd) and Deno WebIDL compatibility.
 - **Errors**: Background promises submitted via runInEdgeBackground() use executionCtx.waitUntil when available.
 
 ## Usage Example

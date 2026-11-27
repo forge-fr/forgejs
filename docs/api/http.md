@@ -2,7 +2,7 @@
 
 > Web Standards HTTP engine with tiered middleware, 7 lifecycle hooks, bounded body parsers, SSE, Web Streams compression, conditional ETags, and WebSocket route registry.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Framework Core
 - **Category**: core
 - **Tarball**: 52.5 kB (56 files)
@@ -20,7 +20,7 @@ npm install @forge-fr/http
 
 ## Runtime & Error Semantics
 
-- **Runtime**: Built on Web Standards (Request, Response, Headers, ReadableStream, CompressionStream). Zero third-party dependencies.
+- **Runtime**: Built on Web Standards (Request, Response, Headers, ReadableStream, CompressionStream). Zero third-party dependencies; automatically emits native globalThis.Response on Cloudflare Workers, Deno, and Bun.
 - **Errors**: Enforces 1 MiB default body limit (PayloadTooLargeError 413), CR/LF/NUL rejection in FastHeaders, and double-next() / post-commit middleware guards.
 
 ## Usage Example
@@ -44,7 +44,7 @@ app.get('/ping', (ctx) => ctx.json({ pong: true }));
 
 ### Fast Path, Body Parsers, Negotiation & SSE
 
-- **Values**: `FastHeaders`, `FastResponse`, `attachFastBody`, `copyFastBody`, `createFastResponse`, `getFastBody`, `DEFAULT_MAX_BODY_BYTES`, `DEFAULT_MAX_MULTIPART_FIELDS`, `DEFAULT_MAX_MULTIPART_FILES`, `DEFAULT_MAX_MULTIPART_FILE_BYTES`, `readBoundedBytes`, `readBoundedJson`, `readBoundedMultipart`, `readBoundedText`, `readBoundedUrlEncoded`, `negotiateContentType`, `parseAcceptHeader`, `createSseResponse`, `formatSseEvent`
+- **Values**: `FastHeaders`, `FastResponse`, `attachFastBody`, `copyFastBody`, `createFastResponse`, `getFastBody`, `toNativeResponse`, `DEFAULT_MAX_BODY_BYTES`, `DEFAULT_MAX_MULTIPART_FIELDS`, `DEFAULT_MAX_MULTIPART_FILES`, `DEFAULT_MAX_MULTIPART_FILE_BYTES`, `readBoundedBytes`, `readBoundedJson`, `readBoundedMultipart`, `readBoundedText`, `readBoundedUrlEncoded`, `negotiateContentType`, `parseAcceptHeader`, `createSseResponse`, `formatSseEvent`
 - **Types**: `BodyParseOptions`, `ParsedMultipart`, `UploadedFile`, `RequestBodyReader`, `AcceptMediaRange`, `CreateSseResponseOptions`, `SseEvent`, `SseProducer`, `SseStreamController`
 
 ### Hooks, WebSockets & HTTP Errors

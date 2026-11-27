@@ -4,7 +4,7 @@
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/http, @forge-fr/core, @forge-fr/cli
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/controllers
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/controllers.md

@@ -1,6 +1,6 @@
 # Panduan Hosting & Publikasi Package npm ForgeJS di GitHub
 
-Semua 20 paket `@forge-fr/*` di monorepo ini (`v1.0.0-rc.1`, Pure ESM + deklarasi TypeScript `.d.ts`) sudah disiapkan untuk di-host dan dipublikasikan melalui **GitHub Packages (`https://npm.pkg.github.com`)** serta **GitHub Releases** (arsip `.tgz` + checksum SHA-256).
+Semua 20 paket `@forge-fr/*` di monorepo ini (`v1.0.0-rc.2`, Pure ESM + deklarasi TypeScript `.d.ts`) sudah disiapkan untuk di-host dan dipublikasikan melalui **GitHub Packages (`https://npm.pkg.github.com`)** serta **GitHub Releases** (arsip `.tgz` + checksum SHA-256).
 
 ---
 
@@ -59,20 +59,20 @@ Metode ini memakai `GITHUB_TOKEN` bawaan GitHub Actions (`permissions: packages:
 2. Di GitHub, buka **Settings → Actions → General → Workflow permissions**, pastikan **Read and write permissions** diaktifkan.
 3. **Publikasi manual langsung dari GitHub:**
    - Buka tab **Actions → Publish to GitHub Packages → Run workflow**.
-   - Pilih `dist_tag`: `next` (untuk `1.0.0-rc.1`) atau `latest` (untuk rilis stabil `1.0.0`).
+   - Pilih `dist_tag`: `next` (untuk `1.0.0-rc.2`) atau `latest` (untuk rilis stabil `1.0.0`).
    - Biarkan `dry_run` **tidak dicentang** (`false`) untuk langsung publish sungguhan (centang `dry_run` hanya jika ingin simulasi tanpa mengunggah paket).
 4. **Cek hasil & tautkan paket di halaman repo organisasi:**
    - Setelah job **Publish to npm.pkg.github.com** selesai, cek ringkasan job (**Summary**) untuk memastikan mode adalah `LIVE PUBLISH`.
    - Jika paket sudah muncul di `https://github.com/orgs/<org>/packages` tetapi belum tampil di sidebar **Packages** halaman repositori, buka paket tersebut → **Package settings** → **Connect repository** → pilih repositori target (mis. `forge-fr/forgejs`), lalu atur visibility menjadi **Public** bila diinginkan.
 5. **Publikasi otomatis + GitHub Release via tag SemVer:**
    ```bash
-   git tag v1.0.0-rc.1
-   git push origin v1.0.0-rc.1
+   git tag v1.0.0-rc.2
+   git push origin v1.0.0-rc.2
    ```
    Workflow akan otomatis:
    - Memverifikasi semua 20 paket.
    - Mempublikasikan seluruh paket dalam urutan topologi (`core` → `router` → `http` → … → `cli`) ke `https://npm.pkg.github.com`.
-   - Membuat **GitHub Release** `v1.0.0-rc.1` lengkap dengan 20 file `.tgz`, `SHA256SUMS.txt`, dan `release-manifest.json`.
+   - Membuat **GitHub Release** `v1.0.0-rc.2` lengkap dengan 20 file `.tgz`, `SHA256SUMS.txt`, dan `release-manifest.json`.
 
 ---
 
@@ -123,5 +123,5 @@ npm install @forge-fr/core @forge-fr/http @forge-fr/node
 Jika repositori GitHub bersifat publik, file `.tgz` yang dilampirkan di GitHub Release dapat diinstal langsung per paket:
 
 ```bash
-npm install https://github.com/forge-fr/forgejs/releases/download/v1.0.0-rc.1/forgejs-core-1.0.0-rc.1.tgz
+npm install https://github.com/forge-fr/forgejs/releases/download/v1.0.0-rc.2/forgejs-core-1.0.0-rc.2.tgz
 ```

@@ -2,7 +2,7 @@
 
 > Background job queues for Memory, Redis (sorted sets + atomic Lua pop), and PostgreSQL (FOR UPDATE SKIP LOCKED) with retries, DLQ replay, idempotency, and graceful worker draining.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 25.1 kB (40 files)

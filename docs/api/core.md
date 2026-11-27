@@ -2,7 +2,7 @@
 
 > 7-stage application kernel, typed dependency injection container, encapsulated modules, SemVer capability-scoped plugin runtime, errors, secrets, config, events, hooks, and health checks.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Framework Core
 - **Category**: core
 - **Tarball**: 50.5 kB (56 files)

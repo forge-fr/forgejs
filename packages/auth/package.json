@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/auth",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Modular authentication suite for ForgeJS: Argon2id password hashing, hardened sessions, JWT/JWKS via jose, hashed API keys, OAuth 2.0/OIDC PKCE primitives, and Better Auth adapter.",
   "license": "MIT",
   "type": "module",
@@ -52,8 +52,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/http": "^1.0.0-rc.1",
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/http": "^1.0.0-rc.2",
     "@node-rs/argon2": "^2.2.0",
     "jose": "^6.0.0"
   },

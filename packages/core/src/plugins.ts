@@ -6,7 +6,7 @@ import type { ForgeLogger } from './logger.js';
 import type { AnyProviderDefinition } from './modules.js';
 import { isValidSemVer, isValidSemVerRange, satisfiesRange } from './semver.js';
 
-export const FORGE_CORE_VERSION = '1.0.0-rc.1';
+export const FORGE_CORE_VERSION = '1.0.0-rc.2';
 
 const FORBIDDEN_PLUGIN_NAMES = new Set(['__proto__', 'constructor', 'prototype']);
 

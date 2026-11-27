@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/core",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "Runtime-agnostic core engine for ForgeJS — structured errors, redacting logger abstraction, immutable configuration, typed event dispatcher, and deterministic hook registry.",
   "license": "MIT",
   "type": "module",

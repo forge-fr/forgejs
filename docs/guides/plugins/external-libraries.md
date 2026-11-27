@@ -4,7 +4,7 @@
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/core, @forge-fr/cache, @forge-fr/prisma
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/external-libraries
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/external-libraries.md

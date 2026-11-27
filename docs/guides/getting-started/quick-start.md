@@ -4,7 +4,7 @@
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/http, @forge-fr/validation, @forge-fr/node, @forge-fr/bun, @forge-fr/edge
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start.md

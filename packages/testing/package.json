@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/testing",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "In-memory HTTP runtime adapter, ergonomic test client, and DI provider override helpers for testing ForgeJS applications on Node.js and Bun.",
   "license": "MIT",
   "type": "module",
@@ -46,8 +46,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/http": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/http": "^1.0.0-rc.2"
   },
   "publishConfig": {
     "access": "public",

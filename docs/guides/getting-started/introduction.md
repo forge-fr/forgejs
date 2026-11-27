@@ -4,7 +4,7 @@
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/core, @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction.md
@@ -14,7 +14,7 @@
 
 ForgeJS is an open-source, pure-ESM, strict-TypeScript backend framework built directly on Web Standards (Request, Response, Headers, ReadableStream, AbortSignal, CompressionStream, and Web Crypto).
 
-Rather than coupling application logic to node:http primitives or requiring runtime reflection decorators, ForgeJS separates domain code from host runtimes across 20 modular @forge-fr/* packages synchronized at v1.0.0-rc.1.
+Rather than coupling application logic to node:http primitives or requiring runtime reflection decorators, ForgeJS separates domain code from host runtimes across 20 modular @forge-fr/* packages synchronized at v1.0.0-rc.2.
 
 - 16 of 20 packages ship with zero third-party runtime dependencies.
 - Verified locally on Node.js v22.23.5 and Bun 1.4.4, with a zero-global WinterCG Edge adapter (@forge-fr/edge).

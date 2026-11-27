@@ -4,8 +4,8 @@
 
 - **Section**: Community & Contributing
 - **Packages**: @forge-fr/core, @forge-fr/http
-- **Version**: v1.0.0-rc.1
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0-rc.2
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/faq
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/faq.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/FRAMEWORK_FEATURE_INVENTORY.md
@@ -18,9 +18,9 @@ Explicit createToken<T>() and defineModule() avoid experimental decorator metada
 
 ForgeJS provides official packages for native PostgreSQL (@forge-fr/database via postgres-js), Drizzle ORM (@forge-fr/drizzle), and Prisma ORM (@forge-fr/prisma). TypeORM, MikroORM, Sequelize, and Knex are not shipped officially, though teams can integrate them via DatabaseAdapter.
 
-## Is v1.0.0-rc.1 published on npm yet?
+## How is v1.0.0-rc.2 published to npm and GitHub Packages?
 
-All 20 packages are verified locally via npm pack tarballs and isolated Node 22 & Bun 1.4 consumer tests, with .github/workflows/release.yml configured for OIDC Trusted Publishing. Live registry publication awaits maintainer dispatch.
+All 20 packages are synchronized at 1.0.0-rc.2 and verified via npm pack tarballs, isolated Node 22 & Bun 1.4 consumer tests, and Cloudflare Edge Worker bundle tests. Maintainers can publish directly via .github/workflows/github-packages.yml or .github/workflows/release.yml.
 
 ## Does ForgeJS guarantee my application is secure out of the box?
 

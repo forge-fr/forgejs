@@ -1,4 +1,4 @@
-# ForgeJS — Complete Documentation & API Corpus (v1.0.0-rc.1)
+# ForgeJS — Complete Documentation & API Corpus (v1.0.0-rc.2)
 
 > Build structured, modular TypeScript backends for Bun, Node.js, and WinterCG Edge with typed DI, capability-scoped plugins, and OWASP ASVS 5.0.0 defaults.
 
@@ -95,14 +95,14 @@
 
 - [Contributing](https://github.com/forge-fr/forgejs/docs/community/contributing.md) — Monorepo workspace layout, strict TypeScript standards, architectural boundary tests, and verification commands for contributors.
 - [Plugin Author Guide](https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide.md) — Checklist for publishing pure-ESM, capability-scoped third-party ForgeJS plugins with SemVer safety and clean npm pack tarballs.
-- [Release & Versioning](https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md) — SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.1 status, and OIDC Trusted Publishing workflow.
+- [Release & Versioning](https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md) — SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.2 changelog, and GitHub Packages / npm OIDC Trusted Publishing workflow.
 - [Frequently Asked Questions](https://github.com/forge-fr/forgejs/docs/community/faq.md) — Direct answers on runtime compatibility, ORM choices, decorators vs. typed tokens, security boundaries, and benchmark reproduction.
 
 ---
 
 # ForgeJS Architecture Specifications, ADRs & Benchmarks
 
-> Architectural overview, 20-package directed acyclic graph, verified benchmarks, and OWASP ASVS 5.0.0 release checklist for ForgeJS v1.0.0-rc.1.
+> Architectural overview, 20-package directed acyclic graph, verified benchmarks, and OWASP ASVS 5.0.0 release checklist for ForgeJS v1.0.0-rc.2.
 
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/architecture/hub
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/architecture/hub.md
@@ -167,7 +167,7 @@
 
 > Build the full opinionated modular ForgeJS backend step by step — from workspace setup and Kernel DI to auth strategies, OWASP security, caching, magic-byte storage, webhook queues with DLQ replay, SSE/WebSockets, OpenTelemetry, and OpenAPI 3.1.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Steps**: 9 interactive steps
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend.md
@@ -892,7 +892,7 @@ registerHealthRoutes(app, {
 
 registerOpenApiRoutes(app, {
   title: 'ForgeJS Live Playground API',
-  version: '1.0.0-rc.1',
+  version: '1.0.0-rc.2',
   specPath: '/playground-api/openapi.json',
   docsPath: '/playground-api/docs',
 });
@@ -912,7 +912,7 @@ registerOpenApiRoutes(app, {
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/core, @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction.md
@@ -922,7 +922,7 @@ registerOpenApiRoutes(app, {
 
 ForgeJS is an open-source, pure-ESM, strict-TypeScript backend framework built directly on Web Standards (Request, Response, Headers, ReadableStream, AbortSignal, CompressionStream, and Web Crypto).
 
-Rather than coupling application logic to node:http primitives or requiring runtime reflection decorators, ForgeJS separates domain code from host runtimes across 20 modular @forge-fr/* packages synchronized at v1.0.0-rc.1.
+Rather than coupling application logic to node:http primitives or requiring runtime reflection decorators, ForgeJS separates domain code from host runtimes across 20 modular @forge-fr/* packages synchronized at v1.0.0-rc.2.
 
 - 16 of 20 packages ship with zero third-party runtime dependencies.
 - Verified locally on Node.js v22.23.5 and Bun 1.4.4, with a zero-global WinterCG Edge adapter (@forge-fr/edge).
@@ -953,7 +953,7 @@ ForgeJS favors explicit composition over hidden magic: typed tokens (createToken
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/core, @forge-fr/http, @forge-fr/node, @forge-fr/bun, @forge-fr/cli
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/installation
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/installation.md
@@ -965,7 +965,7 @@ ForgeJS favors explicit composition over hidden magic: typed tokens (createToken
 - Pure ESM package configuration ("type": "module" in package.json).
 - TypeScript 5.8+ / 7.x with strict: true and moduleResolution: "NodeNext" or "Bundler".
 
-> **WARNING: v1.0.0-rc.1 Pre-Publication Status**
+> **WARNING: v1.0.0-rc.2 Pre-Publication Status**
 >
 > All 20 @forge-fr/* packages are verified locally via npm pack tarballs and isolated consumer smoke tests. Live publication to registry.npmjs.org under the @next tag awaits maintainer execution of .github/workflows/release.yml.
 
@@ -1036,7 +1036,7 @@ Run forge doctor inside your project directory to verify Node.js >=22, optional 
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/http, @forge-fr/validation, @forge-fr/node, @forge-fr/bun, @forge-fr/edge
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start.md
@@ -1161,7 +1161,7 @@ await client.close();
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/core, @forge-fr/http, @forge-fr/validation, @forge-fr/security, @forge-fr/node
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/first-application
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/first-application.md
@@ -1284,7 +1284,7 @@ src/
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core, @forge-fr/router, @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/architecture
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/architecture.md
@@ -1318,7 +1318,7 @@ tests/architecture/boundaries.test.ts runs 60 assertions across all 20 packages 
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/lifecycle
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/lifecycle.md
@@ -1367,7 +1367,7 @@ await kernel.shutdown();
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/configuration
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/configuration.md
@@ -1418,7 +1418,7 @@ const dbSecret = config.get<SecretValue<string>>('databaseUrl');
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection.md
@@ -1479,7 +1479,7 @@ await container.dispose();
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/modules
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/modules.md
@@ -1530,7 +1530,7 @@ console.info('Total cents:', billing.total());
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core, @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/error-handling
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/error-handling.md
@@ -1577,7 +1577,7 @@ app.get('/orders/:id', (ctx) => {
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/router, @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/routing
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/routing.md
@@ -1618,7 +1618,7 @@ app.group('/api/v1', (api) => {
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/http, @forge-fr/core, @forge-fr/cli
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/controllers
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/controllers.md
@@ -1665,7 +1665,7 @@ forge generate service users
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/request-and-response
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/request-and-response.md
@@ -1708,7 +1708,7 @@ app.get('/catalog', (ctx) =>
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/middleware
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/middleware.md
@@ -1740,7 +1740,7 @@ app.get('/catalog', (ctx) =>
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/validation
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/validation
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/validation.md
@@ -1793,7 +1793,7 @@ compileFastValidator() detects synchronous Zod v4 schemas once at route registra
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/validation, @forge-fr/http
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/serialization
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/serialization.md
@@ -1842,7 +1842,7 @@ app.get(
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/openapi, @forge-fr/validation
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/openapi
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/openapi.md
@@ -1899,7 +1899,7 @@ const spec = generateOpenApiDocument(app, { title: 'Forge Store API', version: '
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/database, @forge-fr/drizzle, @forge-fr/prisma
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/overview
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/overview.md
@@ -1948,7 +1948,7 @@ assert.equal(normalized.expose, false);
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/database
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/postgresql
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/postgresql.md
@@ -2009,7 +2009,7 @@ createMigrationRunner() tracks applied migrations with SHA-256 checksums, reject
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/drizzle, @forge-fr/database
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/drizzle
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/drizzle.md
@@ -2058,7 +2058,7 @@ const db = kernel.container.resolve(DefaultDrizzleTokens.db);
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/prisma, @forge-fr/database
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/prisma
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/prisma.md
@@ -2102,7 +2102,7 @@ const prisma = kernel.container.resolve(DefaultPrismaTokens.client);
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/core, @forge-fr/database, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern.md
@@ -2155,7 +2155,7 @@ export const OrderDataModule = defineModule({
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/database, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/testing
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/testing.md
@@ -2181,7 +2181,7 @@ FORGE_TEST_DATABASE_URL=postgres://postgres:forge@127.0.0.1:5432/forge_test npx 
 
 - **Section**: Authentication & Security
 - **Packages**: @forge-fr/auth
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/authentication
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/authentication.md
@@ -2235,7 +2235,7 @@ const sessions = createSessionManager({
 
 - **Section**: Authentication & Security
 - **Packages**: @forge-fr/authorization
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/authorization
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/authorization.md
@@ -2294,7 +2294,7 @@ assertOwnership(billing.actor, { ownerId: 'u-10' });
 
 - **Section**: Authentication & Security
 - **Packages**: @forge-fr/security, @forge-fr/http, @forge-fr/storage, @forge-fr/logger
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide.md
@@ -2352,7 +2352,7 @@ const clean = sanitizeObject({ name: 'alice' });
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/plugin-system
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/plugin-system.md
@@ -2387,7 +2387,7 @@ Every ForgeJS plugin explicitly declares the capabilities it requires. During ke
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/core, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins.md
@@ -2475,7 +2475,7 @@ await harness.shutdown();
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/http, @forge-fr/database, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/adapter-development
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/adapter-development.md
@@ -2515,7 +2515,7 @@ if (!report.passed) {
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/core, @forge-fr/cache, @forge-fr/prisma
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/external-libraries
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/external-libraries.md
@@ -2540,7 +2540,7 @@ Packages like @forge-fr/cache, @forge-fr/queue, @forge-fr/prisma, and @forge-fr/
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/cache
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/caching
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/caching.md
@@ -2589,7 +2589,7 @@ await cache.invalidateTag('user:42');
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/queue
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/queues
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/queues.md
@@ -2640,7 +2640,7 @@ await worker.stop({ timeoutMs: 5_000 });
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/events-and-hooks
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/events-and-hooks.md
@@ -2680,7 +2680,7 @@ await hooks.run('beforeSave', { entityId: 'ord_55' });
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/storage
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/storage
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/storage.md
@@ -2724,7 +2724,7 @@ assert.equal(stored.key, 'avatars/u1.png');
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/http, @forge-fr/node, @forge-fr/bun, @forge-fr/edge
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/realtime
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/realtime.md
@@ -2776,7 +2776,7 @@ app.get('/events', () =>
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/logger
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/observability
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/observability.md
@@ -2823,7 +2823,7 @@ Mount createObservabilityPlugin() or createTelemetryMiddleware() to connect @ope
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/testing
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/testing.md
@@ -2869,7 +2869,7 @@ await client.close();
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/node, @forge-fr/bun, @forge-fr/edge
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility.md
@@ -2913,7 +2913,7 @@ export const denoHandler = createDenoHandler(app);
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/node, @forge-fr/bun, @forge-fr/edge, @forge-fr/logger
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/production
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/production.md
@@ -2972,7 +2972,7 @@ attachProcessShutdown(server, {
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/router, @forge-fr/http, @forge-fr/node, @forge-fr/bun
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/performance
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/performance.md
@@ -3018,7 +3018,7 @@ bun benchmarks/run-all.mjs
 
 - **Section**: CLI Reference
 - **Packages**: @forge-fr/cli
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/cli/reference
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/cli/reference.md
@@ -3078,7 +3078,7 @@ forge doctor --json
 
 - **Section**: Community & Contributing
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/contributing
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/contributing.md
@@ -3109,7 +3109,7 @@ bun scripts/verify-docs-examples.mjs
 
 - **Section**: Community & Contributing
 - **Packages**: @forge-fr/core, @forge-fr/testing
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Updated**: 2026-11-26
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide.md
@@ -3139,7 +3139,7 @@ bun scripts/verify-docs-examples.mjs
     }
   },
   "peerDependencies": {
-    "@forge-fr/core": "^1.0.0-rc.1"
+    "@forge-fr/core": "^1.0.0-rc.2"
   }
 }
 ```
@@ -3148,26 +3148,35 @@ bun scripts/verify-docs-examples.mjs
 
 # Release & Versioning
 
-> SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.1 status, and OIDC Trusted Publishing workflow.
+> SemVer 2.0.0 versioning across all 20 @forge-fr/* packages, v1.0.0-rc.2 changelog, and GitHub Packages / npm OIDC Trusted Publishing workflow.
 
 - **Section**: Community & Contributing
-- **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.1
-- **Updated**: 2026-11-26
+- **Packages**: @forge-fr/core, @forge-fr/http, @forge-fr/edge, @forge-fr/logger
+- **Version**: v1.0.0-rc.2
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/release-and-versioning
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/CHANGELOG.md
 
+## What changed in v1.0.0-rc.2 (2026-11-27)
+
+v1.0.0-rc.2 fixes Cloudflare Workers / Edge production execution, brings Edge parity to Pino MemoryLogSink logging, resolves native Node.js 22 production startup, and upgrades CI workflows to Node 24 actions.
+
+- @forge-fr/http & @forge-fr/edge: Always materialize genuine native Response instances on Cloudflare Workers (workerd), Deno, and Bun (plus exported toNativeResponse() helper), resolving HTTP 500 WebIDL errors on Edge isolates.
+- @forge-fr/logger: Added browser.write forwarding in createPinoLogger() so MemoryLogSink captures structured PII-redacted logs under pino/browser.js on Edge runtimes.
+- Playground & Production Server: Added Edge-safe inline webhook queue draining (no cross-request setTimeout loops), portable WebCrypto JWT secret fallback, and explicit .ts extensions for native node server.ts production execution.
+- CI & Packaging: Synchronized all 20 @forge-fr/* packages and @forge-fr/cli templates to 1.0.0-rc.2, added workspace paths fallback in tsconfig.base.json, and upgraded GitHub Actions to checkout@v6, setup-node@v6, upload-artifact@v6, and wrangler-action@v4.
+
 ## OIDC Trusted Publishing & topological order
 
-.github/workflows/release.yml publishes all 20 @forge-fr/* packages in strict topological order (core → router → http → ... → cli) with npm OIDC provenance enabled and dry_run: true by default.
+.github/workflows/release.yml and .github/workflows/github-packages.yml publish all 20 @forge-fr/* packages in strict topological order (core → router → http → ... → cli) with provenance support.
 
 | Release Property | Verified Value |
 | --- | --- |
-| Current Workspace Version | 1.0.0-rc.1 (synchronized across all 20 packages) |
+| Current Workspace Version | 1.0.0-rc.2 (synchronized across all 20 packages) |
 | License | MIT |
 | Tarball Verification | 20/20 packages verified via npm pack + isolated Node 22 & Bun 1.4 consumer installs |
-| Registry Publication Status | Ready for maintainer dispatch under @next tag (no live npm publish executed automatically) |
+| Edge & Production Verification | Native Response prototype verified on bundled Cloudflare Worker + NODE_ENV=production node server.ts |
 
 ---
 
@@ -3177,8 +3186,8 @@ bun scripts/verify-docs-examples.mjs
 
 - **Section**: Community & Contributing
 - **Packages**: @forge-fr/core, @forge-fr/http
-- **Version**: v1.0.0-rc.1
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0-rc.2
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/faq
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/faq.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/FRAMEWORK_FEATURE_INVENTORY.md
@@ -3191,9 +3200,9 @@ Explicit createToken<T>() and defineModule() avoid experimental decorator metada
 
 ForgeJS provides official packages for native PostgreSQL (@forge-fr/database via postgres-js), Drizzle ORM (@forge-fr/drizzle), and Prisma ORM (@forge-fr/prisma). TypeORM, MikroORM, Sequelize, and Knex are not shipped officially, though teams can integrate them via DatabaseAdapter.
 
-## Is v1.0.0-rc.1 published on npm yet?
+## How is v1.0.0-rc.2 published to npm and GitHub Packages?
 
-All 20 packages are verified locally via npm pack tarballs and isolated Node 22 & Bun 1.4 consumer tests, with .github/workflows/release.yml configured for OIDC Trusted Publishing. Live registry publication awaits maintainer dispatch.
+All 20 packages are synchronized at 1.0.0-rc.2 and verified via npm pack tarballs, isolated Node 22 & Bun 1.4 consumer tests, and Cloudflare Edge Worker bundle tests. Maintainers can publish directly via .github/workflows/github-packages.yml or .github/workflows/release.yml.
 
 ## Does ForgeJS guarantee my application is secure out of the box?
 
@@ -3203,7 +3212,7 @@ No framework can guarantee application security alone. ForgeJS enforces hardened
 
 # ForgeJS API Reference (20 Packages)
 
-> Complete package directory and public TypeScript API overview for ForgeJS v1.0.0-rc.1.
+> Complete package directory and public TypeScript API overview for ForgeJS v1.0.0-rc.2.
 
 - **HTML URL**: https://github.com/forge-fr/forgejs/api
 - **Markdown URL**: https://github.com/forge-fr/forgejs/api.md
@@ -3237,7 +3246,7 @@ No framework can guarantee application security alone. ForgeJS enforces hardened
 
 > 7-stage application kernel, typed dependency injection container, encapsulated modules, SemVer capability-scoped plugin runtime, errors, secrets, config, events, hooks, and health checks.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Framework Core
 - **Category**: core
 - **Tarball**: 50.5 kB (56 files)
@@ -3315,7 +3324,7 @@ await kernel.start();
 
 > Zero-dependency radix router with O(1) static route lookup, constrained parameters, wildcard matching, nested groups, automatic HEAD, and RFC 405 Allow generation.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Framework Core
 - **Category**: core
 - **Tarball**: 16.4 kB (24 files)
@@ -3361,7 +3370,7 @@ const matched = router.match('GET', '/users/42');
 
 > Web Standards HTTP engine with tiered middleware, 7 lifecycle hooks, bounded body parsers, SSE, Web Streams compression, conditional ETags, and WebSocket route registry.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Framework Core
 - **Category**: core
 - **Tarball**: 52.5 kB (56 files)
@@ -3379,7 +3388,7 @@ npm install @forge-fr/http
 
 ## Runtime & Error Semantics
 
-- **Runtime**: Built on Web Standards (Request, Response, Headers, ReadableStream, CompressionStream). Zero third-party dependencies.
+- **Runtime**: Built on Web Standards (Request, Response, Headers, ReadableStream, CompressionStream). Zero third-party dependencies; automatically emits native globalThis.Response on Cloudflare Workers, Deno, and Bun.
 - **Errors**: Enforces 1 MiB default body limit (PayloadTooLargeError 413), CR/LF/NUL rejection in FastHeaders, and double-next() / post-commit middleware guards.
 
 ## Usage Example
@@ -3403,7 +3412,7 @@ app.get('/ping', (ctx) => ctx.json({ pong: true }));
 
 ### Fast Path, Body Parsers, Negotiation & SSE
 
-- **Values**: `FastHeaders`, `FastResponse`, `attachFastBody`, `copyFastBody`, `createFastResponse`, `getFastBody`, `DEFAULT_MAX_BODY_BYTES`, `DEFAULT_MAX_MULTIPART_FIELDS`, `DEFAULT_MAX_MULTIPART_FILES`, `DEFAULT_MAX_MULTIPART_FILE_BYTES`, `readBoundedBytes`, `readBoundedJson`, `readBoundedMultipart`, `readBoundedText`, `readBoundedUrlEncoded`, `negotiateContentType`, `parseAcceptHeader`, `createSseResponse`, `formatSseEvent`
+- **Values**: `FastHeaders`, `FastResponse`, `attachFastBody`, `copyFastBody`, `createFastResponse`, `getFastBody`, `toNativeResponse`, `DEFAULT_MAX_BODY_BYTES`, `DEFAULT_MAX_MULTIPART_FIELDS`, `DEFAULT_MAX_MULTIPART_FILES`, `DEFAULT_MAX_MULTIPART_FILE_BYTES`, `readBoundedBytes`, `readBoundedJson`, `readBoundedMultipart`, `readBoundedText`, `readBoundedUrlEncoded`, `negotiateContentType`, `parseAcceptHeader`, `createSseResponse`, `formatSseEvent`
 - **Types**: `BodyParseOptions`, `ParsedMultipart`, `UploadedFile`, `RequestBodyReader`, `AcceptMediaRange`, `CreateSseResponseOptions`, `SseEvent`, `SseProducer`, `SseStreamController`
 
 ### Hooks, WebSockets & HTTP Errors
@@ -3417,7 +3426,7 @@ app.get('/ping', (ctx) => ctx.json({ pong: true }));
 
 > Native node:http runtime adapter with direct-dispatch request metadata, synchronous FastResponse writes, RFC 6455 WebSocket upgrade codec, and POSIX graceful shutdown.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 22.6 kB (20 files)
@@ -3464,7 +3473,7 @@ attachProcessShutdown(server);
 
 > Native Bun.serve() runtime adapter with pure-HTTP fast mode, native Bun WebSockets, in-flight request draining, and POSIX shutdown handling.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 11.9 kB (16 files)
@@ -3511,7 +3520,7 @@ attachProcessShutdown(server);
 
 > WinterCG Fetch adapter for Cloudflare Workers, Deno, and isolate runtimes with zero node:* or Bun globals and waitUntil background task helpers.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 8.8 kB (12 files)
@@ -3529,7 +3538,7 @@ npm install @forge-fr/edge
 
 ## Runtime & Error Semantics
 
-- **Runtime**: Zero node:* or Bun globals. Unit and Fetch/WebSocketPair contract verified; live workerd/deno binaries are not installed in local sandbox.
+- **Runtime**: Zero node:* or Bun globals. Normalizes all responses via toNativeResponse() for strict Cloudflare Workers (workerd) and Deno WebIDL compatibility.
 - **Errors**: Background promises submitted via runInEdgeBackground() use executionCtx.waitUntil when available.
 
 ## Usage Example
@@ -3557,7 +3566,7 @@ export default createCloudflareWorkerHandler(app);
 
 > In-memory HTTP and WebSocket test harness, DI provider overrides, capability-scoped plugin test harness, and shared adapter contract verification suites.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: tooling
 - **Tarball**: 17.2 kB (32 files)
@@ -3605,7 +3614,7 @@ await client.close();
 
 > Standard Schema v1 validation engine with Zod v4 direct fast path, typed route handler wrapper, response schema stripping, and recursive prototype-pollution sanitization.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: validation
 - **Tarball**: 13.6 kB (24 files)
@@ -3664,7 +3673,7 @@ app.post(
 
 > Native PostgreSQL adapter built on postgres-js with SQLSTATE error normalization, credential-redacted URLs, allowlisted transaction isolation, and checksum-verified migrations.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 17.9 kB (28 files)
@@ -3723,7 +3732,7 @@ const adapter = kernel.container.resolve(DefaultDatabaseTokens.adapter);
 
 > First-class Drizzle ORM plugin preserving native PostgresJsDatabase<TSchema> inference, typed transactions, and DrizzleQueryError SQLSTATE normalization.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 8.6 kB (16 files)
@@ -3780,7 +3789,7 @@ const db = kernel.container.resolve(DefaultDrizzleTokens.db);
 
 > Prisma ORM adapter supporting Prisma v5/v6/v7+ generated clients, P1xxx/P2xxx error normalization, isolation-level transactions, and $disconnect draining.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 9.1 kB (16 files)
@@ -3835,7 +3844,7 @@ const prisma = kernel.container.resolve(DefaultPrismaTokens.client);
 
 > OWASP Argon2id password hashing (Node & Bun cross-compatible), algorithm-pinned JWT/JWKS, SHA-256 hashed sessions & API keys, OAuth 2.0 PKCE/OIDC, and Better Auth bridge.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: security
 - **Tarball**: 27.6 kB (48 files)
@@ -3896,7 +3905,7 @@ const valid = await hasher.verify('correct-horse-battery-staple', hash);
 
 > Segment-strict RBAC, deny-overrides ABAC policy engine, anti-IDOR resource ownership guards, multi-tenant isolation checks, and service-layer actor authorizers.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: security
 - **Tarball**: 19.2 kB (40 files)
@@ -3955,7 +3964,7 @@ const rbac = createRbacRegistry({
 
 > OWASP ASVS 5.0.0 security headers & CSP, strict CORS, CSRF protection, hardened cookies, proxy-safe rate limiting, SSRF-blocking safe fetch, and symlink-jailed path resolution.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: security
 - **Tarball**: 25.8 kB (44 files)
@@ -4009,7 +4018,7 @@ const safeFetch = createSafeFetch();
 
 > Structured Pino logging with recursive secret redaction and CRLF neutralization, correlation IDs, OpenTelemetry W3C tracing/metrics, and sanitized /health/live & /health/ready routes.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 21.4 kB (32 files)
@@ -4034,7 +4043,7 @@ npm install @forge-fr/logger
 
 ## Runtime & Error Semantics
 
-- **Runtime**: Uses pino ^10.4.0 and @opentelemetry/api ^1.10.0. Neutralizes CRLF log injection and redacts secrets recursively.
+- **Runtime**: Uses pino ^10.4.0 and @opentelemetry/api ^1.10.0. Neutralizes CRLF log injection, redacts secrets recursively, and forwards structured entries to custom destinations on Cloudflare Workers / browser bundles.
 - **Errors**: /health/live and /health/ready endpoints sanitize check errors in production mode.
 
 ## Usage Example
@@ -4064,7 +4073,7 @@ logger.info('Service initialized');
 
 > O(1) LRU in-memory and cursor SCAN-based Redis cache adapters with single-flight getOrSet, tag invalidation, prefix deletion, and CRLF/NUL key validation.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 13.2 kB (32 files)
@@ -4114,7 +4123,7 @@ const value = await cache.getOrSet('user:42', async () => ({ id: '42' }), { ttlM
 
 > Background job queues for Memory, Redis (sorted sets + atomic Lua pop), and PostgreSQL (FOR UPDATE SKIP LOCKED) with retries, DLQ replay, idempotency, and graceful worker draining.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 25.1 kB (40 files)
@@ -4167,7 +4176,7 @@ await queue.enqueue('email.welcome', { userId: 'u_1' });
 
 > Object storage adapters for Memory, symlink-jailed local disk, and zero-SDK Web Crypto AWS SigV4 S3 with MIME allowlists, binary magic-byte inspection, and presigned URLs.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 22.5 kB (36 files)
@@ -4219,7 +4228,7 @@ await storage.put('avatars/u42.txt', new TextEncoder().encode('hello'), {
 
 > OpenAPI 3.1 generator reflecting Standard Schema v1 routes into JSON Schema 2020-12 with validatedOpenApiHandler and XSS-escaped Swagger UI routes.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Adapter Layer
 - **Category**: validation
 - **Tarball**: 17.5 kB (36 files)
@@ -4273,7 +4282,7 @@ registerOpenApiRoutes(app, {
 
 > Official zero-dependency forge CLI for project scaffolding (minimal, api, modular), artifact generators, official plugin registration, dev/build/start/test orchestration, and doctor checks.
 
-- **Version**: v1.0.0-rc.1
+- **Version**: v1.0.0-rc.2
 - **Layer**: Tooling / CLI
 - **Category**: tooling
 - **Tarball**: 20.5 kB (40 files)

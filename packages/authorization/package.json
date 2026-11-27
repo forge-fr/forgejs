@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/authorization",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "description": "RBAC, permissions, policy engine, ownership checks, and multi-tenant authorization guards for ForgeJS.",
   "type": "module",
   "sideEffects": false,
@@ -35,9 +35,9 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@forge-fr/auth": "^1.0.0-rc.1",
-    "@forge-fr/core": "^1.0.0-rc.1",
-    "@forge-fr/http": "^1.0.0-rc.1"
+    "@forge-fr/auth": "^1.0.0-rc.2",
+    "@forge-fr/core": "^1.0.0-rc.2",
+    "@forge-fr/http": "^1.0.0-rc.2"
   },
   "scripts": {
     "build": "tsc -b tsconfig.json",
