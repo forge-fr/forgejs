@@ -1,5 +1,6 @@
 import {
   ForgeHttpError,
+  toNativeResponse,
   type FetchHandler,
   type HttpRuntimeAdapter,
   type ListenOptions,
@@ -344,7 +345,7 @@ export function createEdgeHandler<TEnv = unknown>(
       ) {
         const decision = await fetchFn.authorizeWebSocketUpgrade(request, meta);
         if (!decision.accepted) {
-          return decision.response;
+          return toNativeResponse(decision.response);
         }
         const PairCtor =
           options.webSocketPair ??
@@ -358,7 +359,7 @@ export function createEdgeHandler<TEnv = unknown>(
         return createEdgeWsUpgradeResponse(pair[0]);
       }
 
-      return await fetchFn(request, meta);
+      return toNativeResponse(await fetchFn(request, meta));
     } catch {
       return internalErrorResponse();
     }
@@ -408,7 +409,7 @@ export function createDenoHandler(
       ) {
         const decision = await fetchFn.authorizeWebSocketUpgrade(request, meta);
         if (!decision.accepted) {
-          return decision.response;
+          return toNativeResponse(decision.response);
         }
         const upgradeFn =
           options.upgradeWebSocket ??
@@ -427,10 +428,10 @@ export function createDenoHandler(
             : undefined,
         );
         bindEdgeWebSocketLifecycle(socket, decision, false);
-        return response;
+        return toNativeResponse(response);
       }
 
-      return await fetchFn(request, meta);
+      return toNativeResponse(await fetchFn(request, meta));
     } catch {
       return internalErrorResponse();
     }

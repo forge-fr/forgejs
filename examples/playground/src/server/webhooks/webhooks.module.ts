@@ -19,6 +19,7 @@ export const webhooksModule = defineModule({
           queue: resolver.resolve(QueueTokens.Queue),
           auth: resolver.resolve(AuthServiceToken),
           replayHealthyOverrides: resolver.resolve(PlaygroundTokens.ReplayHealthyOverrides),
+          drainQueue: resolver.resolve(PlaygroundTokens.DrainQueue),
         }),
     },
   ],

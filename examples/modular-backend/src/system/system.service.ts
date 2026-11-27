@@ -56,10 +56,14 @@ export function createSystemService(deps: SystemServiceDeps): SystemService {
 
   return {
     getMeta() {
+      const nodeVersion =
+        typeof process !== 'undefined' && typeof process.version === 'string' && process.version.length > 0
+          ? process.version
+          : null;
       return {
         service: 'ForgeJS Live Playground — Multi-Tenant Task & Webhook API',
         version: '1.0.0-rc.1',
-        runtime: `Node.js ${process.version}`,
+        runtime: nodeVersion ? `Node.js ${nodeVersion}` : 'Edge Runtime',
         packages: [
           '@forge-fr/core',
           '@forge-fr/node',

@@ -1,6 +1,11 @@
 const GlobalResponse = globalThis.Response;
 const GlobalHeaders = globalThis.Headers;
 const IS_BUN = 'Bun' in globalThis;
+const IS_NATIVE_RESPONSE_RUNTIME =
+  IS_BUN ||
+  'Deno' in globalThis ||
+  'WebSocketPair' in globalThis ||
+  (typeof navigator !== 'undefined' && navigator.userAgent === 'Cloudflare-Workers');
 
 const FAST_BODY_MAP = new WeakMap<Response, Uint8Array | string>();
 
@@ -123,7 +128,11 @@ export class FastHeaders {
     }
   }
 }
-Object.setPrototypeOf(FastHeaders.prototype, GlobalHeaders.prototype);
+try {
+  Object.setPrototypeOf(FastHeaders.prototype, GlobalHeaders.prototype);
+} catch {
+  // Ignore frozen prototype runtimes
+}
 
 export class FastResponse {
   public readonly _rawBody: Uint8Array | string | null;
@@ -161,12 +170,20 @@ export class FastResponse {
       for (const [k, v] of this.ensureFastHeaders().entries()) {
         h.append(k, v);
       }
-      this._native = new GlobalResponse(this._rawBody as BodyInit | null, {
+      const body =
+        this._status === 204 || this._status === 304
+          ? null
+          : (this._rawBody as BodyInit | null);
+      this._native = new GlobalResponse(body, {
         status: this._status,
         headers: h,
       });
     }
     return this._native;
+  }
+
+  public toNative(): Response {
+    return this.ensureNative();
   }
 
   public get status(): number {
@@ -274,7 +291,18 @@ export class FastResponse {
     return new FastResponse(this._rawBody, this._status, clonedHeaders, this._contentType) as unknown as Response;
   }
 }
-Object.setPrototypeOf(FastResponse.prototype, GlobalResponse.prototype);
+try {
+  Object.setPrototypeOf(FastResponse.prototype, GlobalResponse.prototype);
+} catch {
+  // Ignore frozen prototype runtimes
+}
+
+export function toNativeResponse(response: Response): Response {
+  if (response instanceof FastResponse) {
+    return response.toNative();
+  }
+  return response;
+}
 
 const BUN_JSON_200_INIT: ResponseInit | null = IS_BUN
   ? { headers: new GlobalHeaders({ 'content-type': 'application/json; charset=utf-8' }) }
@@ -293,11 +321,11 @@ export function createFastStaticResponse(
   status: number,
   contentType: string,
 ): Response {
-  if (!IS_BUN) {
+  if (!IS_NATIVE_RESPONSE_RUNTIME) {
     return new FastResponse(body, status, null, contentType) as unknown as Response;
   }
 
-  if (status === 200) {
+  if (IS_BUN && status === 200) {
     if (contentType === 'application/json; charset=utf-8') {
       return new GlobalResponse(body, BUN_JSON_200_INIT!);
     }
@@ -309,7 +337,8 @@ export function createFastStaticResponse(
     }
   }
 
-  return new GlobalResponse(body, {
+  const effectiveBody = status === 204 || status === 304 ? null : body;
+  return new GlobalResponse(effectiveBody, {
     status,
     headers: { 'content-type': contentType },
   });
@@ -321,14 +350,15 @@ export function createFastResponse(
   headersRecord: Record<string, string>,
   setCookies: string[] | null = null,
 ): Response {
-  if (!IS_BUN) {
+  if (!IS_NATIVE_RESPONSE_RUNTIME) {
     const fh = new FastHeaders(headersRecord);
     fh._setCookies = setCookies;
     return new FastResponse(body, status, fh) as unknown as Response;
   }
 
+  const effectiveBody = status === 204 || status === 304 ? null : (body as BodyInit | null);
   if (setCookies === null || setCookies.length === 0) {
-    return new GlobalResponse(body as BodyInit | null, {
+    return new GlobalResponse(effectiveBody, {
       status,
       headers: headersRecord,
     });
@@ -341,7 +371,7 @@ export function createFastResponse(
       h.append('set-cookie', sc);
     }
   }
-  return new GlobalResponse(body as BodyInit | null, { status, headers: h });
+  return new GlobalResponse(effectiveBody, { status, headers: h });
 }
 
 export function attachFastBody(response: Response, body: Uint8Array | string): Response {

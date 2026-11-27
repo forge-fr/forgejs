@@ -81,11 +81,13 @@ export interface PlaygroundBackendOptions {
   readonly adapter?: HttpRuntimeAdapter;
   readonly passwordHasher?: PasswordHasher;
   readonly jwtSecret?: string;
+  readonly edgeMode?: boolean;
 }
 
 export function createPlaygroundBackend(
   options: PlaygroundBackendOptions = {},
 ): PlaygroundBackend {
+  const isEdgeRuntime = options.edgeMode ?? options.adapter?.name === 'edge';
   const observability = createObservabilityService('forgejs-live-playground');
   const logSink = createMemoryLogSink();
   const logger = createPinoLogger({
@@ -106,7 +108,7 @@ export function createPlaygroundBackend(
   const queue = createMemoryQueueAdapter({
     maxQueueSize: 500,
     defaultMaxAttempts: 2,
-    defaultBackoff: { type: 'fixed', delayMs: 60 },
+    defaultBackoff: { type: 'fixed', delayMs: isEdgeRuntime ? 0 : 60 },
   });
 
   const storage = createMemoryStorageAdapter({
@@ -115,93 +117,143 @@ export function createPlaygroundBackend(
     maxObjectBytes: 512 * 1024,
   });
 
+  async function executeWebhookJob(
+    job: { readonly id: string; readonly name: string; readonly payload: unknown },
+    attempt: number,
+  ): Promise<unknown> {
+    if (job.name !== 'webhook.deliver') {
+      return { ignored: true };
+    }
+    const payload = job.payload as WebhookJobPayload;
+    const effectiveTarget = replayHealthyOverrides.has(job.id)
+      ? 'sandbox://sink/ok'
+      : payload.targetUrl;
+
+    // Deterministic sandbox sink simulation (no unsafe external outbound network traffic)
+    if (effectiveTarget === 'sandbox://sink/fail') {
+      throw new Error('502 Bad Gateway from sandbox://sink/fail (simulated receiver outage)');
+    }
+
+    if (effectiveTarget === 'sandbox://sink/flaky' && attempt === 1) {
+      throw new Error('503 Service Unavailable on attempt 1 from sandbox://sink/flaky');
+    }
+
+    return {
+      delivered: true,
+      statusCode: 200,
+      targetUrl: effectiveTarget,
+      attempt,
+    };
+  }
+
+  function handleJobCompleted(job: {
+    readonly id: string;
+    readonly attempts: number;
+    readonly payload: unknown;
+  }): void {
+    replayHealthyOverrides.delete(job.id);
+    const payload = job.payload as WebhookJobPayload;
+    store.updateDeliveryByJobId(job.id, {
+      status: 'delivered',
+      attempts: job.attempts,
+      statusCode: 200,
+      lastError: undefined,
+    });
+    store.publishEvent({
+      tenantId: payload.tenantId,
+      type: 'webhook.delivered',
+      actorName: '@forge-fr/queue',
+      summary: `Delivered ${payload.eventType} to "${payload.webhookName}" (200 OK)`,
+      data: {
+        jobId: job.id,
+        webhookId: payload.webhookId,
+        attempts: job.attempts,
+      },
+    });
+  }
+
+  function handleJobFailed(
+    job: {
+      readonly id: string;
+      readonly attempts: number;
+      readonly maxAttempts: number;
+      readonly payload: unknown;
+    },
+    err: unknown,
+  ): void {
+    const payload = job.payload as WebhookJobPayload;
+    const message = err instanceof Error ? err.message : String(err);
+    store.updateDeliveryByJobId(job.id, {
+      status: 'retrying',
+      attempts: job.attempts,
+      statusCode: 502,
+      lastError: message,
+    });
+    store.publishEvent({
+      tenantId: payload.tenantId,
+      type: 'webhook.retrying',
+      actorName: '@forge-fr/queue',
+      summary: `Attempt ${job.attempts}/${job.maxAttempts} failed for "${payload.webhookName}" — retrying`,
+      data: { jobId: job.id, error: message },
+    });
+  }
+
+  function handleJobDeadLetter(
+    job: {
+      readonly id: string;
+      readonly attempts: number;
+      readonly payload: unknown;
+    },
+    err: unknown,
+  ): void {
+    const payload = job.payload as WebhookJobPayload;
+    const message = err instanceof Error ? err.message : String(err);
+    store.updateDeliveryByJobId(job.id, {
+      status: 'dlq',
+      attempts: job.attempts,
+      statusCode: 502,
+      lastError: message,
+    });
+    store.publishEvent({
+      tenantId: payload.tenantId,
+      type: 'webhook.dlq',
+      actorName: '@forge-fr/queue',
+      summary: `Job ${job.id} moved to Dead-Letter Queue after ${job.attempts} attempts`,
+      data: { jobId: job.id, webhookId: payload.webhookId, error: message },
+    });
+  }
+
   const worker = createQueueWorker(
     queue,
-    async (job, execCtx) => {
-      if (job.name !== 'webhook.deliver') {
-        return { ignored: true };
-      }
-      const payload = job.payload as WebhookJobPayload;
-      const effectiveTarget = replayHealthyOverrides.has(job.id)
-        ? 'sandbox://sink/ok'
-        : payload.targetUrl;
-
-      // Deterministic sandbox sink simulation (no unsafe external outbound network traffic)
-      if (effectiveTarget === 'sandbox://sink/fail') {
-        throw new Error('502 Bad Gateway from sandbox://sink/fail (simulated receiver outage)');
-      }
-
-      if (effectiveTarget === 'sandbox://sink/flaky' && execCtx.attempt === 1) {
-        throw new Error('503 Service Unavailable on attempt 1 from sandbox://sink/flaky');
-      }
-
-      return {
-        delivered: true,
-        statusCode: 200,
-        targetUrl: effectiveTarget,
-        attempt: execCtx.attempt,
-      };
-    },
+    async (job, execCtx) => executeWebhookJob(job, execCtx.attempt),
     {
       pollIntervalMs: 20,
       concurrency: 4,
-      onCompleted: (job) => {
-        replayHealthyOverrides.delete(job.id);
-        const payload = job.payload as WebhookJobPayload;
-        store.updateDeliveryByJobId(job.id, {
-          status: 'delivered',
-          attempts: job.attempts,
-          statusCode: 200,
-          lastError: undefined,
-        });
-        store.publishEvent({
-          tenantId: payload.tenantId,
-          type: 'webhook.delivered',
-          actorName: '@forge-fr/queue',
-          summary: `Delivered ${payload.eventType} to "${payload.webhookName}" (200 OK)`,
-          data: {
-            jobId: job.id,
-            webhookId: payload.webhookId,
-            attempts: job.attempts,
-          },
-        });
-      },
-      onFailed: (job, err) => {
-        const payload = job.payload as WebhookJobPayload;
-        const message = err instanceof Error ? err.message : String(err);
-        store.updateDeliveryByJobId(job.id, {
-          status: 'retrying',
-          attempts: job.attempts,
-          statusCode: 502,
-          lastError: message,
-        });
-        store.publishEvent({
-          tenantId: payload.tenantId,
-          type: 'webhook.retrying',
-          actorName: '@forge-fr/queue',
-          summary: `Attempt ${job.attempts}/${job.maxAttempts} failed for "${payload.webhookName}" — retrying`,
-          data: { jobId: job.id, error: message },
-        });
-      },
-      onDeadLetter: (job, err) => {
-        const payload = job.payload as WebhookJobPayload;
-        const message = err instanceof Error ? err.message : String(err);
-        store.updateDeliveryByJobId(job.id, {
-          status: 'dlq',
-          attempts: job.attempts,
-          statusCode: 502,
-          lastError: message,
-        });
-        store.publishEvent({
-          tenantId: payload.tenantId,
-          type: 'webhook.dlq',
-          actorName: '@forge-fr/queue',
-          summary: `Job ${job.id} moved to Dead-Letter Queue after ${job.attempts} attempts`,
-          data: { jobId: job.id, webhookId: payload.webhookId, error: message },
-        });
-      },
+      onCompleted: handleJobCompleted,
+      onFailed: handleJobFailed,
+      onDeadLetter: handleJobDeadLetter,
     },
   );
+
+  async function drainQueueInline(): Promise<void> {
+    if (!isEdgeRuntime) return;
+    // Bounded synchronous-style drain for serverless Edge isolates (no background setTimeout loops)
+    for (let step = 0; step < 32; step += 1) {
+      const job = await queue.dequeue();
+      if (!job) break;
+      try {
+        const result = await executeWebhookJob(job, job.attempts);
+        const completed = await queue.complete(job.id, result);
+        handleJobCompleted(completed);
+      } catch (err: unknown) {
+        const outcome = await queue.fail(job.id, err);
+        handleJobFailed(outcome.job, err);
+        if (outcome.status === 'dead') {
+          handleJobDeadLetter(outcome.job, err);
+        }
+      }
+    }
+  }
 
   let kernelRef: ApplicationKernel | null = null;
 
@@ -235,6 +287,7 @@ export function createPlaygroundBackend(
       { token: PlaygroundTokens.LogSink, useValue: logSink },
       { token: PlaygroundTokens.ReplayHealthyOverrides, useValue: replayHealthyOverrides },
       { token: PlaygroundTokens.ResetSandbox, useValue: reset },
+      { token: PlaygroundTokens.DrainQueue, useValue: drainQueueInline },
       {
         token: PlaygroundTokens.AuthConfig,
         useValue: {
@@ -255,7 +308,11 @@ export function createPlaygroundBackend(
     ],
     plugins: [
       createCachePlugin({ adapter: cache }),
-      createQueuePlugin({ queue, worker, drainTimeoutMs: 2_000 }),
+      createQueuePlugin({
+        queue,
+        ...(isEdgeRuntime ? {} : { worker }),
+        drainTimeoutMs: 2_000,
+      }),
       createStoragePlugin({ adapter: storage }),
     ],
     trustRequestId: true,

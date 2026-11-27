@@ -52,6 +52,7 @@ export {
   copyFastBody,
   createFastResponse,
   getFastBody,
+  toNativeResponse,
 } from './fast-body.js';
 
 export { createHttpApp } from './app.js';

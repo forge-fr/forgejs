@@ -207,6 +207,7 @@ export interface PlaygroundAuthRuntime {
 }
 
 export type SandboxResetHandler = () => Promise<void>;
+export type DrainQueueHandler = () => Promise<void>;
 
 export interface PlaygroundAuthConfig {
   readonly passwordHasher?: PasswordHasher | undefined;
@@ -217,6 +218,7 @@ export const PlaygroundTokens = Object.freeze({
   LogSink: createToken<MemoryLogSink>('playground:LogSink'),
   ReplayHealthyOverrides: createToken<Set<string>>('playground:ReplayHealthyOverrides'),
   ResetSandbox: createToken<SandboxResetHandler>('playground:ResetSandbox'),
+  DrainQueue: createToken<DrainQueueHandler>('playground:DrainQueue'),
   AuthConfig: createToken<PlaygroundAuthConfig>('playground:AuthConfig'),
 });
 

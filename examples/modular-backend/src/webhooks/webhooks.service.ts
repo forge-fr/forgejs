@@ -69,6 +69,7 @@ export interface WebhooksServiceDeps {
   readonly queue: QueueAdapter;
   readonly auth: AuthService;
   readonly replayHealthyOverrides: Set<string>;
+  readonly drainQueue?: () => Promise<void>;
 }
 
 async function validateWebhookTarget(targetUrl: string): Promise<string> {
@@ -86,7 +87,7 @@ async function validateWebhookTarget(targetUrl: string): Promise<string> {
 }
 
 export function createWebhooksService(deps: WebhooksServiceDeps): WebhooksService {
-  const { store, queue, auth, replayHealthyOverrides } = deps;
+  const { store, queue, auth, replayHealthyOverrides, drainQueue } = deps;
 
   async function enqueueMatching(
     tenantId: string,
@@ -111,7 +112,6 @@ export function createWebhooksService(deps: WebhooksServiceDeps): WebhooksServic
       };
       const job = await queue.enqueue('webhook.deliver', payload, {
         maxAttempts: 2,
-        backoff: { type: 'fixed', delayMs: 60 },
       });
       store.upsertDelivery({
         id: deliveryId,
@@ -128,6 +128,9 @@ export function createWebhooksService(deps: WebhooksServiceDeps): WebhooksServic
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
+    }
+    if (targets.length > 0 && drainQueue) {
+      await drainQueue();
     }
     return targets.length;
   }
@@ -277,6 +280,10 @@ export function createWebhooksService(deps: WebhooksServiceDeps): WebhooksServic
         summary: `Replayed dead-letter job ${replayed.id}${overrideHealthySink ? ' (healthy sink override)' : ''}`,
         data: { jobId: replayed.id },
       });
+
+      if (drainQueue) {
+        await drainQueue();
+      }
 
       return {
         id: replayed.id,

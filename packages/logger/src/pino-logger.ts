@@ -199,6 +199,16 @@ export function createPinoLogger(options: PinoLoggerOptions = {}): PinoForgeLogg
           },
         }
       : {}),
+    ...(options.destination !== undefined
+      ? {
+          browser: {
+            asObject: true,
+            write: (obj: object): void => {
+              options.destination?.write(`${JSON.stringify(obj)}\n`);
+            },
+          },
+        }
+      : {}),
   };
 
   const rawLogger =

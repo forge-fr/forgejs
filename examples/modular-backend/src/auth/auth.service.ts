@@ -154,10 +154,20 @@ const ALLOWED_OAUTH_REDIRECT_URIS = [
 function resolveJwtSecret(explicitSecret?: string): ReturnType<typeof secret<string>> {
   const fromEnv = typeof process !== 'undefined' ? process.env['PLAYGROUND_JWT_SECRET']?.trim() : undefined;
   const configured = explicitSecret?.trim() || fromEnv;
-  if (configured && Buffer.byteLength(configured, 'utf8') >= 32) {
+  if (configured && new TextEncoder().encode(configured).byteLength >= 32) {
     return secret(configured);
   }
-  return secret(crypto.randomBytes(32).toString('hex'));
+  const bytes = new Uint8Array(32);
+  if (typeof globalThis.crypto?.getRandomValues === 'function') {
+    globalThis.crypto.getRandomValues(bytes);
+  } else {
+    bytes.set(crypto.randomBytes(32));
+  }
+  let hex = '';
+  for (const byte of bytes) {
+    hex += byte.toString(16).padStart(2, '0');
+  }
+  return secret(hex);
 }
 
 export function getRolePermissions(role: UserRole): readonly string[] {
