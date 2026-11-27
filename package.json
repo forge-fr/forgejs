@@ -17,7 +17,9 @@
     "packages:build": "node scripts/prepare-github-packages.mjs --build",
     "packages:verify": "node scripts/verify-packaging.mjs",
     "packages:prepare:github": "node scripts/prepare-github-packages.mjs --build --verify --pack --out-dir dist-packages",
-    "packages:publish:github": "node scripts/prepare-github-packages.mjs --build --publish --registry https://npm.pkg.github.com"
+    "packages:publish:github": "node scripts/prepare-github-packages.mjs --build --publish --registry https://npm.pkg.github.com",
+    "docs:verify": "node scripts/verify-docs-examples.mjs",
+    "bench": "node benchmarks/run-all.mjs"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.2.2",
@@ -31,9 +33,13 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@hono/node-server": "^2.1.11",
     "@types/node": "^22.14.0",
     "esbuild": "^0.28.0",
     "fast-check": "^4.11.0",
+    "fastify": "^5.12.8",
+    "hono": "^4.13.22",
+    "tinybench": "^6.2.5",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2",
     "vitest": "^5.1.2"

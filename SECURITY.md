@@ -5,6 +5,25 @@
 
 ---
 
+## Supported Versions
+
+| Version | Supported |
+| :--- | :--- |
+| `1.0.0-rc.1` (`main`) | :white_check_mark: Yes |
+| `< 1.0.0-rc.1` | :x: No |
+
+## Reporting a Vulnerability
+
+We take security reports seriously across all 20 packages. **Please do not report security vulnerabilities through public GitHub Issues, Discussions, or Pull Requests.**
+
+Instead, please report them privately using **GitHub Private Vulnerability Reporting**:
+
+1. Open [https://github.com/forge-fr/forgejs/security/advisories/new](https://github.com/forge-fr/forgejs/security/advisories/new).
+2. Include the affected package(s), reproduction steps or proof of concept, runtime target (Node.js, Bun, or WinterCG Edge), and potential impact.
+3. Maintainers aim to acknowledge valid reports within **48 hours**, confirm severity/remediation plan within **5 business days**, and coordinate a patched release before public advisory disclosure.
+
+---
+
 ## 1. System Threat Model & Trust Boundaries
 
 ### Trust Boundaries

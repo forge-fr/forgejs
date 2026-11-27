@@ -1,0 +1,77 @@
+name: Bug Report
+description: Report a reproducible bug, TypeScript error, or runtime issue in @forge-fr/* packages
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please do **not** report security vulnerabilities here — use **Security -> Advisories -> Report a vulnerability** instead.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Affected Package
+      description: Select the primary package where the issue occurs.
+      options:
+        - "@forge-fr/core"
+        - "@forge-fr/router"
+        - "@forge-fr/http"
+        - "@forge-fr/node"
+        - "@forge-fr/bun"
+        - "@forge-fr/edge"
+        - "@forge-fr/testing"
+        - "@forge-fr/validation"
+        - "@forge-fr/database"
+        - "@forge-fr/drizzle"
+        - "@forge-fr/prisma"
+        - "@forge-fr/auth"
+        - "@forge-fr/authorization"
+        - "@forge-fr/security"
+        - "@forge-fr/logger"
+        - "@forge-fr/cache"
+        - "@forge-fr/queue"
+        - "@forge-fr/storage"
+        - "@forge-fr/openapi"
+        - "@forge-fr/cli"
+        - "Multiple / Cross-package"
+    validations:
+      required: true
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Target Runtime
+      options:
+        - "Node.js 22.x"
+        - "Node.js 24.x"
+        - "Bun 1.4+"
+        - "Cloudflare Workers / WinterCG Edge"
+        - "Deno"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package Version
+      placeholder: "1.0.0-rc.1"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal Reproduction
+      description: Paste a minimal TypeScript/ESM snippet or steps to reproduce.
+      render: ts
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs / Error Output
+      render: shell

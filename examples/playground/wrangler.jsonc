@@ -1,0 +1,12 @@
+{
+  "name": "forgejs-playground-backend",
+  "main": "src/worker.ts",
+  "compatibility_date": "2025-12-01",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "alias": {
+    "@node-rs/argon2": "./src/cloudflare/argon2-edge-stub.ts"
+  }
+}

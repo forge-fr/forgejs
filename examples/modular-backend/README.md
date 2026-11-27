@@ -9,8 +9,8 @@ Complete multi-tenant modular backend demonstrating:
 ## Run
 
 ```bash
-pnpm install
-pnpm --filter @forge-fr-example-modular-backend dev
+npm install
+npm start
 ```
 
 Follow the full 9-step walkthrough in [`docs/tutorials/playground-backend.md`](../../docs/tutorials/playground-backend.md).

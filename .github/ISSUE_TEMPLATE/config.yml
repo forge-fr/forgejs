@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation & Live Portal
+    url: https://forgejs.dev/docs/getting-started/introduction
+    about: Browse guides, API docs, and the interactive Playground before filing an issue
+  - name: 9-Step Modular Backend Tutorial
+    url: https://github.com/forge-fr/forgejs/blob/main/docs/tutorials/playground-backend.md
+    about: Follow the complete step-by-step backend walkthrough
+  - name: Report a Security Vulnerability (Private)
+    url: https://github.com/forge-fr/forgejs/security/advisories/new
+    about: Report security flaws privately via GitHub Private Vulnerability Reporting

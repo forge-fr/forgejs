@@ -1,0 +1,712 @@
+{
+  "node": {
+    "generatedAt": "2026-11-27T00:10:09.827Z",
+    "metadata": {
+      "runtime": "node",
+      "runtimeVersion": "v22.23.5",
+      "os": "Linux 4.19.0-gvisor (x64)",
+      "cpuModel": "unknown",
+      "cpuCores": 2,
+      "totalMemoryMb": 4096,
+      "versions": {
+        "forgejs": "0.1.0",
+        "hono": "^4.13.22",
+        "honoNodeServer": "^2.1.11",
+        "fastify": "^5.12.8",
+        "tinybench": "^6.2.5",
+        "zod": "^4.6.7"
+      }
+    },
+    "microbenchmarks": {
+      "routerAndStatic": [
+        {
+          "name": "ForgeJS Radix Router (static + dynamic + 404 match)",
+          "opsPerSec": 586190,
+          "meanMs": 0.0018,
+          "p75Ms": 0.0017,
+          "p99Ms": 0.0023,
+          "samples": 277692
+        },
+        {
+          "name": "ForgeJS In-Process Static JSON (app.fetch)",
+          "opsPerSec": 317446,
+          "meanMs": 0.0034,
+          "p75Ms": 0.0032,
+          "p99Ms": 0.0051,
+          "samples": 147632
+        },
+        {
+          "name": "Hono In-Process Static JSON (app.fetch)",
+          "opsPerSec": 131194,
+          "meanMs": 0.0081,
+          "p75Ms": 0.0077,
+          "p99Ms": 0.0151,
+          "samples": 62085
+        },
+        {
+          "name": "Fastify In-Process Static JSON (app.inject)",
+          "opsPerSec": 15197,
+          "meanMs": 0.1001,
+          "p75Ms": 0.0837,
+          "p99Ms": 0.2246,
+          "samples": 4996
+        }
+      ],
+      "middlewareAndValidation": [
+        {
+          "name": "ForgeJS 5-Middleware Chain (/mw/ping)",
+          "opsPerSec": 254577,
+          "meanMs": 0.0043,
+          "p75Ms": 0.004,
+          "p99Ms": 0.0066,
+          "samples": 116240
+        },
+        {
+          "name": "Hono 5-Middleware Chain (/mw/ping)",
+          "opsPerSec": 97585,
+          "meanMs": 0.0111,
+          "p75Ms": 0.0104,
+          "p99Ms": 0.0245,
+          "samples": 45213
+        },
+        {
+          "name": "Fastify 5-Hook Chain (/mw/ping)",
+          "opsPerSec": 22392,
+          "meanMs": 0.0632,
+          "p75Ms": 0.0534,
+          "p99Ms": 0.1369,
+          "samples": 7908
+        },
+        {
+          "name": "ForgeJS Zod Validated POST (/items)",
+          "opsPerSec": 53646,
+          "meanMs": 0.0214,
+          "p75Ms": 0.0186,
+          "p99Ms": 0.064,
+          "samples": 23345
+        },
+        {
+          "name": "Hono Zod Validated POST (/items)",
+          "opsPerSec": 43419,
+          "meanMs": 0.0251,
+          "p75Ms": 0.023,
+          "p99Ms": 0.0656,
+          "samples": 19915
+        },
+        {
+          "name": "Fastify Zod Validated POST (/items)",
+          "opsPerSec": 11868,
+          "meanMs": 0.116,
+          "p75Ms": 0.104,
+          "p99Ms": 0.2813,
+          "samples": 4310
+        }
+      ],
+      "diAndKernel": [
+        {
+          "name": "DI Singleton Resolve",
+          "opsPerSec": 7534415,
+          "meanMs": 0.0002,
+          "p75Ms": 0.0001,
+          "p99Ms": 0.0003,
+          "samples": 3171719
+        },
+        {
+          "name": "DI Transient Resolve",
+          "opsPerSec": 3749618,
+          "meanMs": 0.0003,
+          "p75Ms": 0.0003,
+          "p99Ms": 0.0007,
+          "samples": 1573549
+        },
+        {
+          "name": "DI Request Scope Create + Resolve + Dispose",
+          "opsPerSec": 1188899,
+          "meanMs": 0.001,
+          "p75Ms": 0.0009,
+          "p99Ms": 0.0016,
+          "samples": 521449
+        },
+        {
+          "name": "5-Module Kernel Boot + Shutdown",
+          "opsPerSec": 34053,
+          "meanMs": 0.0322,
+          "p75Ms": 0.0298,
+          "p99Ms": 0.0911,
+          "samples": 15531
+        }
+      ]
+    },
+    "httpLoad": {
+      "static_json": {
+        "label": "GET /json (Static JSON)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.37,
+            "totalRequests": 4650,
+            "failedRequests": 0,
+            "rps": 3867.36,
+            "meanMs": 6.18,
+            "p50Ms": 5.65,
+            "p95Ms": 10.19,
+            "p99Ms": 13.74
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1203.55,
+            "totalRequests": 4483,
+            "failedRequests": 0,
+            "rps": 3724.83,
+            "meanMs": 6.42,
+            "p50Ms": 5.78,
+            "p95Ms": 10.72,
+            "p99Ms": 12.62
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.34,
+            "totalRequests": 4647,
+            "failedRequests": 0,
+            "rps": 3864.97,
+            "meanMs": 6.19,
+            "p50Ms": 5.61,
+            "p95Ms": 10.78,
+            "p99Ms": 18.68
+          }
+        }
+      },
+      "dynamic_param_query": {
+        "label": "GET /users/:id/posts?limit=15 (Param + Query)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.45,
+            "totalRequests": 4662,
+            "failedRequests": 0,
+            "rps": 3877.08,
+            "meanMs": 6.17,
+            "p50Ms": 5.75,
+            "p95Ms": 10.27,
+            "p99Ms": 11.39
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1207.39,
+            "totalRequests": 4445,
+            "failedRequests": 0,
+            "rps": 3681.48,
+            "meanMs": 6.49,
+            "p50Ms": 5.95,
+            "p95Ms": 10.68,
+            "p99Ms": 14.77
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1203.06,
+            "totalRequests": 4604,
+            "failedRequests": 0,
+            "rps": 3826.9,
+            "meanMs": 6.25,
+            "p50Ms": 5.69,
+            "p95Ms": 10.15,
+            "p99Ms": 14.83
+          }
+        }
+      },
+      "middleware_5": {
+        "label": "GET /mw/ping (5-Middleware Chain)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.41,
+            "totalRequests": 4783,
+            "failedRequests": 0,
+            "rps": 3977.83,
+            "meanMs": 6.01,
+            "p50Ms": 5.62,
+            "p95Ms": 10.46,
+            "p99Ms": 11.62
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.14,
+            "totalRequests": 4515,
+            "failedRequests": 0,
+            "rps": 3755.81,
+            "meanMs": 6.37,
+            "p50Ms": 5.83,
+            "p95Ms": 10,
+            "p99Ms": 13.9
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.55,
+            "totalRequests": 4684,
+            "failedRequests": 0,
+            "rps": 3898.31,
+            "meanMs": 6.13,
+            "p50Ms": 5.66,
+            "p95Ms": 10.19,
+            "p99Ms": 12.8
+          }
+        }
+      },
+      "validated_post": {
+        "label": "POST /items (Zod JSON Validation)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.68,
+            "totalRequests": 4013,
+            "failedRequests": 0,
+            "rps": 3336.7,
+            "meanMs": 7.17,
+            "p50Ms": 6.66,
+            "p95Ms": 10.27,
+            "p99Ms": 13.46
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.33,
+            "totalRequests": 3682,
+            "failedRequests": 0,
+            "rps": 3062.38,
+            "meanMs": 7.81,
+            "p50Ms": 7.19,
+            "p95Ms": 12.65,
+            "p99Ms": 17.49
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.08,
+            "totalRequests": 4130,
+            "failedRequests": 0,
+            "rps": 3435.71,
+            "meanMs": 6.96,
+            "p50Ms": 6.49,
+            "p95Ms": 10.58,
+            "p99Ms": 13.71
+          }
+        }
+      }
+    },
+    "probes": {
+      "forgejs": {
+        "coldStartRunsMs": [
+          59.25,
+          52.69,
+          61.01,
+          62.6,
+          66.19
+        ],
+        "coldStartMedianMs": 61.01,
+        "coldStartMinMs": 52.69,
+        "coldStartMaxMs": 66.19,
+        "idleRssMb": 159.68,
+        "idleHeapUsedMb": 13.33,
+        "loadedRssMb": 162.95,
+        "loadedHeapUsedMb": 19.33
+      },
+      "hono": {
+        "coldStartRunsMs": [
+          61.44,
+          62.25,
+          51.67,
+          61.95,
+          51.91
+        ],
+        "coldStartMedianMs": 61.44,
+        "coldStartMinMs": 51.67,
+        "coldStartMaxMs": 62.25,
+        "idleRssMb": 159.5,
+        "idleHeapUsedMb": 13.41,
+        "loadedRssMb": 162.9,
+        "loadedHeapUsedMb": 15.54
+      },
+      "fastify": {
+        "coldStartRunsMs": [
+          160.49,
+          163.92,
+          154.82,
+          168.37,
+          169.53
+        ],
+        "coldStartMedianMs": 163.92,
+        "coldStartMinMs": 154.82,
+        "coldStartMaxMs": 169.53,
+        "idleRssMb": 154.89,
+        "idleHeapUsedMb": 15.34,
+        "loadedRssMb": 157.69,
+        "loadedHeapUsedMb": 22.9
+      }
+    }
+  },
+  "bun": {
+    "generatedAt": "2026-11-27T00:12:48.979Z",
+    "metadata": {
+      "runtime": "bun",
+      "runtimeVersion": "1.4.4",
+      "os": "Linux 4.19.0-gvisor (x64)",
+      "cpuModel": "unknown",
+      "cpuCores": 2,
+      "totalMemoryMb": 4096,
+      "versions": {
+        "forgejs": "0.1.0",
+        "hono": "^4.13.22",
+        "honoNodeServer": "^2.1.11",
+        "fastify": "^5.12.8",
+        "tinybench": "^6.2.5",
+        "zod": "^4.6.7"
+      }
+    },
+    "microbenchmarks": {
+      "routerAndStatic": [
+        {
+          "name": "ForgeJS Radix Router (static + dynamic + 404 match)",
+          "opsPerSec": 651594,
+          "meanMs": 0.0018,
+          "p75Ms": 0.0015,
+          "p99Ms": 0.0078,
+          "samples": 274008
+        },
+        {
+          "name": "ForgeJS In-Process Static JSON (app.fetch)",
+          "opsPerSec": 721724,
+          "meanMs": 0.0018,
+          "p75Ms": 0.0014,
+          "p99Ms": 0.0166,
+          "samples": 271910
+        },
+        {
+          "name": "Hono In-Process Static JSON (app.fetch)",
+          "opsPerSec": 525907,
+          "meanMs": 0.0024,
+          "p75Ms": 0.002,
+          "p99Ms": 0.0162,
+          "samples": 209312
+        },
+        {
+          "name": "Fastify In-Process Static JSON (app.inject)",
+          "opsPerSec": 44613,
+          "meanMs": 0.0393,
+          "p75Ms": 0.0295,
+          "p99Ms": 0.1195,
+          "samples": 12729
+        }
+      ],
+      "middlewareAndValidation": [
+        {
+          "name": "ForgeJS 5-Middleware Chain (/mw/ping)",
+          "opsPerSec": 446581,
+          "meanMs": 0.0033,
+          "p75Ms": 0.0025,
+          "p99Ms": 0.0245,
+          "samples": 153233
+        },
+        {
+          "name": "Hono 5-Middleware Chain (/mw/ping)",
+          "opsPerSec": 205246,
+          "meanMs": 0.0058,
+          "p75Ms": 0.0054,
+          "p99Ms": 0.0311,
+          "samples": 86795
+        },
+        {
+          "name": "Fastify 5-Hook Chain (/mw/ping)",
+          "opsPerSec": 47400,
+          "meanMs": 0.027,
+          "p75Ms": 0.0255,
+          "p99Ms": 0.0825,
+          "samples": 18549
+        },
+        {
+          "name": "ForgeJS Zod Validated POST (/items)",
+          "opsPerSec": 244320,
+          "meanMs": 0.0058,
+          "p75Ms": 0.0044,
+          "p99Ms": 0.0306,
+          "samples": 86741
+        },
+        {
+          "name": "Hono Zod Validated POST (/items)",
+          "opsPerSec": 214530,
+          "meanMs": 0.0055,
+          "p75Ms": 0.005,
+          "p99Ms": 0.0341,
+          "samples": 90446
+        },
+        {
+          "name": "Fastify Zod Validated POST (/items)",
+          "opsPerSec": 30506,
+          "meanMs": 0.0435,
+          "p75Ms": 0.0355,
+          "p99Ms": 0.1883,
+          "samples": 11484
+        }
+      ],
+      "diAndKernel": [
+        {
+          "name": "DI Singleton Resolve",
+          "opsPerSec": 6250984,
+          "meanMs": 0.0002,
+          "p75Ms": 0.0002,
+          "p99Ms": 0.0015,
+          "samples": 2272500
+        },
+        {
+          "name": "DI Transient Resolve",
+          "opsPerSec": 3799900,
+          "meanMs": 0.0004,
+          "p75Ms": 0.0003,
+          "p99Ms": 0.0022,
+          "samples": 1387237
+        },
+        {
+          "name": "DI Request Scope Create + Resolve + Dispose",
+          "opsPerSec": 1351234,
+          "meanMs": 0.001,
+          "p75Ms": 0.0009,
+          "p99Ms": 0.0036,
+          "samples": 503583
+        },
+        {
+          "name": "5-Module Kernel Boot + Shutdown",
+          "opsPerSec": 37340,
+          "meanMs": 0.0292,
+          "p75Ms": 0.0286,
+          "p99Ms": 0.0837,
+          "samples": 17136
+        }
+      ]
+    },
+    "httpLoad": {
+      "static_json": {
+        "label": "GET /json (Static JSON)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1200.87,
+            "totalRequests": 8737,
+            "failedRequests": 0,
+            "rps": 7275.57,
+            "meanMs": 3.29,
+            "p50Ms": 2.97,
+            "p95Ms": 6.54,
+            "p99Ms": 10.93
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1200.88,
+            "totalRequests": 9091,
+            "failedRequests": 0,
+            "rps": 7570.29,
+            "meanMs": 3.16,
+            "p50Ms": 2.77,
+            "p95Ms": 6.26,
+            "p99Ms": 11.7
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.41,
+            "totalRequests": 7855,
+            "failedRequests": 0,
+            "rps": 6538.15,
+            "meanMs": 3.66,
+            "p50Ms": 3.39,
+            "p95Ms": 6.22,
+            "p99Ms": 11.97
+          }
+        }
+      },
+      "dynamic_param_query": {
+        "label": "GET /users/:id/posts?limit=15 (Param + Query)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.48,
+            "totalRequests": 9447,
+            "failedRequests": 0,
+            "rps": 7862.83,
+            "meanMs": 3.04,
+            "p50Ms": 2.79,
+            "p95Ms": 4.45,
+            "p99Ms": 7.38
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1203.3,
+            "totalRequests": 9444,
+            "failedRequests": 0,
+            "rps": 7848.43,
+            "meanMs": 3.05,
+            "p50Ms": 2.84,
+            "p95Ms": 4.02,
+            "p99Ms": 8.68
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.46,
+            "totalRequests": 7981,
+            "failedRequests": 0,
+            "rps": 6642.78,
+            "meanMs": 3.6,
+            "p50Ms": 3.34,
+            "p95Ms": 5.6,
+            "p99Ms": 10.43
+          }
+        }
+      },
+      "middleware_5": {
+        "label": "GET /mw/ping (5-Middleware Chain)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1200.82,
+            "totalRequests": 9866,
+            "failedRequests": 0,
+            "rps": 8216.07,
+            "meanMs": 2.91,
+            "p50Ms": 2.67,
+            "p95Ms": 4.42,
+            "p99Ms": 7.55
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.06,
+            "totalRequests": 8414,
+            "failedRequests": 0,
+            "rps": 7005.5,
+            "meanMs": 3.41,
+            "p50Ms": 2.88,
+            "p95Ms": 6.17,
+            "p99Ms": 12.22
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.25,
+            "totalRequests": 8164,
+            "failedRequests": 0,
+            "rps": 6796.26,
+            "meanMs": 3.52,
+            "p50Ms": 3.34,
+            "p95Ms": 5.5,
+            "p99Ms": 7.44
+          }
+        }
+      },
+      "validated_post": {
+        "label": "POST /items (Zod JSON Validation)",
+        "frameworks": {
+          "forgejs": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.1,
+            "totalRequests": 7753,
+            "failedRequests": 0,
+            "rps": 6454.94,
+            "meanMs": 3.71,
+            "p50Ms": 3.39,
+            "p95Ms": 5.43,
+            "p99Ms": 12.48
+          },
+          "hono": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1201.33,
+            "totalRequests": 8122,
+            "failedRequests": 0,
+            "rps": 6760.82,
+            "meanMs": 3.54,
+            "p50Ms": 3.3,
+            "p95Ms": 5.33,
+            "p99Ms": 9.75
+          },
+          "fastify": {
+            "concurrency": 24,
+            "warmupMs": 600,
+            "durationMs": 1202.28,
+            "totalRequests": 5408,
+            "failedRequests": 0,
+            "rps": 4498.12,
+            "meanMs": 5.32,
+            "p50Ms": 4.81,
+            "p95Ms": 7.5,
+            "p99Ms": 14.42
+          }
+        }
+      }
+    },
+    "probes": {
+      "forgejs": {
+        "coldStartRunsMs": [
+          11.39,
+          10.9,
+          11.08,
+          14.17,
+          11.08
+        ],
+        "coldStartMedianMs": 11.08,
+        "coldStartMinMs": 10.9,
+        "coldStartMaxMs": 14.17,
+        "idleRssMb": 185.72,
+        "idleHeapUsedMb": 5.49,
+        "loadedRssMb": 193.6,
+        "loadedHeapUsedMb": 9.74
+      },
+      "hono": {
+        "coldStartRunsMs": [
+          10.79,
+          10.56,
+          11.43,
+          11.48,
+          10.46
+        ],
+        "coldStartMedianMs": 10.79,
+        "coldStartMinMs": 10.46,
+        "coldStartMaxMs": 11.48,
+        "idleRssMb": 187.48,
+        "idleHeapUsedMb": 4.56,
+        "loadedRssMb": 201.56,
+        "loadedHeapUsedMb": 10.47
+      },
+      "fastify": {
+        "coldStartRunsMs": [
+          113.94,
+          123.81,
+          112.25,
+          107.95,
+          108.43
+        ],
+        "coldStartMedianMs": 112.25,
+        "coldStartMinMs": 107.95,
+        "coldStartMaxMs": 123.81,
+        "idleRssMb": 193.45,
+        "idleHeapUsedMb": 6.92,
+        "loadedRssMb": 217.44,
+        "loadedHeapUsedMb": 10.18
+      }
+    }
+  }
+}

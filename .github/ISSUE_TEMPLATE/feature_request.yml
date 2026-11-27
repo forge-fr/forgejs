@@ -1,0 +1,37 @@
+name: Feature Request
+description: Propose a new capability, adapter, or API enhancement for @forge-fr/*
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: input
+    id: area
+    attributes:
+      label: Target Package or Area
+      placeholder: "e.g. @forge-fr/http, @forge-fr/queue, @forge-fr/cli"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What limitation or developer workflow problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Design / API
+      description: Show how you envision using this feature in TypeScript.
+      render: ts
+    validations:
+      required: true
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Breaking Change?
+      options:
+        - "No — additive / backwards-compatible"
+        - "Yes — requires breaking change"
+        - "Unsure"
+    validations:
+      required: true
