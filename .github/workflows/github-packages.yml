@@ -9,18 +9,18 @@ on:
       dist_tag:
         description: 'npm dist-tag for GitHub Packages (next for RC, latest for stable)'
         required: true
-        default: 'next'
+        default: 'latest'
         type: choice
         options:
-          - next
           - latest
+          - next
       dry_run:
         description: 'Dry run only (check to simulate npm publish without uploading packages)'
         required: true
         default: false
         type: boolean
       attach_release_tarballs:
-        description: 'Attach all 20 .tgz tarballs and SHA256SUMS.txt to GitHub Release (on v* tags)'
+        description: 'Attach all 21 .tgz tarballs and SHA256SUMS.txt to GitHub Release (on v* tags)'
         required: true
         default: true
         type: boolean
@@ -35,7 +35,7 @@ concurrency:
 
 jobs:
   verify-and-pack:
-    name: Build, Verify & Pack 20 Tarballs
+    name: Build, Verify & Pack 21 Tarballs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -54,8 +54,8 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      - name: Build all 20 packages (strict tsc project references)
-        run: npx tsc -b --force packages/*/tsconfig.json
+      - name: Build all 21 packages
+        run: node scripts/prepare-github-packages.mjs --build
 
       - name: Validate workspace metadata & exports
         run: node scripts/verify-workspace.mjs
@@ -72,7 +72,7 @@ jobs:
             node scripts/prepare-github-packages.mjs --owner "${OWNER_LOWER}" --repo "${REPO_NAME}" --apply --build
           fi
 
-      - name: Pack 20 tarballs + SHA256SUMS.txt bundle
+      - name: Pack 21 tarballs + SHA256SUMS.txt bundle
         run: node scripts/prepare-github-packages.mjs --pack --out-dir dist-packages
 
       - name: Upload packed tarballs artifact
@@ -105,16 +105,16 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      - name: Align scope (if needed) and build all 20 packages
+      - name: Align scope (if needed) and build all 21 packages
         run: |
           OWNER_LOWER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
           REPO_NAME="${{ github.event.repository.name }}"
           if [ "${OWNER_LOWER}" != "forge-fr" ]; then
             node scripts/prepare-github-packages.mjs --owner "${OWNER_LOWER}" --repo "${REPO_NAME}" --apply
           fi
-          npx tsc -b --force packages/*/tsconfig.json
+          node scripts/prepare-github-packages.mjs --build
 
-      - name: Publish 20 packages in topological dependency order
+      - name: Publish 21 packages in topological dependency order
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EVENT_NAME: ${{ github.event_name }}
@@ -154,7 +154,7 @@ jobs:
             if [ "${IS_DRY_RUN}" = "true" ]; then
               echo "> **Mode:** \`DRY RUN\` (simulasi — tidak ada paket yang di-upload. Untuk publish sungguhan, jalankan ulang tanpa mencentang \`dry_run\`)."
             else
-              echo "> **Mode:** \`LIVE PUBLISH\` (20 paket \`@${OWNER_LOWER}/*\` telah di-publish ke \`https://npm.pkg.github.com\` dengan tag \`${DIST_TAG}\`)."
+              echo "> **Mode:** \`LIVE PUBLISH\` (21 paket \`@${OWNER_LOWER}/*\` telah di-publish ke \`https://npm.pkg.github.com\` dengan tag \`${DIST_TAG}\`)."
             fi
             echo ""
             echo "- **Repository:** \`${{ github.repository }}\`"
