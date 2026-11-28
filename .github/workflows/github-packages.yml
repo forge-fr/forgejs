@@ -76,7 +76,7 @@ jobs:
         run: node scripts/prepare-github-packages.mjs --pack --out-dir dist-packages
 
       - name: Upload packed tarballs artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: github-packages-tarballs
           path: dist-packages/
