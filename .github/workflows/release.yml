@@ -17,7 +17,7 @@ on:
       dry_run:
         description: 'Run full verification and npm publish --dry-run without mutating npm registry'
         required: true
-        default: true
+        default: false
         type: boolean
 
 permissions:
@@ -67,6 +67,7 @@ jobs:
       - name: Publish packages in topological dependency order to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           INPUT_DIST_TAG: ${{ inputs.dist_tag }}
           INPUT_DRY_RUN: ${{ inputs.dry_run }}
           REF_NAME: ${{ github.ref_name }}
@@ -82,7 +83,18 @@ jobs:
 
           DRY_FLAG=""
           if [ "${INPUT_DRY_RUN:-false}" = "true" ]; then
+            echo "⚠️ DRY RUN MODE ENABLED: Packages will NOT be pushed to npm registry."
             DRY_FLAG="--dry-run"
+          else
+            if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+              echo "❌ ERROR: secret NPM_TOKEN is empty or not configured in GitHub Repository Secrets!"
+              echo "Please navigate to Repo Settings -> Secrets and variables -> Actions and add NPM_TOKEN."
+              exit 1
+            fi
+            echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+            echo "🔍 Verifying npm credentials..."
+            npm whoami --registry https://registry.npmjs.org/
+            echo "🚀 LIVE PUBLISH: Publishing 21 @forge-fr/* packages to https://registry.npmjs.org (tag: ${DIST_TAG})..."
           fi
 
           PACKAGES=(
