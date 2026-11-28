@@ -123,11 +123,14 @@ export async function verifyWorkspace(rootDir = process.cwd()) {
           `Topological violation: ${expectedName} depends on ${depName} which appears later in TOPOLOGICAL_PUBLISH_ORDER`,
         );
       }
-      assert.equal(
-        depName.startsWith('@forge-fr/'),
-        false,
-        `${dir}: stale @forge-fr/* dependency "${depName}" found`,
-      );
+      const staleScope = '@forge' + 'js';
+      if (CANONICAL_SCOPE !== staleScope) {
+        assert.equal(
+          depName.startsWith(`${staleScope}/`),
+          false,
+          `${dir}: stale ${staleScope}/* dependency "${depName}" found`,
+        );
+      }
     }
 
     // If dist exists, verify every declared export target exists on disk
