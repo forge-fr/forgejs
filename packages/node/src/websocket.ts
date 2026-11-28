@@ -1,12 +1,13 @@
 import { createHash, randomUUID } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 import type { Duplex } from 'node:stream';
-import type {
-  FetchHandler,
-  RegisteredWebSocketRoute,
-  WebSocketConnection,
-  WebSocketMessageData,
-  WebSocketUpgradeContext,
+import {
+  createWebSocketConnection,
+  type FetchHandler,
+  type RegisteredWebSocketRoute,
+  type WebSocketConnection,
+  type WebSocketMessageData,
+  type WebSocketUpgradeContext,
 } from '@forge-fr/http';
 
 const WS_MAGIC_GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
@@ -189,18 +190,10 @@ function attachRfc6455Session(
     finalizeClose(code, reason, code === 1000);
   };
 
-  const conn: WebSocketConnection = {
+  const conn: WebSocketConnection = createWebSocketConnection(upgradeContext, {
     id: randomUUID(),
-    url: upgradeContext.url,
-    headers: upgradeContext.headers,
-    params: upgradeContext.params,
-    ...(upgradeContext.remoteAddress !== undefined
-      ? { remoteAddress: upgradeContext.remoteAddress }
-      : {}),
-    protocol: upgradeContext.protocol,
-    get readyState() {
-      return state;
-    },
+    getReadyState: () => state,
+    getBufferedAmount: () => socket.writableLength ?? 0,
     send(data: WebSocketMessageData): void {
       if (state !== 'open' || socket.destroyed || !socket.writable) {
         return;
@@ -224,13 +217,7 @@ function attachRfc6455Session(
             : data;
       socket.write(encodeWsFrame(0x9, bytes));
     },
-    getState<T = unknown>(key: string): T | undefined {
-      return connState.get(key) as T | undefined;
-    },
-    setState<T = unknown>(key: string, value: T): void {
-      connState.set(key, value);
-    },
-  };
+  });
 
   activeSockets.add(closeFn);
 

@@ -9,3 +9,9 @@
 - Added pluggable rate limiting middleware with bounded in-memory store and trusted-proxy-safe client IP extraction.
 - Added prototype pollution sanitizer, canonical path confinement, safe filename normalizer, hardened cookie serializer, and SSRF-safe outbound fetch guard.
 - Added ForgeJS DI plugin (`createSecurityPlugin`, `SecurityTokens`).
+
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Added unified `createSecurityMiddleware({ headers, cors, rateLimit, csrf })` composer, sliding-window rate limiting, zero-dependency `createRedisRateLimitStore()` & `createPostgresRateLimitStore()` adapters, and hardened `extractClientIp()`.
+

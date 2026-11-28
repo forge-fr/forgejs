@@ -1,5 +1,6 @@
 import {
   createHttpApp,
+  createWebSocketConnection,
   type HttpRuntimeAdapter,
   type RegisteredWebSocketRoute,
   type WebSocketCloseInfo,
@@ -70,15 +71,9 @@ export function createMemoryWebSocketPair(): MemoryWebSocketPair {
     client,
     attachServer(route: RegisteredWebSocketRoute, ctx: WebSocketUpgradeContext): WebSocketConnection {
       attachedRoute = route;
-      const conn: WebSocketConnection = {
+      const conn: WebSocketConnection = createWebSocketConnection(ctx, {
         id: 'mem-ws-1',
-        url: ctx.url,
-        headers: ctx.headers,
-        params: ctx.params,
-        protocol: ctx.protocol,
-        get readyState() {
-          return readyState;
-        },
+        getReadyState: () => readyState,
         send(data: WebSocketMessageData): void {
           if (readyState !== 'open') return;
           for (const listener of clientMsgListeners) {
@@ -97,13 +92,7 @@ export function createMemoryWebSocketPair(): MemoryWebSocketPair {
         ping(): void {
           // No-op in memory pair
         },
-        getState<T = unknown>(key: string): T | undefined {
-          return ctx.state.get(key) as T | undefined;
-        },
-        setState<T = unknown>(key: string, value: T): void {
-          ctx.state.set(key, value);
-        },
-      };
+      });
       attachedConn = conn;
       void Promise.resolve(route.handlers.onOpen?.(conn, ctx)).catch((err: unknown) => {
         void route.handlers.onError?.(conn, err);

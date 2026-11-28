@@ -9,15 +9,20 @@ import type {
   ParsedMultipart,
   UploadedFile,
 } from './types.js';
+import {
+  sanitizeUploadFilename,
+  validateUploadMagicBytesOrThrow,
+  validateUploadMetadata,
+} from './upload-validation.js';
 
 export const DEFAULT_MAX_BODY_BYTES = 1_048_576; // 1 MiB
+export const DEFAULT_MAX_MULTIPART_BYTES = 10 * 1_048_576; // 10 MiB
 export const DEFAULT_MAX_MULTIPART_FIELDS = 100;
 export const DEFAULT_MAX_MULTIPART_FILES = 10;
 export const DEFAULT_MAX_MULTIPART_FILE_BYTES = 5 * 1_048_576; // 5 MiB
 
 const FORBIDDEN_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 const utf8Decoder = new TextDecoder('utf-8', { fatal: false });
-const utf8Encoder = new TextEncoder();
 
 export interface FastBoundedTextRequest {
   _readBoundedText?(maxBytes: number): Promise<string>;
@@ -103,34 +108,29 @@ export async function readBoundedText(
 ): Promise<string> {
   const limit = normalizeMaxBytes(options.maxBytes, DEFAULT_MAX_BODY_BYTES);
 
-  const contentLengthHeader = request.headers.get('content-length');
-  if (contentLengthHeader !== null) {
-    const declaredLength = Number(contentLengthHeader);
-    if (Number.isFinite(declaredLength) && declaredLength > limit) {
-      if (request.body !== null) {
-        try {
-          await request.body.cancel();
-        } catch {
-          // Ignore cancellation errors
-        }
-      }
-      throw new PayloadTooLargeError(limit, `Request body exceeds limit of ${limit} bytes`);
-    }
-  }
-
   const fastReq = request as unknown as FastBoundedTextRequest;
   if (typeof fastReq._readBoundedText === 'function') {
+    const contentLengthHeader = request.headers.get('content-length');
+    if (contentLengthHeader !== null) {
+      const declaredLength = Number(contentLengthHeader);
+      if (Number.isFinite(declaredLength) && declaredLength > limit) {
+        if (request.body !== null) {
+          try {
+            await request.body.cancel();
+          } catch {
+            // Ignore cancellation errors
+          }
+        }
+        throw new PayloadTooLargeError(limit, `Request body exceeds limit of ${limit} bytes`);
+      }
+    }
     return fastReq._readBoundedText(limit);
   }
 
-  const text = await request.text();
-  if (
-    text.length > limit ||
-    (text.length * 3 > limit && utf8Encoder.encode(text).byteLength > limit)
-  ) {
-    throw new PayloadTooLargeError(limit, `Request body exceeds limit of ${limit} bytes`);
-  }
-  return text;
+  // Always read incrementally through readBoundedBytes so chunked Transfer-Encoding
+  // bodies without Content-Length cancel immediately upon exceeding `limit` (SEC-01).
+  const bytes = await readBoundedBytes(request, limit);
+  return utf8Decoder.decode(bytes);
 }
 
 function isJsonContentType(contentType: string | null): boolean {
@@ -316,21 +316,32 @@ export async function readBoundedMultipart(
     );
   }
 
-  const maxBytes = normalizeMaxBytes(options.maxBytes, DEFAULT_MAX_BODY_BYTES);
+  const maxBytes = normalizeMaxBytes(options.maxBytes, DEFAULT_MAX_MULTIPART_BYTES);
   const maxFields = options.maxFields ?? DEFAULT_MAX_MULTIPART_FIELDS;
   const maxFiles = options.maxFiles ?? DEFAULT_MAX_MULTIPART_FILES;
   const maxFileBytes = options.maxFileBytes ?? DEFAULT_MAX_MULTIPART_FILE_BYTES;
+  const shouldSanitizeNames = options.sanitizeFilenames !== false;
 
   const rawBytes = await readBoundedBytes(request, maxBytes);
 
   // Parse the bounded byte buffer through standard Web Response.formData()
   // so Node.js 22+ and Bun 1.4+ share identical RFC 7578 multipart parsing semantics.
-  const copy = new Uint8Array(rawBytes.byteLength);
-  copy.set(rawBytes);
+  // Reuse the underlying ArrayBuffer directly when it is already an exact-fit buffer (SEC-02).
+  let bodyBuffer: Uint8Array<ArrayBuffer>;
+  if (
+    rawBytes.buffer instanceof ArrayBuffer &&
+    rawBytes.byteOffset === 0 &&
+    rawBytes.byteLength === rawBytes.buffer.byteLength
+  ) {
+    bodyBuffer = rawBytes as Uint8Array<ArrayBuffer>;
+  } else {
+    bodyBuffer = new Uint8Array(rawBytes.byteLength);
+    bodyBuffer.set(rawBytes);
+  }
 
   let formData: FormData;
   try {
-    const synthetic = new Response(copy, {
+    const synthetic = new Response(bodyBuffer, {
       headers: { 'content-type': contentType ?? 'multipart/form-data' },
     });
     formData = await synthetic.formData();
@@ -366,19 +377,30 @@ export async function readBoundedMultipart(
       if (files.length >= maxFiles) {
         throw new BadRequestError(`Multipart file count exceeds limit of ${maxFiles}`);
       }
+      const rawName = 'name' in entry && typeof entry.name === 'string' ? entry.name : 'upload';
+      const safeName = shouldSanitizeNames ? sanitizeUploadFilename(rawName) : rawName;
+
       if (entry.size > maxFileBytes) {
         throw new PayloadTooLargeError(
           maxFileBytes,
-          `Uploaded file "${entry.name}" exceeds limit of ${maxFileBytes} bytes`,
+          `Uploaded file "${safeName}" exceeds limit of ${maxFileBytes} bytes`,
         );
       }
 
       const blob: Blob = entry;
-      const fileName = 'name' in entry && typeof entry.name === 'string' ? entry.name : 'upload';
+      const mimeType = blob.type || 'application/octet-stream';
+      validateUploadMetadata(safeName, mimeType, options);
+
+      if (options.verifyMagicBytes === true) {
+        const headerSlice = new Uint8Array(await blob.slice(0, 16).arrayBuffer());
+        validateUploadMagicBytesOrThrow(safeName, mimeType, headerSlice, options);
+      }
+
       files.push({
         fieldName,
-        name: fileName,
-        type: blob.type || 'application/octet-stream',
+        name: safeName,
+        rawName,
+        type: mimeType,
         size: blob.size,
         blob,
         arrayBuffer: () => blob.arrayBuffer(),

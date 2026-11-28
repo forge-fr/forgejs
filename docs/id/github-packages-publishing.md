@@ -1,6 +1,6 @@
 # Panduan Hosting & Publikasi Package npm ForgeJS di GitHub
 
-Semua 20 paket `@forge-fr/*` di monorepo ini (`v1.0.0-rc.2`, Pure ESM + deklarasi TypeScript `.d.ts`) sudah disiapkan untuk di-host dan dipublikasikan melalui **GitHub Packages (`https://npm.pkg.github.com`)** serta **GitHub Releases** (arsip `.tgz` + checksum SHA-256).
+Semua 21 paket `@forge-fr/*` di monorepo ini (`v1.0.0`, Pure ESM + deklarasi TypeScript `.d.ts`) sudah disiapkan untuk di-host dan dipublikasikan melalui **GitHub Packages (`https://npm.pkg.github.com`)** serta **GitHub Releases** (arsip `.tgz` + checksum SHA-256).
 
 ---
 
@@ -8,8 +8,8 @@ Semua 20 paket `@forge-fr/*` di monorepo ini (`v1.0.0-rc.2`, Pure ESM + deklaras
 
 | File / Skrip | Fungsi |
 | :--- | :--- |
-| `.github/workflows/github-packages.yml` | Workflow GitHub Actions otomatis untuk build, verifikasi tarball, publish ke `https://npm.pkg.github.com`, dan melampirkan 20 file `.tgz` ke GitHub Release. |
-| `scripts/prepare-github-packages.mjs` | Skrip Node.js untuk build 20 paket, verifikasi consumer (NodeNext + Bundler), re-scope `@owner/*`, packing `.tgz` + `SHA256SUMS.txt`, dan publikasi berurutan secara topologi. |
+| `.github/workflows/github-packages.yml` | Workflow GitHub Actions otomatis untuk build, verifikasi tarball, publish ke `https://npm.pkg.github.com`, dan melampirkan 21 file `.tgz` ke GitHub Release. |
+| `scripts/prepare-github-packages.mjs` | Skrip Node.js untuk build 21 paket, verifikasi consumer (NodeNext + Bundler), re-scope `@owner/*`, packing `.tgz` + `SHA256SUMS.txt`, dan publikasi berurutan secara topologi. |
 | `.npmrc.github.example` | Template konfigurasi `.npmrc` untuk mengautentikasi registry GitHub Packages secara aman tanpa menyimpan token di Git. |
 | `.gitignore` | Memastikan `.npmrc` lokal dan folder output `dist-packages/` tidak ikut ter-commit ke repositori. |
 | `package.json` (root) | Menambahkan perintah siap pakai: `packages:build`, `packages:verify`, `packages:prepare:github`, dan `packages:publish:github`. |
@@ -28,7 +28,7 @@ Registry GitHub Packages (`https://npm.pkg.github.com`) **mewajibkan scope npm (
     # Simulasi (preview perubahan saja)
     node scripts/prepare-github-packages.mjs --owner username-anda --repo nama-repo
 
-    # Terapkan ke semua 20 packages/*/package.json & .npmrc.github.example
+    # Terapkan ke semua 21 packages/*/package.json & .npmrc.github.example
     node scripts/prepare-github-packages.mjs --owner username-anda --repo nama-repo --apply
     ```
 
@@ -43,9 +43,9 @@ npm run packages:prepare:github
 ```
 
 Perintah di atas otomatis menjalankan:
-1. `tsc -b --force` pada seluruh 20 paket (`packages/*/tsconfig.json`).
+1. `tsc -b --force` pada seluruh 21 paket (`packages/*/tsconfig.json`).
 2. `scripts/verify-packaging.mjs` (uji instalasi tarball terisolasi untuk `NodeNext` & `Bundler`, serta smoke test di Node.js dan Bun).
-3. Pembuatan bundel siap unggah di folder `dist-packages/` berisi 20 file `.tgz`, `SHA256SUMS.txt`, dan `release-manifest.json`.
+3. Pembuatan bundel siap unggah di folder `dist-packages/` berisi 21 file `.tgz`, `SHA256SUMS.txt`, dan `release-manifest.json`.
 
 ---
 
@@ -59,20 +59,20 @@ Metode ini memakai `GITHUB_TOKEN` bawaan GitHub Actions (`permissions: packages:
 2. Di GitHub, buka **Settings → Actions → General → Workflow permissions**, pastikan **Read and write permissions** diaktifkan.
 3. **Publikasi manual langsung dari GitHub:**
    - Buka tab **Actions → Publish to GitHub Packages → Run workflow**.
-   - Pilih `dist_tag`: `next` (untuk `1.0.0-rc.2`) atau `latest` (untuk rilis stabil `1.0.0`).
+   - Pilih `dist_tag`: `next` (untuk `1.0.0`) atau `latest` (untuk rilis stabil `1.0.0`).
    - Biarkan `dry_run` **tidak dicentang** (`false`) untuk langsung publish sungguhan (centang `dry_run` hanya jika ingin simulasi tanpa mengunggah paket).
 4. **Cek hasil & tautkan paket di halaman repo organisasi:**
    - Setelah job **Publish to npm.pkg.github.com** selesai, cek ringkasan job (**Summary**) untuk memastikan mode adalah `LIVE PUBLISH`.
    - Jika paket sudah muncul di `https://github.com/orgs/<org>/packages` tetapi belum tampil di sidebar **Packages** halaman repositori, buka paket tersebut → **Package settings** → **Connect repository** → pilih repositori target (mis. `forge-fr/forgejs`), lalu atur visibility menjadi **Public** bila diinginkan.
 5. **Publikasi otomatis + GitHub Release via tag SemVer:**
    ```bash
-   git tag v1.0.0-rc.2
-   git push origin v1.0.0-rc.2
+   git tag v1.0.0
+   git push origin v1.0.0
    ```
    Workflow akan otomatis:
-   - Memverifikasi semua 20 paket.
+   - Memverifikasi semua 21 paket.
    - Mempublikasikan seluruh paket dalam urutan topologi (`core` → `router` → `http` → … → `cli`) ke `https://npm.pkg.github.com`.
-   - Membuat **GitHub Release** `v1.0.0-rc.2` lengkap dengan 20 file `.tgz`, `SHA256SUMS.txt`, dan `release-manifest.json`.
+   - Membuat **GitHub Release** `v1.0.0` lengkap dengan 21 file `.tgz`, `SHA256SUMS.txt`, dan `release-manifest.json`.
 
 ---
 
@@ -92,7 +92,7 @@ Metode ini memakai `GITHUB_TOKEN` bawaan GitHub Actions (`permissions: packages:
    ```bash
    node scripts/prepare-github-packages.mjs --build --publish --tag next --dry-run
    ```
-4. Jika seluruh 20 paket lulus dry-run, jalankan publikasi live:
+4. Jika seluruh 21 paket lulus dry-run, jalankan publikasi live:
    ```bash
    node scripts/prepare-github-packages.mjs --build --publish --tag next
    ```
@@ -123,5 +123,5 @@ npm install @forge-fr/core @forge-fr/http @forge-fr/node
 Jika repositori GitHub bersifat publik, file `.tgz` yang dilampirkan di GitHub Release dapat diinstal langsung per paket:
 
 ```bash
-npm install https://github.com/forge-fr/forgejs/releases/download/v1.0.0-rc.2/forgejs-core-1.0.0-rc.2.tgz
+npm install https://github.com/forge-fr/forgejs/releases/download/v1.0.0/forgejs-core-1.0.0.tgz
 ```

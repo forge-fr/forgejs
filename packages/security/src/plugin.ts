@@ -4,7 +4,12 @@ import {
   type ForgePlugin,
   type PluginContext,
 } from '@forge-fr/core';
-import type { ForgeMiddleware } from '@forge-fr/http';
+import type { ForgeHttpApp, ForgeMiddleware } from '@forge-fr/http';
+import {
+  attachSecurity,
+  createSecurityMiddleware,
+  type SecurityMiddlewareOptions,
+} from './compose.js';
 import { createCorsMiddleware, type CorsOptions } from './cors.js';
 import { createCsrfMiddleware, type CsrfMiddlewareOptions } from './csrf.js';
 import {
@@ -26,14 +31,18 @@ export const SecurityTokens = Object.freeze({
   corsMiddleware: createToken<ForgeMiddleware>('SecurityCorsMiddleware'),
   csrfMiddleware: createToken<ForgeMiddleware>('SecurityCsrfMiddleware'),
   rateLimitMiddleware: createToken<ForgeMiddleware>('SecurityRateLimitMiddleware'),
+  securityMiddleware: createToken<ForgeMiddleware>('SecurityMiddleware'),
 });
 
 export interface SecurityPluginConfig {
-  readonly headers?: SecurityHeadersOptions;
+  readonly headers?: SecurityHeadersOptions | false;
   readonly cors?: CorsOptions;
   readonly csrf?: CsrfMiddlewareOptions;
   readonly rateLimit?: RateLimitMiddlewareOptions;
   readonly ssrf?: SafeFetchOptions;
+  readonly rateLimitPreflight?: boolean;
+  /** Optional HTTP app to automatically attach the unified security stack and CORS preflight hook. */
+  readonly app?: ForgeHttpApp;
 }
 
 export interface SecurityPluginOptions {
@@ -47,8 +56,8 @@ export function createSecurityPlugin(
 ): ForgePlugin<SecurityPluginConfig, SecurityPluginConfig> {
   return definePlugin<SecurityPluginConfig, SecurityPluginConfig>({
     name: options.name ?? '@forge-fr/security',
-    version: options.version ?? '1.0.0-rc.2',
-    forgeVersion: options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1',
+    version: options.version ?? '1.0.0',
+    forgeVersion: options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1 || ^1.0.0',
     capabilities: ['di:register'],
 
     register(
@@ -57,9 +66,15 @@ export function createSecurityPlugin(
     ): void {
       const config = rawConfig ?? {};
 
-      const rateLimitStore = config.rateLimit?.store ?? createMemoryRateLimitStore();
+      const rateLimitStore =
+        config.rateLimit?.store ??
+        createMemoryRateLimitStore({
+          ...(config.rateLimit?.algorithm !== undefined
+            ? { algorithm: config.rateLimit.algorithm }
+            : {}),
+          ...(config.rateLimit?.now !== undefined ? { now: config.rateLimit.now } : {}),
+        });
       const safeFetch = createSafeFetch(config.ssrf);
-      const headersMiddleware = createSecurityHeadersMiddleware(config.headers);
 
       ctx.registerProvider(
         { token: SecurityTokens.rateLimitStore, useValue: rateLimitStore },
@@ -69,10 +84,14 @@ export function createSecurityPlugin(
         { token: SecurityTokens.safeFetch, useValue: safeFetch },
         { export: true },
       );
-      ctx.registerProvider(
-        { token: SecurityTokens.headersMiddleware, useValue: headersMiddleware },
-        { export: true },
-      );
+
+      if (config.headers !== false) {
+        const headersMiddleware = createSecurityHeadersMiddleware(config.headers);
+        ctx.registerProvider(
+          { token: SecurityTokens.headersMiddleware, useValue: headersMiddleware },
+          { export: true },
+        );
+      }
 
       if (config.cors !== undefined) {
         ctx.registerProvider(
@@ -88,14 +107,37 @@ export function createSecurityPlugin(
         );
       }
 
-      if (config.rateLimit !== undefined) {
+      const resolvedRateLimit: RateLimitMiddlewareOptions | undefined =
+        config.rateLimit !== undefined ? { ...config.rateLimit, store: rateLimitStore } : undefined;
+
+      if (resolvedRateLimit !== undefined) {
         ctx.registerProvider(
           {
             token: SecurityTokens.rateLimitMiddleware,
-            useValue: createRateLimitMiddleware({ ...config.rateLimit, store: rateLimitStore }),
+            useValue: createRateLimitMiddleware(resolvedRateLimit),
           },
           { export: true },
         );
+      }
+
+      const composeOptions: SecurityMiddlewareOptions = {
+        ...(config.headers !== undefined ? { headers: config.headers } : {}),
+        ...(config.cors !== undefined ? { cors: config.cors } : {}),
+        ...(resolvedRateLimit !== undefined ? { rateLimit: resolvedRateLimit } : {}),
+        ...(config.csrf !== undefined ? { csrf: config.csrf } : {}),
+        ...(config.rateLimitPreflight !== undefined
+          ? { rateLimitPreflight: config.rateLimitPreflight }
+          : {}),
+      };
+
+      const securityMiddleware = createSecurityMiddleware(composeOptions);
+      ctx.registerProvider(
+        { token: SecurityTokens.securityMiddleware, useValue: securityMiddleware },
+        { export: true },
+      );
+
+      if (config.app !== undefined) {
+        attachSecurity(config.app, composeOptions);
       }
     },
   });

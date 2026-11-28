@@ -1,18 +1,18 @@
 # Repository Pattern
 
-> Decouple domain services from ORM specifics using typed DI repository tokens and explicit transaction propagation.
+> Keep business logic independent from your ORM by defining repository tokens that can be swapped cleanly in tests.
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/core, @forge-fr/database, @forge-fr/testing
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/repository-pattern.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
 
-## Port interfaces & provider overrides
+## Separate data access behind typed tokens
 
-Define domain repository interfaces behind createToken<T>(), bind PostgreSQL/Drizzle/Prisma implementations inside infrastructure modules, and swap them cleanly in unit tests via overrideProvider().
+Define a simple repository interface with createToken<T>(), connect your PostgreSQL, Drizzle, or Prisma implementation in a data module, and swap it with an in-memory fake in unit tests using overrideProvider().
 
 **File: `src/modules/orders/orders.repository.ts`**
 

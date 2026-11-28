@@ -1,5 +1,6 @@
 import {
   ForgeHttpError,
+  createWebSocketConnection,
   type FetchHandler,
   type HttpRuntimeAdapter,
   type ListenOptions,
@@ -110,20 +111,9 @@ function resolveBunServe(customServe?: BunServeLike): BunServeLike {
 
 function createBunWsConnection(ws: BunServerWebSocketLike): WebSocketConnection {
   const { upgradeContext } = ws.data;
-  const connState = upgradeContext.state;
 
-  return {
-    id: globalThis.crypto.randomUUID(),
-    url: upgradeContext.url,
-    headers: upgradeContext.headers,
-    params: upgradeContext.params,
-    ...(upgradeContext.remoteAddress !== undefined
-      ? { remoteAddress: upgradeContext.remoteAddress }
-      : {}),
-    protocol: upgradeContext.protocol,
-    get readyState() {
-      return ws.data.readyState;
-    },
+  return createWebSocketConnection(upgradeContext, {
+    getReadyState: () => ws.data.readyState,
     send(data: WebSocketMessageData): void {
       if (ws.data.readyState !== 'open') {
         return;
@@ -143,13 +133,7 @@ function createBunWsConnection(ws: BunServerWebSocketLike): WebSocketConnection 
       }
       ws.ping(data);
     },
-    getState<T = unknown>(key: string): T | undefined {
-      return connState.get(key) as T | undefined;
-    },
-    setState<T = unknown>(key: string, value: T): void {
-      connState.set(key, value);
-    },
-  };
+  });
 }
 
 export class BunAdapter implements HttpRuntimeAdapter {

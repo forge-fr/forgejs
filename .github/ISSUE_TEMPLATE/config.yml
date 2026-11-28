@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation & Live Portal
-    url: https://forgejs.dev/docs/getting-started/introduction
+    url: https://forgejs.id/docs/getting-started/introduction
     about: Browse guides, API docs, and the interactive Playground before filing an issue
   - name: 9-Step Modular Backend Tutorial
     url: https://github.com/forge-fr/forgejs/blob/main/docs/tutorials/playground-backend.md

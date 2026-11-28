@@ -17,6 +17,12 @@ import type {
   RouteOptions,
   RouterOptions,
 } from '@forge-fr/router';
+import type { AnyContextKey, ContextKey, DefaultedContextKey } from './context-key.js';
+import type {
+  BinaryBodyInput,
+  BinaryResponseOptions,
+  DownloadResponseOptions,
+} from './binary.js';
 
 export type WebSocketMessageData = string | Uint8Array;
 
@@ -37,6 +43,24 @@ export interface WebSocketUpgradeContext {
   readonly runtime: string;
   readonly protocol: string;
   readonly state: Map<string, unknown>;
+  readonly typedState?: Map<symbol, unknown>;
+
+  /** Type-safe read of symbol-backed upgrade/connection state created with `createContextKey<T>()`. */
+  get<T>(key: DefaultedContextKey<T>): T;
+  get<T>(key: ContextKey<T>): T | undefined;
+  get<T>(key: AnyContextKey<T>): T | undefined;
+  /** Type-safe write of symbol-backed upgrade/connection state. */
+  set<T>(key: AnyContextKey<T>, value: T): this;
+  /** Returns `true` if a value has been explicitly set for this typed key. */
+  has<T>(key: AnyContextKey<T>): boolean;
+  /** Removes a previously set value for this typed key. */
+  delete<T>(key: AnyContextKey<T>): boolean;
+  /** Type-safe read that throws `ContextKeyNotFoundError` when the key has not been set (and has no default). */
+  require<T>(key: AnyContextKey<T>, message?: string): T;
+
+  getState<T = unknown>(key: string): T | undefined;
+  setState<T = unknown>(key: string, value: T): this;
+  hasState(key: string): boolean;
 }
 
 export interface WebSocketConnection {
@@ -47,11 +71,29 @@ export interface WebSocketConnection {
   readonly remoteAddress?: string;
   readonly protocol: string;
   readonly readyState: 'open' | 'closing' | 'closed';
+  /** Optional current outbound buffered byte count reported by the underlying transport. */
+  readonly bufferedAmount?: number;
   send(data: WebSocketMessageData): void;
+  sendJson?(data: unknown): void;
   close(code?: number, reason?: string): void;
   ping(data?: WebSocketMessageData): void;
+
+  /** Type-safe read of symbol-backed connection state created with `createContextKey<T>()`. */
+  get<T>(key: DefaultedContextKey<T>): T;
+  get<T>(key: ContextKey<T>): T | undefined;
+  get<T>(key: AnyContextKey<T>): T | undefined;
+  /** Type-safe write of symbol-backed connection state. */
+  set<T>(key: AnyContextKey<T>, value: T): this;
+  /** Returns `true` if a value has been explicitly set for this typed key on this connection. */
+  has<T>(key: AnyContextKey<T>): boolean;
+  /** Removes a previously set value for this typed key from this connection. */
+  delete<T>(key: AnyContextKey<T>): boolean;
+  /** Type-safe read that throws `ContextKeyNotFoundError` when the key has not been set (and has no default). */
+  require<T>(key: AnyContextKey<T>, message?: string): T;
+
   getState<T = unknown>(key: string): T | undefined;
   setState<T = unknown>(key: string, value: T): void;
+  hasState?(key: string): boolean;
 }
 
 export interface WebSocketHandlers {
@@ -165,15 +207,27 @@ export interface BodyParseOptions {
 }
 
 export interface MultipartParseOptions {
+  /** Maximum total multipart request body size in bytes (default: 10 MiB). */
   readonly maxBytes?: number;
   readonly maxFields?: number;
   readonly maxFiles?: number;
   readonly maxFileBytes?: number;
+  /** Optional MIME allowlist (exact match, type wildcards like `image/*`, or any-type wildcard). */
+  readonly allowedMimeTypes?: readonly string[];
+  /** Optional file extension allowlist (e.g. `['.png', '.jpg']` or `['png', 'jpg']`). */
+  readonly allowedExtensions?: readonly string[];
+  /** When `true`, inspects leading magic bytes against declared MIME type for binary formats. */
+  readonly verifyMagicBytes?: boolean;
+  /** Sanitizes uploaded filenames to strip path traversal and control bytes (default: `true`). */
+  readonly sanitizeFilenames?: boolean;
 }
 
 export interface UploadedFile {
   readonly fieldName: string;
+  /** Sanitized safe filename (unless `sanitizeFilenames: false`). */
   readonly name: string;
+  /** Original unsanitized filename reported by the client, when available. */
+  readonly rawName?: string;
   readonly type: string;
   readonly size: number;
   readonly blob: Blob;
@@ -186,6 +240,30 @@ export interface ParsedMultipart {
   readonly files: readonly UploadedFile[];
 }
 
+export interface MultipartStreamFieldPart {
+  readonly kind: 'field';
+  readonly fieldName: string;
+  readonly value: string;
+}
+
+export interface MultipartStreamFilePart {
+  readonly kind: 'file';
+  readonly fieldName: string;
+  readonly name: string;
+  readonly rawName: string;
+  readonly type: string;
+  readonly stream: ReadableStream<Uint8Array>;
+  bytes(): Promise<Uint8Array>;
+  text(): Promise<string>;
+}
+
+export type MultipartStreamPart = MultipartStreamFieldPart | MultipartStreamFilePart;
+
+export interface MultipartStreamOptions extends MultipartParseOptions {
+  /** Maximum byte size for a single non-file text field (default: 1 MiB). */
+  readonly maxFieldBytes?: number;
+}
+
 export interface RequestBodyReader {
   bytes(options?: Pick<BodyParseOptions, 'maxBytes'>): Promise<Uint8Array>;
   arrayBuffer(options?: Pick<BodyParseOptions, 'maxBytes'>): Promise<ArrayBuffer>;
@@ -193,6 +271,7 @@ export interface RequestBodyReader {
   json<T = unknown>(options?: BodyParseOptions): Promise<T>;
   form(options?: Pick<BodyParseOptions, 'maxBytes'>): Promise<Readonly<Record<string, string | readonly string[]>>>;
   multipart(options?: MultipartParseOptions): Promise<ParsedMultipart>;
+  multipartStream(options?: MultipartStreamOptions): AsyncIterable<MultipartStreamPart>;
 }
 
 export interface SseEvent {
@@ -204,12 +283,25 @@ export interface SseEvent {
 
 export interface SseStreamController {
   readonly closed: boolean;
+  /** Client `Last-Event-ID` header value (or undefined if not provided). */
+  readonly lastEventId?: string | undefined;
   send(event: SseEvent): void;
   comment(text: string): void;
   close(): void;
 }
 
 export type SseProducer = (stream: SseStreamController) => Promise<void> | void;
+
+export interface SseResponseOptions extends Omit<ResponseHelperInit, 'status'> {
+  /** Optional explicit `Last-Event-ID` override (defaults to `Last-Event-ID` request header). */
+  readonly lastEventId?: string | undefined;
+  /** Optional automatic keepalive comment interval in milliseconds (e.g. `15_000`). */
+  readonly keepAliveIntervalMs?: number;
+  /** Optional comment text sent on each keepalive tick (default: `'keepalive'`). */
+  readonly keepAliveComment?: string;
+  /** Optional initial reconnection retry interval (`retry: <ms>`) sent when the stream opens. */
+  readonly retryMs?: number;
+}
 
 export type RedirectStatusCode = 301 | 302 | 303 | 307 | 308;
 
@@ -233,6 +325,8 @@ export interface ForgeContext {
   readonly logger: ForgeLogger;
   readonly container: Container;
   readonly routeMeta: Readonly<Record<string, unknown>>;
+  /** Matched route pattern (e.g. `"/users/:id"`), or `undefined` before routing or on 404/405. */
+  readonly routePattern: string | undefined;
   readonly body: RequestBodyReader;
   readonly committed: boolean;
 
@@ -241,8 +335,25 @@ export interface ForgeContext {
   accepts(offered: readonly string[]): string | null;
   resolve<T>(token: InjectionToken<T>): T;
   resolveOptional<T>(token: InjectionToken<T>): T | undefined;
+
+  /** Type-safe read of symbol-backed request state created with `createContextKey<T>()`. */
+  get<T>(key: DefaultedContextKey<T>): T;
+  get<T>(key: ContextKey<T>): T | undefined;
+  get<T>(key: AnyContextKey<T>): T | undefined;
+  /** Type-safe write of symbol-backed request state. */
+  set<T>(key: AnyContextKey<T>, value: T): this;
+  /** Returns `true` if a value has been explicitly set for this typed key on the current request. */
+  has<T>(key: AnyContextKey<T>): boolean;
+  /** Removes a previously set value for this typed key from the current request. */
+  delete<T>(key: AnyContextKey<T>): boolean;
+  /** Type-safe read that throws `ContextKeyNotFoundError` when the key has not been set (and has no default). */
+  require<T>(key: AnyContextKey<T>, message?: string): T;
+
+  /** @deprecated Prefer `createContextKey<T>()` with `ctx.get()` / `ctx.set()` for compile-time safety. */
   getState<T = unknown>(key: string): T | undefined;
+  /** @deprecated Prefer `createContextKey<T>()` with `ctx.get()` / `ctx.set()` for compile-time safety. */
   setState<T = unknown>(key: string, value: T): this;
+  /** @deprecated Prefer `createContextKey<T>()` with `ctx.has()` for compile-time safety. */
   hasState(key: string): boolean;
 
   status(code: number): this;
@@ -250,14 +361,22 @@ export interface ForgeContext {
   appendHeader(name: string, value: string): this;
   removeHeader(name: string): this;
 
+  formData(options?: MultipartParseOptions): Promise<ParsedMultipart>;
+
   json(data: unknown, init?: ResponseHelperInit): Response;
   text(body: string, init?: ResponseHelperInit): Response;
   html(body: string, init?: ResponseHelperInit): Response;
   bytes(body: Uint8Array, contentType?: string, init?: ResponseHelperInit): Response;
+  binary(body: BinaryBodyInput, options?: BinaryResponseOptions | string): Response;
+  download(
+    body: BinaryBodyInput | ReadableStream<Uint8Array>,
+    filename: string,
+    options?: DownloadResponseOptions,
+  ): Response;
   empty(statusCode?: number): Response;
   redirect(location: string, statusCode?: RedirectStatusCode): Response;
   stream(body: ReadableStream<Uint8Array>, contentType?: string, init?: ResponseHelperInit): Response;
-  sse(producer: SseProducer, init?: Omit<ResponseHelperInit, 'status'>): Response;
+  sse(producer: SseProducer, init?: SseResponseOptions): Response;
 }
 
 export type RouteHandlerResult =

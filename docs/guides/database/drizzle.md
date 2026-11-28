@@ -1,18 +1,18 @@
 # Drizzle ORM
 
-> Preserve 100% native Drizzle schema and relational query inference with createDrizzlePostgresPlugin() and normalizeDrizzleError().
+> Use Drizzle ORM with full native TypeScript schema inference via createDrizzlePostgresPlugin() and automatic pool cleanup.
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/drizzle, @forge-fr/database
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/drizzle
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/drizzle.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
 
-## Zero-loss Drizzle TypeScript inference
+## Full native Drizzle TypeScript inference
 
-Passing your schema generic to createDrizzlePostgresPlugin<typeof schema>() preserves complete Drizzle query builder and relational db.query.* inference with zero wrapper abstractions.
+Pass your schema type to createDrizzlePostgresPlugin<typeof schema>() to use Drizzle query builders and db.query.* directly with zero wrapper friction.
 
 **File: `src/db/drizzle.ts`**
 
@@ -40,7 +40,7 @@ await kernel.start();
 const db = kernel.container.resolve(DefaultDrizzleTokens.db);
 ```
 
-## Transactions & error normalization
+## Transactions & clean shutdown
 
-- The Drizzle adapter implements DatabaseAdapter.transaction() with allowlisted isolation levels and wraps failures through normalizeDrizzleError().
-- Shutdown automatically closes the underlying postgres-js pool via LIFO kernel teardown.
+- Supports safe transactions with allowlisted isolation levels and wraps errors through normalizeDrizzleError().
+- Closes the underlying postgres-js pool automatically when kernel.shutdown() runs.

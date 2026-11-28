@@ -6,6 +6,7 @@ import {
   DatabaseForeignKeyViolationError,
   DatabaseSerializationError,
   DatabaseUniqueViolationError,
+  defineRepository,
   runInTransaction,
   type PostgresClientLike,
 } from '@forge-fr/database';
@@ -15,6 +16,7 @@ import {
   createDrizzlePostgresAdapter,
   createDrizzlePostgresPlugin,
   createDrizzleToken,
+  createDrizzleUnitOfWork,
   drizzlePostgresConfigSchema,
   normalizeDrizzleError,
   type DrizzlePostgresClient,
@@ -274,5 +276,49 @@ describe('@forge-fr/drizzle Adapter & Plugin (M4.2)', () => {
     expect(caught).toBeInstanceOf(DatabaseConnectionError);
     expect((caught as DatabaseConnectionError).message).not.toContain('drizzle-secret-pw-777');
     expect(unreachable.state).toBe('error');
+  });
+
+  it('supports createDrizzleUnitOfWork, defineRepository, and exports tokens.unitOfWork from createDrizzlePostgresPlugin', async () => {
+    const fakeSql = createFakeSql();
+    const tokens = createDrizzleToken<DrizzlePostgresClient<AppSchema>>('uow-app');
+    const plugin = createDrizzlePostgresPlugin<AppSchema>({
+      name: '@forge-fr/drizzle-uow-app',
+      adapterToken: tokens.adapter,
+      dbToken: tokens.db,
+      unitOfWorkToken: tokens.unitOfWork,
+    });
+
+    const harness = createPluginTestHarness({
+      plugin,
+      config: {
+        url: secret('postgres://forge:pass@localhost:5432/app'),
+        schema: appSchema,
+        driverFactory: () => fakeSql.client,
+      },
+    });
+
+    await harness.start();
+    const uow = harness.resolveExport(tokens.unitOfWork);
+    const directUow = createDrizzleUnitOfWork(harness.resolveExport(tokens.adapter));
+
+    const UsersDrizzleRepo = defineRepository((db: { select: DrizzlePostgresClient<AppSchema>['select'] }) => ({
+      compileSelectAll(): string {
+        return db.select().from(usersTable).toSQL().sql;
+      },
+    }));
+
+    const events: string[] = [];
+    const sqlText = await uow.run(async (ctx) => {
+      ctx.afterCommit(() => {
+        events.push('committed');
+      });
+      return ctx.repository(UsersDrizzleRepo).compileSelectAll();
+    });
+
+    expect(sqlText).toContain('users');
+    expect(events).toEqual(['committed']);
+    expect(directUow.repository(UsersDrizzleRepo).compileSelectAll()).toContain('users');
+
+    await harness.dispose();
   });
 });

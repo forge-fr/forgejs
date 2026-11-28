@@ -29,8 +29,8 @@ export function createAuthorizationPlugin(
 ): ForgePlugin<AuthorizationPluginConfig, AuthorizationPluginConfig> {
   return definePlugin<AuthorizationPluginConfig, AuthorizationPluginConfig>({
     name: options.name ?? '@forge-fr/authorization',
-    version: options.version ?? '1.0.0-rc.2',
-    forgeVersion: options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1',
+    version: options.version ?? '1.0.0',
+    forgeVersion: options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1 || ^1.0.0',
     capabilities: ['di:register'],
 
     register(

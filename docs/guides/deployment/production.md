@@ -1,23 +1,23 @@
 # Production Deployment
 
-> Strict ESM builds, NODE_ENV=production hardening, POSIX graceful draining, health probes, and reverse-proxy configuration.
+> Production checklist covering NODE_ENV=production, graceful shutdown on SIGTERM, health checks, and reverse proxies.
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/node, @forge-fr/bun, @forge-fr/edge, @forge-fr/logger
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/production
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/production.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
 
 ## Production deployment checklist
 
-- Run with NODE_ENV=production and exposeErrorDetails: false so unknown 5xx errors and readiness probes sanitize internal diagnostics.
-- Attach attachProcessShutdown(server, { timeoutMs: 10_000 }) alongside kernel.shutdown() for zero-drop SIGTERM/SIGINT draining.
-- Keep trustProxy: false unless behind a trusted reverse proxy (Nginx, Caddy, Envoy, Cloudflare) that overwrites client IP headers.
-- Mount /health/live (liveness) and /health/ready (readiness) via registerHealthRoutes() for container orchestrator probes.
+- Run with NODE_ENV=production and exposeErrorDetails: false so 5xx errors and health checks hide internal server details.
+- Wire attachProcessShutdown(server, { timeoutMs: 10_000 }) with kernel.shutdown() so active requests finish before exit.
+- Keep trustProxy: false unless your app sits behind a trusted proxy (Nginx, Caddy, Envoy, or Cloudflare) that sets real client IPs.
+- Mount /health/live and /health/ready via registerHealthRoutes() for Kubernetes or load-balancer checks.
 
-## Node.js & Bun production entrypoint
+## Node.js & Bun production entry file
 
 **Node.js (`src/index.ts`)**
 

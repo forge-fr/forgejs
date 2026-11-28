@@ -1,11 +1,33 @@
 import { normalizeError, type ForgeLogger, type LogContext } from '@forge-fr/core';
-import type { ForgeContext, ForgeHttpApp, ForgeMiddleware } from '@forge-fr/http';
-import { buildRedactionSet, normalizeRedactKey, sanitizeLogContext } from './redact.js';
+import {
+  createContextKey,
+  type ContextKey,
+  type ForgeContext,
+  type ForgeHttpApp,
+  type ForgeMiddleware,
+} from '@forge-fr/http';
+import {
+  buildRedactionSet,
+  compileRedactPaths,
+  normalizeRedactKey,
+  sanitizeLogContext,
+  type CompiledRedactPath,
+} from './redact.js';
 
 const SAFE_CORRELATION_ID_REGEX = /^[A-Za-z0-9._:/-]{1,128}$/;
 
-const correlationIdStore = new WeakMap<ForgeContext, string>();
-const requestLoggerStore = new WeakMap<ForgeContext, ForgeLogger>();
+/** Official typed context key storing the request correlation ID. */
+export const CorrelationIdKey: ContextKey<string> = createContextKey<string>('logger.correlationId');
+
+/** Official typed context key storing the request-scoped child `ForgeLogger`. */
+export const RequestLoggerKey: ContextKey<ForgeLogger> = createContextKey<ForgeLogger>(
+  'logger.requestLogger',
+);
+
+const RequestErrorKey: ContextKey<unknown> = createContextKey<unknown>('logger.requestError');
+
+const fallbackCorrelationIdStore = new WeakMap<ForgeContext, string>();
+const fallbackRequestLoggerStore = new WeakMap<ForgeContext, ForgeLogger>();
 
 export interface CorrelationIdOptions {
   /** Header name to read/write correlation IDs. Default: `x-correlation-id`. */
@@ -33,7 +55,7 @@ export function resolveCorrelationId(
   ctx: ForgeContext,
   options: CorrelationIdOptions = {},
 ): string {
-  const existing = correlationIdStore.get(ctx);
+  const existing = getCorrelationId(ctx);
   if (existing !== undefined) {
     return existing;
   }
@@ -58,11 +80,30 @@ export function resolveCorrelationId(
 }
 
 export function getCorrelationId(ctx: ForgeContext): string | undefined {
-  return correlationIdStore.get(ctx) ?? ctx.getState<string>('correlationId');
+  if (typeof ctx.get === 'function') {
+    const typed = ctx.get(CorrelationIdKey);
+    if (typed !== undefined) {
+      return typed;
+    }
+  }
+  return fallbackCorrelationIdStore.get(ctx) ?? ctx.getState<string>('correlationId');
 }
 
 export function getRequestLogger(ctx: ForgeContext): ForgeLogger | undefined {
-  return requestLoggerStore.get(ctx);
+  if (typeof ctx.get === 'function') {
+    const typed = ctx.get(RequestLoggerKey);
+    if (typed !== undefined) {
+      return typed;
+    }
+  }
+  return fallbackRequestLoggerStore.get(ctx);
+}
+
+function storeRequestLogger(ctx: ForgeContext, reqLogger: ForgeLogger): void {
+  if (typeof ctx.set === 'function') {
+    ctx.set(RequestLoggerKey, reqLogger);
+  }
+  fallbackRequestLoggerStore.set(ctx, reqLogger);
 }
 
 export function bindCorrelationId(
@@ -71,7 +112,10 @@ export function bindCorrelationId(
 ): string {
   const headerName = (options.headerName ?? 'x-correlation-id').toLowerCase();
   const correlationId = resolveCorrelationId(ctx, options);
-  correlationIdStore.set(ctx, correlationId);
+  if (typeof ctx.set === 'function') {
+    ctx.set(CorrelationIdKey, correlationId);
+  }
+  fallbackCorrelationIdStore.set(ctx, correlationId);
   ctx.setState('correlationId', correlationId);
   if (!ctx.committed) {
     ctx.setHeader(headerName, correlationId);
@@ -100,6 +144,8 @@ export interface RequestLoggingOptions {
   readonly slowRequestMs?: number;
   /** Additional header/query keys to redact. */
   readonly redactKeys?: readonly string[];
+  /** Additional dot/bracket paths to redact in structured request metadata. */
+  readonly redactPaths?: readonly string[];
 }
 
 function nowMs(): number {
@@ -140,27 +186,35 @@ function emitCompletionLog(
   durationMs: number,
   options: RequestLoggingOptions,
   redactSet: ReadonlySet<string>,
+  compiledPaths: readonly CompiledRedactPath[],
   error?: unknown,
 ): void {
   const roundedDuration = Math.round(durationMs * 100) / 100;
   const isSlow =
     options.slowRequestMs !== undefined && roundedDuration >= options.slowRequestMs;
   const safeHeaders = pickSafeHeaders(ctx, options.logHeaders, redactSet);
+  const routePattern = ctx.routePattern;
 
   const payload: LogContext = {
     method: ctx.method,
     path: ctx.path,
+    ...(routePattern !== undefined ? { route: routePattern } : {}),
     statusCode,
     durationMs: roundedDuration,
     ...(isSlow ? { slow: true } : {}),
     ...(safeHeaders !== undefined ? { headers: safeHeaders } : {}),
     ...(options.includeQuery === true && Object.keys(ctx.query).length > 0
-      ? { query: sanitizeLogContext({ ...ctx.query }, { redactSet }) }
+      ? {
+          query: sanitizeLogContext(
+            { ...ctx.query },
+            { redactSet, compiledRedactPaths: compiledPaths },
+          ),
+        }
       : {}),
     ...(error !== undefined ? { err: error } : {}),
   };
 
-  if (statusCode >= 500 || error !== undefined && statusCode >= 500) {
+  if (statusCode >= 500) {
     reqLogger.error('http.request.completed', payload);
   } else if (statusCode >= 400 || isSlow) {
     reqLogger.warn('http.request.completed', payload);
@@ -174,6 +228,7 @@ export function createRequestLoggingMiddleware(
 ): ForgeMiddleware {
   const ignored = new Set(options.ignorePaths ?? []);
   const redactSet = buildRedactionSet(options.redactKeys);
+  const compiledPaths = compileRedactPaths(options.redactPaths);
 
   return async (ctx, next) => {
     const correlationId = getCorrelationId(ctx) ?? ctx.requestId;
@@ -181,7 +236,7 @@ export function createRequestLoggingMiddleware(
       requestId: ctx.requestId,
       correlationId,
     });
-    requestLoggerStore.set(ctx, reqLogger);
+    storeRequestLogger(ctx, reqLogger);
 
     const shouldIgnore = ignored.has(ctx.path);
     const start = nowMs();
@@ -196,6 +251,7 @@ export function createRequestLoggingMiddleware(
           nowMs() - start,
           options,
           redactSet,
+          compiledPaths,
         );
       }
       return response;
@@ -209,6 +265,7 @@ export function createRequestLoggingMiddleware(
           nowMs() - start,
           options,
           redactSet,
+          compiledPaths,
           err,
         );
       }
@@ -224,8 +281,9 @@ export interface ObservabilityHooksOptions {
 }
 
 /**
- * Attaches `onRequest` and `onResponse` HTTP hooks so every request — including
- * unmatched 404/405 routes — receives a correlation ID and structured access log.
+ * Attaches `onRequest`, `onError`, and `onResponse` HTTP hooks so every request —
+ * including unmatched 404/405 routes and unhandled errors — receives a correlation ID,
+ * request-scoped child logger (`RequestLoggerKey`), matched `route` pattern, and structured access log.
  */
 export function attachObservabilityHooks(
   app: ForgeHttpApp,
@@ -233,6 +291,7 @@ export function attachObservabilityHooks(
 ): void {
   const ignored = new Set(options.requestLogging?.ignorePaths ?? []);
   const redactSet = buildRedactionSet(options.requestLogging?.redactKeys);
+  const compiledPaths = compileRedactPaths(options.requestLogging?.redactPaths);
   const logOpts: RequestLoggingOptions = {
     logger: options.logger,
     ...(options.requestLogging ?? {}),
@@ -240,11 +299,17 @@ export function attachObservabilityHooks(
 
   app.addHook('onRequest', ({ ctx }) => {
     const correlationId = bindCorrelationId(ctx, options.correlation);
-    if (!requestLoggerStore.has(ctx)) {
-      requestLoggerStore.set(
+    if (getRequestLogger(ctx) === undefined) {
+      storeRequestLogger(
         ctx,
         options.logger.child({ requestId: ctx.requestId, correlationId }),
       );
+    }
+  });
+
+  app.addHook('onError', ({ ctx, error }) => {
+    if (typeof ctx.set === 'function') {
+      ctx.set(RequestErrorKey, error);
     }
   });
 
@@ -253,11 +318,21 @@ export function attachObservabilityHooks(
       return;
     }
     const reqLogger =
-      requestLoggerStore.get(ctx) ??
+      getRequestLogger(ctx) ??
       options.logger.child({
         requestId: ctx.requestId,
         correlationId: getCorrelationId(ctx) ?? ctx.requestId,
       });
-    emitCompletionLog(reqLogger, ctx, statusCode, durationMs, logOpts, redactSet);
+    const capturedError = typeof ctx.get === 'function' ? ctx.get(RequestErrorKey) : undefined;
+    emitCompletionLog(
+      reqLogger,
+      ctx,
+      statusCode,
+      durationMs,
+      logOpts,
+      redactSet,
+      compiledPaths,
+      capturedError,
+    );
   });
 }

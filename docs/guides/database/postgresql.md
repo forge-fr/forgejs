@@ -1,18 +1,18 @@
 # PostgreSQL
 
-> Native postgres-js pooling, allowlisted transaction isolation levels, SQLSTATE error mapping, and checksum-verified migrations.
+> Connect to PostgreSQL with connection pooling, safe transactions, typed SQL error handling, and checksum-checked migrations.
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/database
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/postgresql
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/postgresql.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
 
-## Registering the PostgreSQL plugin & running transactions
+## Register the PostgreSQL plugin & run transactions
 
-Pass createPostgresPlugin() and its runtime config tuple into createKernel({ plugins }) or call kernel.plugin(createPostgresPlugin(), config). The plugin automatically registers a health probe and closes the pool cleanly on kernel.shutdown().
+Add createPostgresPlugin() and its config to createKernel({ plugins }). It automatically registers a readiness health check and closes the connection pool cleanly when the app stops.
 
 **File: `src/db/postgres.ts`**
 
@@ -50,9 +50,9 @@ await runInTransaction(
 
 ## Checksum-verified SQL migrations
 
-createMigrationRunner() tracks applied migrations with SHA-256 checksums, rejecting tampered historical migrations before executing new SQL files.
+createMigrationRunner() stores a SHA-256 checksum for every applied migration and stops if an older migration file was edited unexpectedly.
 
-| Isolation Level (Allowlisted) | SQLSTATE Mapped Errors |
+| Supported Isolation Levels | Mapped PostgreSQL Errors |
 | --- | --- |
-| read uncommitted · read committed | 23505 → DatabaseUniqueViolationError (409 internal) |
+| read uncommitted · read committed | 23505 → DatabaseUniqueViolationError (duplicate key) |
 | repeatable read · serializable | 23503 → DatabaseForeignKeyError · 40001/40P01 → DatabaseSerializationError |

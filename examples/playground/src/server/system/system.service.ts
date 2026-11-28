@@ -62,7 +62,7 @@ export function createSystemService(deps: SystemServiceDeps): SystemService {
           : null;
       return {
         service: 'ForgeJS Live Playground — Multi-Tenant Task & Webhook API',
-        version: '1.0.0-rc.2',
+        version: '1.0.0',
         runtime: nodeVersion ? `Node.js ${nodeVersion}` : 'Edge Runtime',
         packages: [
           '@forge-fr/core',

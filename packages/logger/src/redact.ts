@@ -61,6 +61,8 @@ const CREDENTIALED_URL_REGEX =
   /\b(postgres|postgresql|mysql|mariadb|mongodb(?:\+srv)?|redis|rediss|amqp|amqps|https?):\/\/([^:/@\s]+):([^@\s]+)@/gi;
 const INLINE_AUTH_SCHEME_REGEX = /\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]{6,}/gi;
 
+export type CompiledRedactPath = readonly string[];
+
 export function normalizeRedactKey(key: string): string {
   return key.toLowerCase().replace(/[-_]/g, '');
 }
@@ -73,6 +75,74 @@ export function buildRedactionSet(extraKeys?: readonly string[]): ReadonlySet<st
     }
   }
   return set;
+}
+
+/**
+ * Parses a dot/bracket redaction path such as `user.profile.ssn`,
+ * `req.headers["x-api-key"]`, or `*.credentials.*` into normalized path segments.
+ */
+export function parseRedactPath(rawPath: string): CompiledRedactPath {
+  const trimmed = rawPath.trim();
+  if (trimmed.length === 0) {
+    return [];
+  }
+
+  const segments: string[] = [];
+  const tokenRegex = /\[(?:"([^"]+)"|'([^']+)'|([^\]]+))\]|([^.[\]]+)/g;
+  let match: RegExpExecArray | null;
+  while ((match = tokenRegex.exec(trimmed)) !== null) {
+    const seg = match[1] ?? match[2] ?? match[3] ?? match[4] ?? '';
+    const cleaned = seg.trim();
+    if (cleaned.length > 0) {
+      segments.push(cleaned === '*' ? '*' : cleaned.toLowerCase());
+    }
+  }
+  return segments;
+}
+
+export function compileRedactPaths(
+  paths?: readonly string[],
+): readonly CompiledRedactPath[] {
+  if (!paths || paths.length === 0) {
+    return [];
+  }
+  const compiled: CompiledRedactPath[] = [];
+  for (const p of paths) {
+    const parsed = parseRedactPath(p);
+    if (parsed.length > 0) {
+      compiled.push(parsed);
+    }
+  }
+  return compiled;
+}
+
+export function matchesRedactPath(
+  currentPath: readonly string[],
+  compiledPaths: readonly CompiledRedactPath[],
+): boolean {
+  if (compiledPaths.length === 0 || currentPath.length === 0) {
+    return false;
+  }
+
+  for (let i = 0; i < compiledPaths.length; i += 1) {
+    const pattern = compiledPaths[i]!;
+    if (pattern.length !== currentPath.length) {
+      continue;
+    }
+    let matched = true;
+    for (let j = 0; j < pattern.length; j += 1) {
+      const pSeg = pattern[j]!;
+      const cSeg = currentPath[j]!;
+      if (pSeg !== '*' && pSeg !== cSeg) {
+        matched = false;
+        break;
+      }
+    }
+    if (matched) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function redactInlineSecrets(input: string): string {
@@ -96,6 +166,10 @@ export function sanitizeLogMessage(message: string, preventLogInjection = true):
 export interface SanitizeContextOptions {
   readonly redactKeys?: readonly string[];
   readonly redactSet?: ReadonlySet<string>;
+  /** Dot/bracket/wildcard paths to redact (e.g. `user.email`, `req.headers["x-custom-secret"]`, `items.*.token`). */
+  readonly redactPaths?: readonly string[];
+  /** Precompiled dot-paths for hot-path reuse. */
+  readonly compiledRedactPaths?: readonly CompiledRedactPath[];
   readonly includeStack?: boolean;
   readonly maxDepth?: number;
 }
@@ -103,6 +177,8 @@ export interface SanitizeContextOptions {
 function sanitizeValueInternal(
   value: unknown,
   redactSet: ReadonlySet<string>,
+  compiledPaths: readonly CompiledRedactPath[],
+  currentPath: string[],
   includeStack: boolean,
   seen: WeakSet<object>,
   depth: number,
@@ -161,9 +237,24 @@ function sanitizeValueInternal(
   seen.add(value);
 
   if (Array.isArray(value)) {
-    return value.map((item) =>
-      sanitizeValueInternal(item, redactSet, includeStack, seen, depth + 1, maxDepth),
-    );
+    return value.map((item, idx) => {
+      currentPath.push(String(idx));
+      const res =
+        compiledPaths.length > 0 && matchesRedactPath(currentPath, compiledPaths)
+          ? REDACTED_PLACEHOLDER
+          : sanitizeValueInternal(
+              item,
+              redactSet,
+              compiledPaths,
+              currentPath,
+              includeStack,
+              seen,
+              depth + 1,
+              maxDepth,
+            );
+      currentPath.pop();
+      return res;
+    });
   }
 
   const out: Record<string, unknown> = {};
@@ -173,8 +264,37 @@ function sanitizeValueInternal(
     }
     if (redactSet.has(normalizeRedactKey(k))) {
       out[k] = REDACTED_PLACEHOLDER;
+      continue;
+    }
+
+    if (compiledPaths.length > 0) {
+      currentPath.push(k.toLowerCase());
+      if (matchesRedactPath(currentPath, compiledPaths)) {
+        out[k] = REDACTED_PLACEHOLDER;
+      } else {
+        out[k] = sanitizeValueInternal(
+          v,
+          redactSet,
+          compiledPaths,
+          currentPath,
+          includeStack,
+          seen,
+          depth + 1,
+          maxDepth,
+        );
+      }
+      currentPath.pop();
     } else {
-      out[k] = sanitizeValueInternal(v, redactSet, includeStack, seen, depth + 1, maxDepth);
+      out[k] = sanitizeValueInternal(
+        v,
+        redactSet,
+        compiledPaths,
+        currentPath,
+        includeStack,
+        seen,
+        depth + 1,
+        maxDepth,
+      );
     }
   }
   return out;
@@ -185,11 +305,14 @@ export function sanitizeLogContext(
   options: SanitizeContextOptions = {},
 ): LogContext {
   const redactSet = options.redactSet ?? buildRedactionSet(options.redactKeys);
+  const compiledPaths = options.compiledRedactPaths ?? compileRedactPaths(options.redactPaths);
   const includeStack = options.includeStack ?? false;
   const maxDepth = options.maxDepth ?? MAX_SANITIZE_DEPTH;
   return sanitizeValueInternal(
     context,
     redactSet,
+    compiledPaths,
+    [],
     includeStack,
     new WeakSet<object>(),
     0,

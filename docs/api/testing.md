@@ -1,8 +1,8 @@
 # @forge-fr/testing
 
-> In-memory HTTP and WebSocket test harness, DI provider overrides, capability-scoped plugin test harness, and shared adapter contract verification suites.
+> First-class testing harness with createTestKernel/createTestApp, typed DI overrides, in-memory HTTP/SSE/multipart/cookie-jar TestClient, and WebSocket pairs.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: tooling
 - **Tarball**: 17.2 kB (32 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/testing
 ```
 
@@ -41,5 +42,5 @@ await client.close();
 
 ### Test Clients, Harnesses & Contract Suites
 
-- **Values**: `MemoryAdapter`, `createTestClient`, `overrideProvider`, `runHttpAdapterContractSuite`, `createPluginTestHarness`, `createMemoryWebSocketPair`, `runWebSocketContractSuite`
-- **Types**: `TestClient`, `TestClientOptions`, `TestRequestOptions`, `TestResponse`, `ProviderTarget`, `AdapterContractCheckResult`, `PluginTestHarness`, `PluginTestHarnessOptions`, `MemoryWebSocketClient`, `MemoryWebSocketPair`
+- **Values**: `MemoryAdapter`, `createTestClient`, `createTestApp`, `createTestKernel`, `overrideProvider`, `overrideValue`, `overrideFactory`, `applyOverrides`, `isTypedProviderOverride`, `runHttpAdapterContractSuite`, `createPluginTestHarness`, `createMemoryWebSocketPair`, `runWebSocketContractSuite`
+- **Types**: `TestApp`, `TestAppOptions`, `TestClient`, `TestClientOptions`, `TestKernel`, `TestKernelOptions`, `TestOverride`, `TestRequestOptions`, `TestResponse`, `TestSseResponse`, `ParsedSseMessage`, `TypedProviderOverride`, `TestMultipartFile`, `TestMultipartFieldValue`, `ProviderTarget`, `AdapterContractCheckResult`, `PluginTestHarness`, `PluginTestHarnessOptions`, `MemoryWebSocketClient`, `MemoryWebSocketPair`

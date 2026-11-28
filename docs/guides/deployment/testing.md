@@ -1,21 +1,21 @@
 # Testing
 
-> In-memory HTTP/WebSocket tests, DI provider overrides, plugin harnesses, and dual-runtime Node.js + Bun verification.
+> Test HTTP routes, WebSockets, DI overrides, and plugins fast in memory with identical behavior on Node.js and Bun.
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/testing
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/testing
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/testing.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/TESTING_STRATEGY.md
 
-## Fast in-memory HTTP, DI & WebSocket testing
+## Fast in-memory testing toolkit
 
-- createTestClient(app) exercises full routing, tiered middleware, hooks, body limits, and schema validation without binding TCP sockets.
-- overrideProvider() swaps repositories or external services cleanly inside the DI container.
-- createMemoryWebSocketPair() tests real-time WebSocket upgrades, auth guards, and message frames deterministically.
-- createPluginTestHarness() verifies plugin configuration schemas, exports, health probes, and shutdown hooks in isolation.
+- createTestClient(app) tests full routing, middleware, hooks, body limits, and validation without opening a network port.
+- overrideProvider() swaps real repositories or external API clients with test doubles in one line.
+- createMemoryWebSocketPair() tests WebSocket auth guards and live messages reliably in memory.
+- createPluginTestHarness() verifies plugin config validation, exports, health checks, and shutdown hooks in isolation.
 
 **File: `tests/orders.test.ts`**
 

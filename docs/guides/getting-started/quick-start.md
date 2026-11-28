@@ -1,18 +1,18 @@
 # Quick Start
 
-> Build a schema-validated HTTP API with createHttpApp() and validatedHandler(), then swap seamlessly across Node.js, Bun, and WinterCG Edge.
+> Create a validated HTTP API with createHttpApp() and validatedHandler(), then run the same code on Node.js, Bun, or Edge.
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/http, @forge-fr/validation, @forge-fr/node, @forge-fr/bun, @forge-fr/edge
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/quick-start.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
 
-## Create your first validated API
+## Build your first validated API
 
-Your routing, validation, middleware, and error-handling code stays 100% identical across runtimes. Only the runtime adapter import changes at the entrypoint.
+Your routes, input validation, middleware, and error handling stay the same no matter where you deploy. Only the small runtime adapter import at the top changes.
 
 **Node.js (`src/server.ts`)**
 
@@ -72,7 +72,7 @@ const server = await app.listen(createBunAdapter(), { host: '127.0.0.1', port: 3
 attachProcessShutdown(server);
 ```
 
-**WinterCG Edge (`src/worker.ts`)**
+**Cloudflare / Edge (`src/worker.ts`)**
 
 ```ts
 import { createHttpApp } from '@forge-fr/http';
@@ -100,9 +100,9 @@ app.post(
 export default createCloudflareWorkerHandler(app);
 ```
 
-## Test routes without binding a TCP port
+## Test routes in memory without opening a port
 
-Pass your ForgeHttpApp directly to createTestClient(app) from @forge-fr/testing to exercise routing, middleware, body limits, and schema validation in memory.
+Pass your app directly to createTestClient(app) from @forge-fr/testing to test routes, middleware, body size limits, and validation fast in memory.
 
 **File: `tests/health.test.ts`**
 

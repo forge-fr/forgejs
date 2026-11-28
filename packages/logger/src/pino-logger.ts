@@ -8,8 +8,10 @@ import {
 import {
   DEFAULT_PINO_REDACT_PATHS,
   buildRedactionSet,
+  compileRedactPaths,
   sanitizeLogContext,
   sanitizeLogMessage,
+  type CompiledRedactPath,
 } from './redact.js';
 import { getActiveTraceContext, type ActiveTraceContext } from './telemetry.js';
 
@@ -77,6 +79,7 @@ export interface PinoLoggerOptions {
 
 interface InternalWrapConfig {
   readonly redactSet: ReadonlySet<string>;
+  readonly compiledRedactPaths: readonly CompiledRedactPath[];
   readonly includeStack: boolean;
   readonly preventLogInjection: boolean;
 }
@@ -91,6 +94,7 @@ function wrapPinoInstance(rawLogger: PinoLogger, config: InternalWrapConfig): Pi
     if (context !== undefined && Object.keys(context).length > 0) {
       const safeContext = sanitizeLogContext(context, {
         redactSet: config.redactSet,
+        compiledRedactPaths: config.compiledRedactPaths,
         includeStack: config.includeStack,
       });
       rawLogger[level](safeContext, safeMsg);
@@ -115,6 +119,7 @@ function wrapPinoInstance(rawLogger: PinoLogger, config: InternalWrapConfig): Pi
     child(bindings: LogContext): PinoForgeLogger {
       const safeBindings = sanitizeLogContext(bindings, {
         redactSet: config.redactSet,
+        compiledRedactPaths: config.compiledRedactPaths,
         includeStack: config.includeStack,
       });
       return wrapPinoInstance(rawLogger.child(safeBindings), config);
@@ -135,6 +140,7 @@ function wrapPinoInstance(rawLogger: PinoLogger, config: InternalWrapConfig): Pi
 
 export function createPinoLogger(options: PinoLoggerOptions = {}): PinoForgeLogger {
   const redactSet = buildRedactionSet(options.redactKeys);
+  const compiledRedactPaths = compileRedactPaths(options.redactPaths);
   const includeStack = options.includeStack ?? false;
   const preventLogInjection = options.preventLogInjection ?? true;
   const includeOtelTraceContext = options.includeOtelTraceContext ?? true;
@@ -145,7 +151,7 @@ export function createPinoLogger(options: PinoLoggerOptions = {}): PinoForgeLogg
   );
 
   const sanitizedBaseBindings = options.bindings
-    ? sanitizeLogContext(options.bindings, { redactSet, includeStack })
+    ? sanitizeLogContext(options.bindings, { redactSet, compiledRedactPaths, includeStack })
     : undefined;
 
   const resolvedBase: Record<string, unknown> = {
@@ -216,6 +222,7 @@ export function createPinoLogger(options: PinoLoggerOptions = {}): PinoForgeLogg
 
   return wrapPinoInstance(rawLogger, {
     redactSet,
+    compiledRedactPaths,
     includeStack,
     preventLogInjection,
   });

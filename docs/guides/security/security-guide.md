@@ -1,18 +1,18 @@
 # Security Guide (OWASP ASVS 5.0.0)
 
-> Clear separation of built-in HTTP defaults, optional @forge-fr/security middleware, and application/infrastructure security responsibilities.
+> Clear breakdown of built-in HTTP protections, optional @forge-fr/security middleware, and what your team still owns.
 
 - **Section**: Authentication & Security
 - **Packages**: @forge-fr/security, @forge-fr/http, @forge-fr/storage, @forge-fr/logger
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/security-guide.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/security-and-observability.md
 
-## Composable OWASP ASVS 5.0.0 controls
+## Ready-to-use OWASP ASVS 5.0.0 security controls
 
-@forge-fr/security ships zero-dependency security middleware and utility guards aligned with OWASP ASVS 5.0.0 L1/L2 baseline controls.
+@forge-fr/security provides zero-dependency middleware and helper functions aligned with OWASP ASVS 5.0.0 security practices.
 
 **File: `src/security.ts`**
 
@@ -34,22 +34,22 @@ app.use(createCorsMiddleware({ origin: ['https://app.example.com'], credentials:
 app.use(createCsrfMiddleware());
 app.use(createRateLimitMiddleware({ windowMs: 60_000, max: 120, trustProxy: false }));
 
-// SSRF-hardened outbound fetch (blocks loopback, link-local, RFC1918, cloud metadata)
+// Safe outbound fetch (blocks localhost, private IPs, and cloud metadata endpoints)
 const safeFetch = createSafeFetch();
 const safePath = resolveConfinedPath('/var/app/uploads', '2026/avatar.png');
 const clean = sanitizeObject({ name: 'alice' });
 ```
 
-## Built-in defaults vs. optional vs. application duties
+## Built-in defaults vs. optional packages vs. your duties
 
 | Layer | Included Controls |
 | --- | --- |
-| Built-in Framework Defaults | 1 MiB bounded body readers (413), null-prototype params, prototype-pollution stripping, expose: false 5xx sanitization, CRLF log stripping, SecretValue redaction |
-| Optional @forge-fr/security & @forge-fr/auth | CSP/HSTS headers, strict CORS, double-submit CSRF, rate limiting, SSRF createSafeFetch(), Argon2id, algorithm-pinned JWT, RBAC/ABAC |
-| Application & Infrastructure Duties | Calling assertOwnership() & assertTenantIsolation() on every object fetch, TLS termination, WAF/DDoS, secret rotation, OS/container isolation |
+| Built-in Framework Defaults | 1 MiB body size limit (413), safe route params, JSON prototype key stripping, hidden 5xx details, safe log line breaks, SecretValue masking |
+| Optional @forge-fr/security & @forge-fr/auth | Security headers (CSP/HSTS), strict CORS, CSRF checks, rate limiting, SSRF-safe fetch, Argon2id passwords, strict JWTs, RBAC/ABAC |
+| Your App & Infrastructure Duties | Calling ownership and tenant checks on every data fetch, HTTPS/TLS, WAF/DDoS protection, secret rotation, and container isolation |
 
-## Limitations & honest boundaries
+## Honest security boundaries
 
-> **SECURITY: Honest Security Boundary**
+> **SECURITY: Security Is a Shared Responsibility**
 >
-> No framework automatically makes an application secure. Plugins run in-process (capability scoping prevents accidental coupling, not OS/VM sandboxing). Schema validation proves shape only; services must still enforce ownership and tenant checks.
+> No framework can make an app secure by itself. Plugins run in the same process (capabilities prevent accidental coupling, not OS sandboxing). Schema validation checks data shape only — your services must still verify ownership and tenant access.

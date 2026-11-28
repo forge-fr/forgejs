@@ -1,17 +1,34 @@
 import { CliError } from './errors.js';
-import { validateProjectName, validateSymbolName } from './safety.js';
+import { validateProjectName } from './safety.js';
+import { renderControllerTemplate } from './templates/controller.template.js';
+import { renderModuleTemplate } from './templates/module.template.js';
+import { renderRepositoryTemplate } from './templates/repository.template.js';
+import { renderSchemaTemplate } from './templates/schema.template.js';
+import { renderServiceTemplate } from './templates/service.template.js';
+import { resolveGeneratorContext } from './templates/shared.js';
 import type {
   GeneratedFileEntry,
   GeneratorArtifactKind,
+  GeneratorOptions,
   ProjectRuntimeTarget,
   ProjectTemplateKind,
 } from './types.js';
 
 const FORGE_SCOPE = '@forge-fr';
 
-function pkgSpec(shortName: string): string {
-  return `${FORGE_SCOPE}/${shortName}`;
+function pkgSpec(pkgName: string): string {
+  return `${FORGE_SCOPE}/${pkgName}`;
 }
+
+export {
+  renderControllerTemplate,
+  renderModuleTemplate,
+  renderRepositoryTemplate,
+  renderSchemaTemplate,
+  renderServiceTemplate,
+  resolveGeneratorContext,
+};
+export type { ResolvedGeneratorContext } from './templates/shared.js';
 
 export interface ProjectTemplateOptions {
   readonly projectName: string;
@@ -36,20 +53,22 @@ export function buildProjectTemplateFiles(
   }
 
   const dependencies: Record<string, string> = {
-    [pkgSpec('core')]: '^1.0.0-rc.2',
-    [pkgSpec('http')]: '^1.0.0-rc.2',
+    [pkgSpec('core')]: '^1.0.0',
+    [pkgSpec('http')]: '^1.0.0',
     ...(runtime === 'bun'
-      ? { [pkgSpec('bun')]: '^1.0.0-rc.2' }
+      ? { [pkgSpec('bun')]: '^1.0.0' }
       : runtime === 'edge'
-        ? { [pkgSpec('edge')]: '^1.0.0-rc.2' }
-        : { [pkgSpec('node')]: '^1.0.0-rc.2' }),
+        ? { [pkgSpec('edge')]: '^1.0.0' }
+        : { [pkgSpec('node')]: '^1.0.0' }),
   };
 
-  if (template === 'api') {
-    dependencies[pkgSpec('openapi')] = '^1.0.0-rc.2';
-    dependencies[pkgSpec('security')] = '^1.0.0-rc.2';
-    dependencies[pkgSpec('validation')] = '^1.0.0-rc.2';
+  if (template === 'api' || template === 'modular') {
+    dependencies[pkgSpec('validation')] = '^1.0.0';
     dependencies['zod'] = '^4.6.7';
+  }
+  if (template === 'api') {
+    dependencies[pkgSpec('openapi')] = '^1.0.0';
+    dependencies[pkgSpec('security')] = '^1.0.0';
   }
 
   const adapterImport =
@@ -91,7 +110,7 @@ export function buildProjectTemplateFiles(
     scripts,
     dependencies,
     devDependencies: {
-      [pkgSpec('testing')]: '^1.0.0-rc.2',
+      [pkgSpec('testing')]: '^1.0.0',
       typescript: '^5.8.0',
       ...(runtime === 'node'
         ? { '@types/node': '^22.15.0', tsx: '^4.19.0', vitest: '^3.1.0' }
@@ -281,75 +300,161 @@ function buildEntrySource(opts: {
   ].join('\n');
 }
 
+/**
+ * Generates a single artifact file (`module`, `controller`, `service`, `repository`, or `schema`).
+ * Preserves backward-compatible defaults (`modulesDir: 'src'`, `naming: 'exact'`) when called with 2 arguments.
+ */
 export function generateArtifactFiles(
   kind: GeneratorArtifactKind,
   rawName: string,
+  options: GeneratorOptions = {},
 ): GeneratedFileEntry {
-  const sym = validateSymbolName(rawName);
+  const ctx = resolveGeneratorContext(rawName, options, {
+    modulesDir: 'src',
+    naming: 'exact',
+    crud: options.crud ?? false,
+    includeRepository: options.includeRepository ?? false,
+    includeSchema: options.includeSchema ?? false,
+    includeController: options.includeController ?? true,
+  });
 
   switch (kind) {
-    case 'module':
-      return {
-        relativePath: `src/${sym.kebab}/${sym.kebab}.module.ts`,
-        content: [
-          `import { defineModule } from '${pkgSpec('core')}';`,
-          `import { ${sym.pascal}ServiceToken, create${sym.pascal}Service } from './${sym.kebab}.service.js';`,
-          ``,
-          `export const ${sym.camel}Module = defineModule({`,
-          `  name: '${sym.kebab}',`,
-          `  providers: [`,
-          `    {`,
-          `      token: ${sym.pascal}ServiceToken,`,
-          `      scope: 'singleton',`,
-          `      useFactory: () => create${sym.pascal}Service(),`,
-          `    },`,
-          `  ],`,
-          `  exports: [${sym.pascal}ServiceToken],`,
-          `});`,
-          ``,
-        ].join('\n'),
-      };
-
-    case 'controller':
-      return {
-        relativePath: `src/${sym.kebab}/${sym.kebab}.controller.ts`,
-        content: [
-          `import type { ForgeHttpApp } from '${pkgSpec('http')}';`,
-          `import { ${sym.pascal}ServiceToken } from './${sym.kebab}.service.js';`,
-          ``,
-          `export function register${sym.pascal}Controller(app: ForgeHttpApp): void {`,
-          `  app.group('/${sym.kebab}', (group) => {`,
-          `    group.get('/', (ctx) => {`,
-          `      const service = ctx.resolve(${sym.pascal}ServiceToken);`,
-          `      return ctx.json(service.status());`,
-          `    });`,
-          `  });`,
-          `}`,
-          ``,
-        ].join('\n'),
-      };
-
+    case 'schema':
+      return renderSchemaTemplate(ctx);
+    case 'repository':
+      return renderRepositoryTemplate(ctx);
     case 'service':
-      return {
-        relativePath: `src/${sym.kebab}/${sym.kebab}.service.ts`,
-        content: [
-          `import { createToken } from '${pkgSpec('core')}';`,
-          ``,
-          `export interface ${sym.pascal}Service {`,
-          `  status(): { readonly name: string; readonly ok: boolean };`,
-          `}`,
-          ``,
-          `export const ${sym.pascal}ServiceToken = createToken<${sym.pascal}Service>('${sym.pascal}Service');`,
-          ``,
-          `export function create${sym.pascal}Service(): ${sym.pascal}Service {`,
-          `  return {`,
-          `    status() {`,
-          `      return { name: '${sym.kebab}', ok: true };`,
-          `    },`,
-          `  };`,
-          `}`,
-          ``,
-        ].join('\n'),
-      };
+      return renderServiceTemplate(ctx);
+    case 'controller':
+      return renderControllerTemplate(ctx);
+    case 'module':
+    case 'resource':
+      return renderModuleTemplate(ctx);
   }
+}
+
+/**
+ * Generates the complete 5-file ForgeJS feature module structure:
+ * `<modulesDir>/<name>/<name>.schema.ts`
+ * `<modulesDir>/<name>/<name>.repository.ts`
+ * `<modulesDir>/<name>/<name>.service.ts`
+ * `<modulesDir>/<name>/<name>.controller.ts`
+ * `<modulesDir>/<name>/<name>.module.ts`
+ */
+export function generateModuleBundle(
+  rawName: string,
+  options: GeneratorOptions = {},
+): readonly GeneratedFileEntry[] {
+  const ctx = resolveGeneratorContext(rawName, options, {
+    modulesDir: 'src/modules',
+    naming: 'plural',
+    crud: true,
+    includeRepository: true,
+    includeSchema: true,
+    includeController: true,
+  });
+
+  const files: GeneratedFileEntry[] = [];
+  if (ctx.includeSchema) {
+    files.push(renderSchemaTemplate(ctx));
+  }
+  if (ctx.includeRepository) {
+    files.push(renderRepositoryTemplate(ctx));
+  }
+  files.push(renderServiceTemplate(ctx));
+  if (ctx.includeController) {
+    files.push(renderControllerTemplate(ctx));
+  }
+  files.push(renderModuleTemplate(ctx));
+  return files;
+}
+
+/**
+ * Dispatches any `GeneratorArtifactKind` (`module`, `resource`, `schema`, `repository`, `service`, `controller`)
+ * to either the full modular bundle or the specific artifact file inside `options.modulesDir ?? 'src/modules'`.
+ */
+export function generateCodeArtifacts(
+  kind: GeneratorArtifactKind,
+  rawName: string,
+  options: GeneratorOptions = {},
+): readonly GeneratedFileEntry[] {
+  if (kind === 'resource' || (kind === 'module' && options.singleFile !== true)) {
+    return generateModuleBundle(rawName, options);
+  }
+
+  const ctx = resolveGeneratorContext(rawName, options, {
+    modulesDir: 'src/modules',
+    naming: 'plural',
+    crud: options.crud ?? false,
+    includeRepository: options.includeRepository ?? false,
+    includeSchema: options.includeSchema ?? false,
+    includeController: true,
+  });
+
+  switch (kind) {
+    case 'schema':
+      return [renderSchemaTemplate(ctx)];
+    case 'repository':
+      return [renderRepositoryTemplate(ctx)];
+    case 'service':
+      return [renderServiceTemplate(ctx)];
+    case 'controller':
+      return [renderControllerTemplate(ctx)];
+    case 'module':
+      return [renderModuleTemplate(ctx)];
+  }
+}
+
+/**
+ * Injects module and controller registration into an existing `src/app.ts` source string.
+ */
+export function injectModuleRegistrationInAppSource(
+  appSource: string,
+  rawName: string,
+  options: GeneratorOptions = {},
+): string {
+  const ctx = resolveGeneratorContext(rawName, options, {
+    modulesDir: 'src/modules',
+    naming: 'plural',
+  });
+
+  const relFromSrc = ctx.relativeDir.startsWith('src/')
+    ? `./${ctx.relativeDir.slice('src/'.length)}`
+    : `./${ctx.relativeDir}`;
+
+  const moduleImport = `import { ${ctx.moduleCamel}Module } from '${relFromSrc}/${ctx.filePrefix}.module.js';`;
+  const controllerImport = `import { register${ctx.modulePascal}Controller } from '${relFromSrc}/${ctx.filePrefix}.controller.js';`;
+  const registerModuleCall = `  app.registerModule(${ctx.moduleCamel}Module);`;
+  const registerControllerCall = `  register${ctx.modulePascal}Controller(app);`;
+
+  let updated = appSource;
+  const importsToAdd: string[] = [];
+  if (!updated.includes(`${ctx.moduleCamel}Module`)) {
+    importsToAdd.push(moduleImport);
+  }
+  if (ctx.includeController && !updated.includes(`register${ctx.modulePascal}Controller`)) {
+    importsToAdd.push(controllerImport);
+  }
+
+  if (importsToAdd.length > 0) {
+    updated = `${importsToAdd.join('\n')}\n${updated}`;
+  }
+
+  const returnAppIdx = updated.lastIndexOf('return app;');
+  if (returnAppIdx >= 0) {
+    const callsToAdd: string[] = [];
+    if (!appSource.includes(registerModuleCall.trim())) {
+      callsToAdd.push(registerModuleCall);
+    }
+    if (ctx.includeController && !appSource.includes(registerControllerCall.trim())) {
+      callsToAdd.push(registerControllerCall);
+    }
+    if (callsToAdd.length > 0) {
+      const lineStart = updated.lastIndexOf('\n', returnAppIdx);
+      const insertPos = lineStart >= 0 ? lineStart + 1 : returnAppIdx;
+      updated = `${updated.slice(0, insertPos)}${callsToAdd.join('\n')}\n${updated.slice(insertPos)}`;
+    }
+  }
+
+  return updated;
 }

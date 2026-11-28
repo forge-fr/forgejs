@@ -1,28 +1,28 @@
 # Database Overview
 
-> DatabaseAdapter contract, SQLSTATE normalization, credential-redacted URLs, and supported PostgreSQL, Drizzle, and Prisma integrations.
+> How ForgeJS handles PostgreSQL, Drizzle, and Prisma connections, clean error mapping, and password masking in database URLs.
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/database, @forge-fr/drizzle, @forge-fr/prisma
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/overview
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/overview.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
 
-## Verified official integrations
+## Official database integrations
 
-- @forge-fr/database — Native PostgreSQL driver built on postgres (postgres-js) with pooling, transactions, migrations, and SQLSTATE error mapping.
-- @forge-fr/drizzle — First-class Drizzle ORM plugin preserving 100% native PostgresJsDatabase<TSchema> inference.
-- @forge-fr/prisma — Prisma ORM plugin supporting Prisma v5/v6/v7+ generated clients with P1xxx/P2xxx error normalization.
+- @forge-fr/database — Direct PostgreSQL support (powered by postgres-js) with connection pooling, transactions, migrations, and typed errors.
+- @forge-fr/drizzle — Drizzle ORM plugin that keeps 100% of Drizzle native TypeScript query inference.
+- @forge-fr/prisma — Prisma ORM plugin supporting Prisma v5, v6, and v7+ generated clients with clean error mapping.
 
-> **NOTE: Explicit ORM Scope Disclosure**
+> **NOTE: Using another ORM or database?**
 >
-> TypeORM, MikroORM, Sequelize, and Knex do not have official ForgeJS packages. Teams using other ORMs or SQL dialects can integrate them cleanly via the generic DatabaseAdapter contract and createDatabasePlugin().
+> TypeORM, MikroORM, Sequelize, and Knex do not have official ForgeJS plugins. You can still plug in any database or ORM cleanly using the DatabaseAdapter interface and createDatabasePlugin().
 
-## Credential redaction & SQLSTATE normalization
+## Safe URL masking & typed database errors
 
-All database adapters sanitize connection strings via redactDatabaseUrl() and map raw driver errors into typed ForgeError subclasses with expose: false by default so SQL statements and credentials never leak.
+Database adapters hide passwords in connection URLs via redactDatabaseUrl() and turn raw driver errors into typed ForgeError classes (hidden from clients by default so SQL details never leak).
 
 **File: `src/db/errors.ts`**
 

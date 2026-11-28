@@ -1,8 +1,8 @@
 # @forge-fr/queue
 
-> Background job queues for Memory, Redis (sorted sets + atomic Lua pop), and PostgreSQL (FOR UPDATE SKIP LOCKED) with retries, DLQ replay, idempotency, and graceful worker draining.
+> Background job queues, cron/interval createJobScheduler with distributed lease locks, createTransactionalOutbox, and createDurableEventBridge for Memory, Redis, and PostgreSQL.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 25.1 kB (40 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/queue
 ```
 
@@ -48,3 +49,8 @@ await queue.enqueue('email.welcome', { userId: 'u_1' });
 
 - **Values**: `QueueError`, `QueueFullError`, `QueueValidationError`, `assertPayloadSizeLimit`, `computeBackoffDelayMs`, `sanitizePayload`, `validateIdempotencyKey`, `validateJobName`, `createMemoryQueueAdapter`, `createRedisQueueAdapter`, `createPostgresQueueAdapter`, `createQueueWorker`, `QueueTokens`, `createQueuePlugin`
 - **Types**: `BackoffPolicy`, `EnqueueOptions`, `FailJobOutcome`, `JobExecutionContext`, `JobHandler`, `JobStatus`, `MemoryQueueOptions`, `PersistentQueueAdapter`, `PostgresQueryResult`, `PostgresQueueAdapter`, `PostgresQueueOptions`, `PostgresQueueSqlLike`, `QueueAdapter`, `QueueJob`, `QueuePluginOptions`, `QueueStats`, `QueueWorker`, `QueueWorkerOptions`, `QueueWorkerStopOptions`, `RedisQueueClientLike`, `RedisQueueOptions`
+
+### Job Scheduler, Transactional Outbox & Durable Events
+
+- **Values**: `createJobScheduler`, `createMemorySchedulerLockAdapter`, `createPostgresSchedulerLockAdapter`, `createRedisSchedulerLockAdapter`, `getNextCronTimestamp`, `matchesCronTimestamp`, `parseCronExpression`, `validateTimezone`, `createMemoryOutboxStore`, `createPostgresOutboxStore`, `createTransactionalOutbox`, `createDurableEventBridge`
+- **Types**: `JobScheduler`, `JobSchedulerOptions`, `MemorySchedulerLockOptions`, `MemorySchedulerLockStore`, `ParsedCronExpression`, `PostgresSchedulerLockAdapter`, `PostgresSchedulerLockOptions`, `RedisSchedulerLockOptions`, `RegisteredScheduleInfo`, `ScheduledJobDefinition`, `ScheduledJobTickContext`, `SchedulerLockAdapter`, `SchedulerTickResult`, `MemoryOutboxStore`, `MemoryOutboxStoreOptions`, `OutboxBatchEntry`, `OutboxEnqueueOptions`, `OutboxPublisher`, `OutboxRecord`, `OutboxRelayResult`, `OutboxStats`, `OutboxStatus`, `OutboxStoreAdapter`, `OutboxStoreInsertInput`, `OutboxTransactionContextLike`, `OutboxTransactionHandle`, `PostgresOutboxStoreOptions`, `TransactionalOutbox`, `TransactionalOutboxOptions`, `DurableEventBridge`, `DurableEventBridgeOptions`, `DurableEventConsumer`, `DurableEventExecutionContext`, `DurableEventJobPayload`, `DurableEventPublishOptions`, `DurableEventTopicConfig`, `DurableEventTopicRule`

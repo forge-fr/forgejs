@@ -38,7 +38,7 @@ const CreateApiKeyBodySchema = z.object({
 
 const GenerateOAuthPkceBodySchema = z.object({
   redirectUri: z
-    .enum(['http://localhost:3000/playground', 'https://playground.forgejs.dev/callback'])
+    .enum(['http://localhost:3000/playground', 'https://playground.forgejs.id/callback'])
     .default('http://localhost:3000/playground'),
   scopes: z.array(z.string().min(1).max(40)).min(1).max(6).default(['openid', 'profile', 'tasks:read']),
 });

@@ -1,8 +1,8 @@
 # @forge-fr/bun
 
-> Native Bun.serve() runtime adapter with pure-HTTP fast mode, native Bun WebSockets, in-flight request draining, and POSIX shutdown handling.
+> Bun server adapter powered by Bun.serve() with fast HTTP handling, native WebSockets, in-flight request draining, and graceful shutdown.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 11.9 kB (16 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/bun
 ```
 

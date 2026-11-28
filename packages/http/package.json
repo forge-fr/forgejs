@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/http",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0",
   "description": "Web Standards HTTP engine for ForgeJS with ForgeContext, deterministic tiered middleware, bounded body/multipart parsers, content negotiation, SSE/streaming, and request-scoped DI.",
   "license": "MIT",
   "type": "module",
@@ -9,7 +9,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./realtime": {
+      "types": "./dist/realtime.d.ts",
+      "import": "./dist/realtime.js",
+      "default": "./dist/realtime.js"
     }
   },
   "files": [
@@ -44,11 +50,11 @@
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@forge-fr/core": "^1.0.0-rc.2",
-    "@forge-fr/router": "^1.0.0-rc.2"
+    "@forge-fr/core": "^1.0.0",
+    "@forge-fr/router": "^1.0.0"
   },
   "publishConfig": {
     "access": "public",

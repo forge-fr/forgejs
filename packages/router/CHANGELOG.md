@@ -1,5 +1,10 @@
 # Changelog — @forge-fr/router
 
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Synchronized `@forge-fr/router` to `1.0.0` General Availability.
+
 ## [0.1.0] — Milestone 2.1 (2026-11-25)
 
 ### Added

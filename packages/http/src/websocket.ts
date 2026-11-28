@@ -1,5 +1,7 @@
 import { isForgeError, normalizeError } from '@forge-fr/core';
 import { createRouter, type Router } from '@forge-fr/router';
+import type { AnyContextKey, ContextKey, DefaultedContextKey } from './context-key.js';
+import { ContextKeyNotFoundError } from './errors.js';
 import type {
   RegisteredWebSocketRoute,
   RuntimeRequestMeta,
@@ -68,6 +70,176 @@ function parseQueryRecord(url: URL): Readonly<Record<string, string>> {
     }
   }
   return Object.freeze(out);
+}
+
+export interface CreateWebSocketUpgradeContextInit {
+  readonly request: Request;
+  readonly url: URL;
+  readonly path: string;
+  readonly headers: Headers;
+  readonly params: Readonly<Record<string, string>>;
+  readonly query: Readonly<Record<string, string>>;
+  readonly remoteAddress?: string;
+  readonly runtime: string;
+  readonly protocol: string;
+  readonly state?: Map<string, unknown>;
+  readonly typedState?: Map<symbol, unknown>;
+}
+
+export function createWebSocketUpgradeContext(
+  init: CreateWebSocketUpgradeContextInit,
+): WebSocketUpgradeContext {
+  const state = init.state ?? new Map<string, unknown>();
+  const typedState = init.typedState ?? new Map<symbol, unknown>();
+
+  function get<T>(key: DefaultedContextKey<T>): T;
+  function get<T>(key: ContextKey<T>): T | undefined;
+  function get<T>(key: AnyContextKey<T>): T | undefined;
+  function get<T>(key: AnyContextKey<T>): T | undefined {
+    if (typedState.has(key.id)) {
+      return typedState.get(key.id) as T;
+    }
+    if (key.hasDefault) {
+      return key.defaultValue();
+    }
+    return undefined;
+  }
+
+  const ctx: WebSocketUpgradeContext = {
+    request: init.request,
+    url: init.url,
+    path: init.path,
+    headers: init.headers,
+    params: init.params,
+    query: init.query,
+    ...(init.remoteAddress !== undefined ? { remoteAddress: init.remoteAddress } : {}),
+    runtime: init.runtime,
+    protocol: init.protocol,
+    state,
+    typedState,
+    get,
+    set<T>(key: AnyContextKey<T>, value: T): WebSocketUpgradeContext {
+      typedState.set(key.id, value);
+      return ctx;
+    },
+    has<T>(key: AnyContextKey<T>): boolean {
+      return typedState.has(key.id);
+    },
+    delete<T>(key: AnyContextKey<T>): boolean {
+      return typedState.delete(key.id);
+    },
+    require<T>(key: AnyContextKey<T>, message?: string): T {
+      if (typedState.has(key.id)) {
+        return typedState.get(key.id) as T;
+      }
+      if (key.hasDefault) {
+        return key.defaultValue();
+      }
+      throw new ContextKeyNotFoundError(key.label, message);
+    },
+    getState<T = unknown>(key: string): T | undefined {
+      return state.get(key) as T | undefined;
+    },
+    setState<T = unknown>(key: string, value: T): WebSocketUpgradeContext {
+      state.set(key, value);
+      return ctx;
+    },
+    hasState(key: string): boolean {
+      return state.has(key);
+    },
+  };
+
+  return ctx;
+}
+
+export interface CreateWebSocketConnectionTransport {
+  readonly id?: string;
+  readonly getReadyState: () => 'open' | 'closing' | 'closed';
+  readonly getBufferedAmount?: () => number;
+  readonly send: (data: WebSocketMessageData) => void;
+  readonly close: (code?: number, reason?: string) => void;
+  readonly ping?: (data?: WebSocketMessageData) => void;
+}
+
+export function createWebSocketConnection(
+  upgradeContext: WebSocketUpgradeContext,
+  transport: CreateWebSocketConnectionTransport,
+): WebSocketConnection {
+  const state = upgradeContext.state;
+  const typedState = upgradeContext.typedState ?? new Map<symbol, unknown>();
+
+  function get<T>(key: DefaultedContextKey<T>): T;
+  function get<T>(key: ContextKey<T>): T | undefined;
+  function get<T>(key: AnyContextKey<T>): T | undefined;
+  function get<T>(key: AnyContextKey<T>): T | undefined {
+    if (typedState.has(key.id)) {
+      return typedState.get(key.id) as T;
+    }
+    if (key.hasDefault) {
+      return key.defaultValue();
+    }
+    return undefined;
+  }
+
+  const conn: WebSocketConnection = {
+    id: transport.id ?? globalThis.crypto.randomUUID(),
+    url: upgradeContext.url,
+    headers: upgradeContext.headers,
+    params: upgradeContext.params,
+    ...(upgradeContext.remoteAddress !== undefined
+      ? { remoteAddress: upgradeContext.remoteAddress }
+      : {}),
+    protocol: upgradeContext.protocol,
+    get readyState() {
+      return transport.getReadyState();
+    },
+    get bufferedAmount() {
+      return transport.getBufferedAmount ? transport.getBufferedAmount() : 0;
+    },
+    send(data: WebSocketMessageData): void {
+      transport.send(data);
+    },
+    sendJson(data: unknown): void {
+      transport.send(JSON.stringify(data));
+    },
+    close(code = 1000, reason = ''): void {
+      transport.close(code, reason);
+    },
+    ping(data?: WebSocketMessageData): void {
+      transport.ping?.(data);
+    },
+    get,
+    set<T>(key: AnyContextKey<T>, value: T): WebSocketConnection {
+      typedState.set(key.id, value);
+      return conn;
+    },
+    has<T>(key: AnyContextKey<T>): boolean {
+      return typedState.has(key.id);
+    },
+    delete<T>(key: AnyContextKey<T>): boolean {
+      return typedState.delete(key.id);
+    },
+    require<T>(key: AnyContextKey<T>, message?: string): T {
+      if (typedState.has(key.id)) {
+        return typedState.get(key.id) as T;
+      }
+      if (key.hasDefault) {
+        return key.defaultValue();
+      }
+      throw new ContextKeyNotFoundError(key.label, message);
+    },
+    getState<T = unknown>(key: string): T | undefined {
+      return state.get(key) as T | undefined;
+    },
+    setState<T = unknown>(key: string, value: T): void {
+      state.set(key, value);
+    },
+    hasState(key: string): boolean {
+      return state.has(key);
+    },
+  };
+
+  return conn;
 }
 
 export class WebSocketRouteRegistry {
@@ -144,7 +316,7 @@ export class WebSocketRouteRegistry {
       }
     }
 
-    const upgradeContext: WebSocketUpgradeContext = {
+    const upgradeContext = createWebSocketUpgradeContext({
       request,
       url,
       path: url.pathname,
@@ -157,8 +329,7 @@ export class WebSocketRouteRegistry {
         request.headers.get('sec-websocket-protocol'),
         route.options.protocols,
       ),
-      state: new Map<string, unknown>(),
-    };
+    });
 
     // 2. Pre-upgrade authentication hook BEFORE 101 Switching Protocols
     if (route.handlers.authenticate) {

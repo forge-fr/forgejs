@@ -1,8 +1,8 @@
 # @forge-fr/edge
 
-> WinterCG Fetch adapter for Cloudflare Workers, Deno, and isolate runtimes with zero node:* or Bun globals and waitUntil background task helpers.
+> Edge Fetch adapter for Cloudflare Workers, Deno, and serverless isolates with zero Node or Bun globals plus background task helpers.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 8.8 kB (12 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/edge
 ```
 

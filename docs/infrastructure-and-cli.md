@@ -1,8 +1,8 @@
 # Infrastructure Plugins & CLI
 
-## 1. Single-Flight Cache, Priority Queue + DLQ & Traversal-Safe Storage
+## 1. Caching, Background Job Queues & Safe File Storage
 
-`@forge-fr/cache`, `@forge-fr/queue`, and `@forge-fr/storage` share uniform adapters and DI plugins across Node.js and Bun:
+`@forge-fr/cache`, `@forge-fr/queue`, and `@forge-fr/storage` share consistent adapters and lifecycle plugins across Node.js and Bun:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -59,7 +59,7 @@ assert.equal(stored.key, 'avatars/u1.png');
 
 ## 2. Official Cross-Runtime CLI (`@forge-fr/cli`)
 
-Programmatic verification of the `forge` CLI scaffolding, code generators, and diagnostics API:
+Run the `forge` CLI programmatically or from your terminal to scaffold projects, generate feature files, and check your environment:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -83,9 +83,9 @@ try {
 }
 ```
 
-## 3. WinterCG Edge Runtimes (`@forge-fr/edge`)
+## 3. Edge Runtimes (`@forge-fr/edge`)
 
-Deploy the exact same `ForgeHttpApp` to Cloudflare Workers, Deno Deploy, or standard WinterCG Fetch isolates without TCP socket listeners:
+Deploy the exact same `ForgeHttpApp` to Cloudflare Workers, Deno Deploy, or any standard Web Fetch edge runtime with no TCP server setup:
 
 ```ts forge-example
 import assert from 'node:assert/strict';

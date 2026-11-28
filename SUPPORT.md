@@ -4,12 +4,12 @@ Before opening a new issue, please check the resources below so we can help you 
 
 ## Documentation & Interactive Learning
 
-- **Documentation Portal:** [https://forgejs.dev/docs/getting-started/introduction](https://forgejs.dev/docs/getting-started/introduction)
+- **Documentation Portal:** [https://forgejs.id/docs/getting-started/introduction](https://forgejs.id/docs/getting-started/introduction)
 - **Repository Docs Index:** [`docs/INDEX.md`](./docs/INDEX.md)
 - **9-Step Modular Backend Tutorial:** [`docs/tutorials/playground-backend.md`](./docs/tutorials/playground-backend.md)
-- **Interactive Playground:** [https://forgejs.dev/playground](https://forgejs.dev/playground)
+- **Interactive Playground:** [https://forgejs.id/playground](https://forgejs.id/playground)
 - **Panduan Bahasa Indonesia:** [Memulai Cepat](./docs/id/quick-start.md) · [Arsitektur](./docs/id/architecture.md) · [Keamanan](./docs/id/security.md) · [Publikasi GitHub Packages](./docs/id/github-packages-publishing.md)
-- **LLM Context Files:** [`llms.txt`](./llms.txt) · [`llms-full.txt`](./llms-full.txt)
+- **LLM Context Files:** [`llms.txt`](./llms.txt) (or [`llm.txt`](./llm.txt)) · [`llms-full.txt`](./llms-full.txt) (or [`llm-full.txt`](./llm-full.txt))
 
 ## Where to Report Issues
 

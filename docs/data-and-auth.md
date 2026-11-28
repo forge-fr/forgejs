@@ -1,8 +1,8 @@
 # Database, ORM, Authentication & Authorization
 
-## 1. Error Normalization & Deterministic Migrations (`@forge-fr/database`)
+## 1. Safe Database Errors & Checksum Migrations (`@forge-fr/database`)
 
-`@forge-fr/database` normalizes driver SQLSTATE errors without exposing credentials or connection URLs, and coordinates checksum-verified SQL migrations:
+`@forge-fr/database` turns raw database errors into clean typed errors without exposing passwords or connection strings, and verifies SQL migrations with checksums:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -26,7 +26,7 @@ assert.equal(normalized.expose, false);
 
 ## 2. Authentication: Argon2id Passwords, JWT & Hashed Sessions (`@forge-fr/auth`)
 
-`@forge-fr/auth` combines OWASP Argon2id password hashing (cross-runtime verified between Node.js and Bun), algorithm-allowlisted JWTs (`jose`), and SHA-256 hashed-at-rest session tokens:
+`@forge-fr/auth` includes OWASP Argon2id password hashing (compatible across Node.js and Bun), strict JWT verification (`jose`), and SHA-256 hashed session tokens:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -60,9 +60,9 @@ assert.equal(loaded?.subject, 'user-1');
 assert.notEqual(loaded?.idHash, created.sessionId);
 ```
 
-## 3. Fail-Closed RBAC, Anti-IDOR Ownership & Tenant Isolation (`@forge-fr/authorization`)
+## 3. Roles (RBAC), Ownership Checks & Tenant Isolation (`@forge-fr/authorization`)
 
-Authorization works identically in pure service layers (`forActor`) and HTTP route middleware with universal deny-overrides-allow precedence:
+Run the exact same permission rules in your domain services (`forActor`) and HTTP middleware — any explicit deny rule always overrides allow:
 
 ```ts forge-example
 import assert from 'node:assert/strict';

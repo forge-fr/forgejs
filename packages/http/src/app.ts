@@ -678,6 +678,7 @@ class ForgeHttpAppImpl implements ForgeHttpApp {
       const route = match.route as InlineCachedRoute;
       ctx._params = match.params;
       ctx._routeMeta = route.meta;
+      ctx._routePattern = route.path;
 
       const pipeline =
         route._pipelineVersion === this.pipelineVersion && route._pipelineRun !== undefined
@@ -790,7 +791,7 @@ class ForgeHttpAppImpl implements ForgeHttpApp {
           throw new MethodNotAllowedError(match.allowedMethods, match.allowHeader);
         }
 
-        ctx.setRouteMatch(match.params, match.route.meta);
+        ctx.setRouteMatch(match.params, match.route.meta, match.route.path);
         const pipeline = this.getRoutePipeline(match.route);
         response = await pipeline(ctx);
       }

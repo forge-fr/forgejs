@@ -2,38 +2,41 @@
 
 > Build the full opinionated modular ForgeJS backend step by step — from workspace setup and Kernel DI to auth strategies, OWASP security, caching, magic-byte storage, webhook queues with DLQ replay, SSE/WebSockets, OpenTelemetry, and OpenAPI 3.1.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Steps**: 9 interactive steps
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend.md
 - **Live Playground**: https://github.com/forge-fr/forgejs/playground
 
-## Step 01: Workspace Setup, ESM TypeScript & HTTP Runtime
+## Step 01: Project Setup, Strict TypeScript & Node Runtime
 
-*Scaffold the workspace and boot the server natively with @forge-fr/node*
+*Create the workspace and start the server cleanly with @forge-fr/node*
 
 - **Estimated time**: 5 min
 - **Packages**: @forge-fr/cli, @forge-fr/node, @forge-fr/http
 - **Module files**: `package.json`, `tsconfig.json`, `server.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=source
 
-Every production ForgeJS backend runs on pure ECMAScript Modules (ESM) with strict TypeScript compiler checks enabled from day one.
+Every ForgeJS backend uses modern JavaScript modules (ESM) and strict TypeScript settings from day one so type mistakes are caught before deployment.
 
-Instead of wrapping an external framework, your entry file wires createNodeAdapter() directly to createHttpApp() and delegates SIGINT/SIGTERM draining to attachProcessShutdown().
+Your entry file connects createNodeAdapter() directly to createHttpApp() and wires attachProcessShutdown() so open requests and background jobs finish safely when the server stops.
 
 ### Key Architectural Highlights
 
-- Pure ESM package configuration ("type": "module") and strict tsconfig rules (strict, exactOptionalPropertyTypes, noUncheckedIndexedAccess).
-- createNodeAdapter({ trustHostHeader: true }) exposes native Node.js HTTP and WebSocket upgrades with zero third-party server wrappers.
-- attachProcessShutdown(app, { exitOnComplete: true }) guarantees queued jobs and open connections drain cleanly on shutdown.
+- Uses modern ESM ("type": "module") with strict TypeScript compiler checks.
+- createNodeAdapter({ trustHostHeader: true }) runs directly on native Node.js HTTP and WebSockets with no extra server wrapper.
+- attachProcessShutdown(app, { exitOnComplete: true }) ensures active requests and queued jobs drain cleanly on SIGINT or SIGTERM.
 
 ### Implementation Code
 
 **1. Bootstrap CLI (`terminal`)**
 
 ```bash
-# Scaffold a modular backend workspace
-npx @forge-fr/cli@next new task-webhook-api --template modular --runtime node
+# Configure GitHub Packages registry for @forge-fr/*
+echo "@forge-fr:registry=https://npm.pkg.github.com" >> .npmrc
+
+# Create a modular backend workspace
+npx @forge-fr/cli new task-webhook-api --template modular --runtime node
 cd task-webhook-api
 
 # Install ForgeJS domain, security, cache, queue, storage, and OpenAPI packages
@@ -77,27 +80,27 @@ void startServer();
 
 ### Verification Checklist
 
-- [ ] Inspect server.ts in the Backend Source viewer to confirm pure @forge-fr/node booting.
-- [ ] Verify graceful shutdown closes both the HTTP listener and background queue worker.
+- [ ] Open server.ts in the Backend Source viewer to see how @forge-fr/node starts the server.
+- [ ] Confirm the shutdown handler closes both the HTTP server and the background job worker.
 
-## Step 02: Application Kernel, Typed Tokens & Opinionated Modules
+## Step 02: App Kernel, Typed Tokens & Feature Modules
 
-*Organize domain features into isolated DI modules with defineModule()*
+*Group each backend feature into a clean module with defineModule()*
 
 - **Estimated time**: 8 min
 - **Packages**: @forge-fr/core, @forge-fr/http
 - **Module files**: `src/playground-server/app.ts`, `src/playground-server/types.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=source
 
-As backends grow, flat route files turn into circular dependency knots. The Playground backend uses ForgeJS opinionated modules: each domain folder owns its module wiring, service factory, and HTTP controller.
+As an API grows, putting all routes in one file quickly turns into messy cross-imports. The Playground backend uses ForgeJS feature modules: each folder owns its module setup, service logic, and HTTP routes.
 
-Cross-module communication flows exclusively through typed tokens (createToken<T>()) and explicit imports/exports declarations resolved by ApplicationKernel.
+Modules talk to each other only through typed tokens (createToken<T>()) and explicit exports, keeping boundaries clear and easy to test.
 
 ### Key Architectural Highlights
 
-- Zero runtime reflection or experimental decorators — createToken<T>() preserves full static TypeScript inference.
-- Plugins (createCachePlugin, createQueuePlugin, createStoragePlugin) extend container capabilities safely in topological boot order.
-- Global middleware (correlation IDs, OpenTelemetry spans, security headers, rate limiting) wraps all domain controllers uniformly.
+- No class decorators or reflection magic — createToken<T>() keeps full TypeScript type checking.
+- Plugins (cache, queue, storage) boot in dependency order and shut down in exact reverse order.
+- Global middleware adds request IDs, OpenTelemetry tracing, security headers, and rate limits across every route.
 
 ### Implementation Code
 
@@ -176,27 +179,27 @@ export const tasksModule = defineModule({
 
 ### Verification Checklist
 
-- [ ] Confirm every domain folder exports an explicit module token and never imports unexported internals.
-- [ ] View the DI Module Topology inside Health & OpenAPI after inspecting Backend Source.
+- [ ] Confirm each feature folder exports a clear module token and hides its internal helpers.
+- [ ] Open Health & OpenAPI after viewing Backend Source to see the loaded module graph.
 
-## Step 03: Multi-Tenant Store & Deterministic Seed Modeling
+## Step 03: Multi-Tenant Data Store & Predictable Seed Data
 
-*Isolate tenant records and expose deterministic sandbox seed data*
+*Keep every workspace separated by tenantId with ready-to-test sample accounts*
 
 - **Estimated time**: 6 min
 - **Packages**: @forge-fr/core
 - **Module files**: `src/playground-server/types.ts`, `src/playground-server/store.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=tasks
 
-Every record in a multi-tenant SaaS backend carries a required tenantId field from creation. Modeling this explicitly at the type and store boundary guarantees queries and authorization checks never drop tenant scope.
+In a multi-tenant SaaS app, every record belongs to a workspace (tenantId). Putting tenantId right on your TypeScript types and store methods makes sure queries never mix data between customers.
 
-Our Playground store hashes seed passwords with Argon2id and uploads starter attachment bytes during kernel.start() so the API boots ready for immediate verification and one-click resets.
+During startup, the Playground store hashes demo passwords securely and adds starter files so you can test every feature right away or reset the sandbox with one click.
 
 ### Key Architectural Highlights
 
-- Strict readonly TypeScript interfaces distinguish internal UserRecord (with passwordHash) from PublicUser.
-- Two isolated seed tenants (Acme Corp and Globex Labs) let you prove cross-tenant boundaries immediately.
-- In production databases, swap the in-memory store token for @forge-fr/database, @forge-fr/drizzle, or @forge-fr/prisma with zero controller changes.
+- Separate TypeScript types keep internal fields like passwordHash away from public user responses.
+- Two separate demo companies (Acme Corp and Globex Labs) let you test tenant isolation immediately.
+- In production, you can swap the in-memory store token for @forge-fr/database, @forge-fr/drizzle, or @forge-fr/prisma without changing your routes.
 
 ### Implementation Code
 
@@ -243,34 +246,34 @@ export class PlaygroundStore {
     this.tenants.clear();
     this.users.clear();
     this.tasks.clear();
-    // Hash seed user passwords with real Argon2id and seed sample tenant records
+    // Hash seed user passwords with Argon2id and create starter tenant records
   }
 }
 ```
 
 ### Verification Checklist
 
-- [ ] Switch personas between Acme Admin and Globex Admin in the Playground top bar.
-- [ ] Confirm task lists stay strictly scoped to the active persona tenant.
+- [ ] Switch users between Acme Admin and Globex Admin in the Playground top bar.
+- [ ] Confirm each user only sees tasks belonging to their own workspace.
 
-## Step 04: Authentication Strategies & RBAC/ABAC Policies
+## Step 04: Login Methods, Roles & Tenant Access Rules
 
-*Combine Argon2id, JWT, hashed sessions, API keys, OAuth2 PKCE, and tenant isolation*
+*Support passwords, JWTs, HttpOnly cookies, scoped API keys, OAuth2 PKCE, and ownership checks*
 
 - **Estimated time**: 10 min
 - **Packages**: @forge-fr/auth, @forge-fr/authorization
 - **Module files**: `src/playground-server/auth/auth.module.ts`, `src/playground-server/auth/auth.service.ts`, `src/playground-server/auth/auth.middleware.ts`, `src/playground-server/auth/auth.controller.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=auth_lab
 
-Production APIs rarely rely on a single auth mechanism. Browser portals use HttpOnly cookies or short-lived Bearer JWTs, CLI tools use scoped API keys, and federated logins rely on OAuth2 PKCE.
+Real backends often need more than one login method: browser apps use HttpOnly cookies or Bearer JWTs, CLI tools use scoped API keys, and social/SSO logins use OAuth2 PKCE.
 
-@forge-fr/auth handles Argon2id hashing, JWT signing/verification, SHA-256 cookie/API key validation, and PKCE state generation, while @forge-fr/authorization enforces role permissions plus ABAC ownership and tenant isolation.
+@forge-fr/auth handles strong Argon2id password hashing, JWT verification, hashed sessions, API keys, and OAuth2 PKCE, while @forge-fr/authorization checks roles, record ownership, and tenant isolation.
 
 ### Key Architectural Highlights
 
-- Password hashing uses createPasswordHasher() with Argon2id defaults and constant-time comparison.
-- Scoped API keys enforce least privilege (e.g., tasks:read without tasks:delete or webhooks:read).
-- assertTenantIsolation() and admin-or-owner policies block IDOR and privilege escalation automatically.
+- createPasswordHasher() uses safe Argon2id defaults and constant-time checks.
+- Scoped API keys limit access strictly (for example, allowing tasks:read while blocking deletes).
+- assertTenantIsolation() and ownership rules block cross-tenant snooping (IDOR) automatically.
 
 ### Implementation Code
 
@@ -328,28 +331,28 @@ export const requireBearerAuth: ForgeMiddleware = async (ctx, next) => {
 
 ### Verification Checklist
 
-- [ ] Mint an HttpOnly session cookie, rotate its refresh token, and call GET /auth/session-me.
-- [ ] Create a tasks:read-only API key and confirm read succeeds while unauthorized mutations reject.
-- [ ] Generate an OAuth2 PKCE authorize URL and verify state mismatch defense.
+- [ ] Create an HttpOnly session cookie, rotate its refresh token, and call GET /auth/session-me.
+- [ ] Create a read-only API key (tasks:read) and confirm reads pass while write attempts are rejected.
+- [ ] Generate an OAuth2 PKCE login URL and test that a wrong state parameter is blocked.
 
-## Step 05: Security Middleware & Defense-in-Depth Labs
+## Step 05: Security Middleware & Attack Defenses
 
-*Harden endpoints against CSRF, bursts, prototype pollution, SSRF, and path traversal*
+*Protect routes against CSRF, traffic bursts, JSON pollution, SSRF, and path escapes*
 
 - **Estimated time**: 9 min
 - **Packages**: @forge-fr/security
 - **Module files**: `src/playground-server/security/security.module.ts`, `src/playground-server/security/security.service.ts`, `src/playground-server/security/security.controller.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=security
 
-Security controls must protect both the HTTP edge and application helpers. In this step you compose @forge-fr/security primitives directly into route middleware and domain validators.
+Good backend security protects both incoming HTTP requests and sensitive helpers inside your code. Here you plug @forge-fr/security middleware and safety helpers directly into your routes and services.
 
-Every dangerous sink—JSON parsing, outbound webhook URLs, and file path assembly—runs through defensive allowlist utilities before touching business logic.
+Every risky operation — parsing untrusted JSON, fetching user-supplied webhook URLs, or building file paths — passes through a safety check first.
 
 ### Key Architectural Highlights
 
-- createRateLimitMiddleware() attaches standard RateLimit-Limit, RateLimit-Remaining, and Retry-After headers on 429 responses.
-- createCsrfMiddleware() validates Fetch Metadata and X-CSRF-Token headers before accepting state-changing cookie requests.
-- safeJsonParse() strips __proto__ / constructor keys, assertSafeOutboundUrl() blocks metadata IPs, and resolveConfinedPath() stops ../ traversal.
+- createRateLimitMiddleware() adds standard RateLimit-* and Retry-After headers when callers hit HTTP 429.
+- createCsrfMiddleware() checks Fetch Metadata and X-CSRF-Token headers before accepting cookie-based mutations.
+- safeJsonParse() strips __proto__ keys, assertSafeOutboundUrl() blocks private/metadata IPs, and resolveConfinedPath() stops ../ path escapes.
 
 ### Implementation Code
 
@@ -390,39 +393,39 @@ import {
   safeJsonParse,
 } from '@forge-fr/security';
 
-// 1. Prototype-pollution safe JSON parsing
+// 1. Safe JSON parsing (strips __proto__ / constructor keys)
 const sanitized = safeJsonParse('{"role":"member","__proto__":{"isAdmin":true}}');
 
-// 2. SSRF URL inspection (blocks loopback, RFC1918, and 169.254.169.254 metadata)
+// 2. Outbound URL guard (blocks localhost, private IPs, and 169.254.169.254)
 await assertSafeOutboundUrl(candidateUrl, { allowPrivateIps: false });
 
-// 3. Filesystem path-confinement guard (rejects ../../etc/passwd)
+// 3. Confined file path helper (blocks ../../etc/passwd)
 const safeTarget = resolveConfinedPath('/srv/sandbox/uploads', requestedFilename);
 ```
 
 ### Verification Checklist
 
-- [ ] Trigger 4 consecutive rate-limit probes in Security Lab to observe 200 OK followed by 429 + Retry-After.
-- [ ] Run the CSRF, IDOR, SSRF, Path Traversal, and __proto__ probes and inspect blocked responses.
+- [ ] Click the rate-limit probe 4 times in Security Lab to see 200 OK followed by 429 + Retry-After.
+- [ ] Run the CSRF, IDOR, SSRF, Path Traversal, and __proto__ probes and inspect the blocked responses.
 
-## Step 06: Validated Tasks Module & Tag-Invalidated Caching
+## Step 06: Validated Task Routes & Tag-Based Caching
 
-*Validate HTTP schemas automatically and bust tenant caches via tags*
+*Validate request inputs automatically and clear workspace caches by tag on writes*
 
 - **Estimated time**: 8 min
 - **Packages**: @forge-fr/validation, @forge-fr/cache, @forge-fr/openapi
 - **Module files**: `src/playground-server/tasks/tasks.module.ts`, `src/playground-server/tasks/tasks.service.ts`, `src/playground-server/tasks/tasks.controller.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=tasks
 
-Controllers stay concise when schema parsing, error formatting, and OpenAPI metadata happen together via validatedOpenApiHandler().
+Route handlers stay short and readable when validatedOpenApiHandler() takes care of input parsing, clean 400 validation errors, and OpenAPI docs in one step.
 
-Read queries cache results under composite tenant+filter keys tagged with tenant:<id>:tasks. Every create, update, or delete calls invalidateByTag() so stale reads never leak across mutations.
+Task list reads are cached per workspace under a shared tag (tenant:<id>:tasks). Whenever a task is created, updated, or deleted, invalidateByTag() clears stale cache entries right away.
 
 ### Key Architectural Highlights
 
-- Standard Schema support lets Zod schemas validate query, params, and JSON body before entering your handler.
-- Cache lookup sets X-Cache-Status: MISS on first fetch and HIT on subsequent requests within TTL.
-- Every mutation invalidates the tenant cache tag, emits an SSE event, and enqueues matching webhooks.
+- Zod schemas validate query params, URL params, and JSON bodies before your handler runs.
+- Responses return X-Cache-Status: MISS on the first load and HIT on repeat loads within the TTL.
+- Every write clears the tenant cache tag, sends a live SSE update, and queues matching webhooks.
 
 ### Implementation Code
 
@@ -483,27 +486,27 @@ await cache.invalidateByTag(tag);
 
 ### Verification Checklist
 
-- [ ] Load Tasks twice and watch the cache indicator transition from MISS to HIT in the HTTP Inspector.
-- [ ] Create or update a task and confirm cache invalidation immediately returns fresh MISS data.
+- [ ] Load Tasks twice and watch X-Cache-Status switch from MISS to HIT in the HTTP Inspector.
+- [ ] Create or edit a task and verify the next read refreshes cleanly with a MISS.
 
-## Step 07: Attachments Module & Magic-Byte Object Storage
+## Step 07: Safe File Uploads & Signature Checks
 
-*Verify uploaded binary signatures before storing files per tenant*
+*Check real file bytes and size limits before saving tenant attachments*
 
 - **Estimated time**: 6 min
 - **Packages**: @forge-fr/storage, @forge-fr/http
 - **Module files**: `src/playground-server/attachments/attachments.module.ts`, `src/playground-server/attachments/attachments.service.ts`, `src/playground-server/attachments/attachments.controller.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=attachments
 
-Trusting client-supplied file extensions or Content-Type headers exposes applications to disguised executables and stored XSS.
+Relying only on a filename extension or Content-Type header lets attackers disguise scripts or executables as safe images.
 
-@forge-fr/storage inspects actual binary magic bytes during put() alongside size bounds and MIME allowlists, then serves downloads with nosniff and safe Content-Disposition headers.
+@forge-fr/storage checks the actual first bytes of each uploaded file (magic bytes), enforces file size and MIME limits, and serves downloads with safe nosniff headers.
 
 ### Key Architectural Highlights
 
-- createMemoryStorageAdapter({ verifyMagicBytes: true, maxObjectBytes: 512 * 1024 }) blocks spoofed headers at the adapter boundary.
-- Multipart parsing is size-bounded via ctx.body.multipart({ maxFiles: 1, maxFileBytes: 512 * 1024 }).
-- Downloads emit x-content-type-options: nosniff and private cache headers after asserting tenant ownership.
+- createMemoryStorageAdapter({ verifyMagicBytes: true, maxObjectBytes: 512 * 1024 }) rejects fake file types automatically.
+- ctx.body.multipart({ maxFiles: 1, maxFileBytes: 512 * 1024 }) caps upload sizes while streaming.
+- Downloads check tenant ownership and include x-content-type-options: nosniff.
 
 ### Implementation Code
 
@@ -552,27 +555,27 @@ group.post(
 
 ### Verification Checklist
 
-- [ ] Upload a valid 1x1 PNG file in the Attachments tab and inspect its generated ETag and byte size.
-- [ ] Upload a spoofed payload (e.g., plain text claiming image/png) and confirm magic-byte rejection.
+- [ ] Upload a valid 1x1 PNG in the Attachments tab and check its ETag and byte size.
+- [ ] Try uploading plain text disguised as image/png and verify ForgeJS rejects it.
 
-## Step 08: Webhooks Module, Async Queue Worker & DLQ Replay
+## Step 08: Background Webhooks, Retries & Dead-Letter Replay
 
-*Deliver outbound webhooks asynchronously with retries and dead-letter recovery*
+*Send outbound webhooks asynchronously with automatic retries and easy recovery*
 
 - **Estimated time**: 9 min
 - **Packages**: @forge-fr/queue, @forge-fr/security
 - **Module files**: `src/playground-server/webhooks/webhooks.module.ts`, `src/playground-server/webhooks/webhooks.service.ts`, `src/playground-server/webhooks/webhooks.controller.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=webhooks
 
-Task mutations should never block HTTP response latency waiting on slow webhook receivers. Instead, the webhooks service enqueues durable jobs processed concurrently by createQueueWorker().
+API writes should return quickly instead of waiting on slow third-party webhook servers. Here the webhooks service queues jobs so createQueueWorker() can deliver them in the background.
 
-Failed deliveries retry with configurable backoff and land in the Dead-Letter Queue (DLQ) after exhausting maxAttempts, ready for manual inspection and replay.
+If delivery fails, the worker retries automatically. Jobs that fail every attempt move into the Dead-Letter Queue (DLQ), where admins can inspect and replay them later.
 
 ### Key Architectural Highlights
 
-- createQueueWorker() exposes deterministic lifecycle callbacks: onCompleted, onFailed, and onDeadLetter.
-- Admin-only endpoint guards + SSRF checks prevent non-admins or unsafe URLs from registering webhooks.
-- Dead-letter jobs can be replayed directly from the API with optional healthy-sink override.
+- createQueueWorker() provides clear callbacks: onCompleted, onFailed, and onDeadLetter.
+- Admin permission checks and SSRF URL guards stop unauthorized users or unsafe targets from registering webhooks.
+- Admins can replay dead-letter jobs from the API (with an optional healthy-sink override in the sandbox).
 
 ### Implementation Code
 
@@ -640,28 +643,28 @@ group.post(
 
 ### Verification Checklist
 
-- [ ] Register a failing webhook (sandbox://sink/fail), trigger a test event, and confirm it transitions into the Dead-Letter Queue.
-- [ ] Replay the failed DLQ job using the healthy sink override and verify 200 OK delivery.
+- [ ] Register a failing webhook (sandbox://sink/fail), trigger a test event, and watch it move to the Dead-Letter Queue.
+- [ ] Replay the failed DLQ job using the healthy sink override and confirm 200 OK delivery.
 
-## Step 09: Realtime SSE/WebSocket, Edge HTTP, Observability & OpenAPI 3.1
+## Step 09: Real-Time Events, ETag Caching, Logs & OpenAPI 3.1
 
-*Stream live room events, negotiate content, trace spans, and publish specs*
+*Stream live updates, handle 304 caching, trace requests, and serve live API docs*
 
 - **Estimated time**: 10 min
 - **Packages**: @forge-fr/http, @forge-fr/logger, @forge-fr/openapi
 - **Module files**: `src/playground-server/realtime/realtime.controller.ts`, `src/playground-server/system/observability.ts`, `src/playground-server/system/system.controller.ts`
 - **Playground verification tab**: https://github.com/forge-fr/forgejs/playground?tab=events
 
-Rounding out the backend, @forge-fr/http handles authenticated app.ws() rooms, Server-Sent Events (SSE), weak ETag conditional caching (304 Not Modified vs 200 OK), and RFC-compliant Accept header negotiation.
+To finish the backend, @forge-fr/http adds authenticated WebSocket rooms, Server-Sent Events (SSE), weak ETag 304 caching, and Accept header negotiation.
 
-Simultaneously, @forge-fr/logger instruments OpenTelemetry HTTP spans alongside Pino logs correlated by x-request-id and x-trace-id, exposes /health/live and /health/ready Kubernetes probes, and @forge-fr/openapi auto-generates live OpenAPI 3.1 JSON.
+@forge-fr/logger connects OpenTelemetry traces with redacted Pino logs (linked by x-request-id and x-trace-id) and /health/live + /health/ready probes, while @forge-fr/openapi serves a live OpenAPI 3.1 spec.
 
 ### Key Architectural Highlights
 
-- app.ws() authenticates handshakes with Bearer or query tokens before joining tenant-isolated rooms.
-- createEtagMiddleware({ weak: true }) returns 304 Not Modified on matching If-None-Match and 200 OK once bumped.
-- registerHealthRoutes() aggregates dependency checks (/health/ready flips between 200 ok and 503 unhealthy on fault injection).
-- registerOpenApiRoutes() introspects every validatedOpenApiHandler route automatically at /openapi.json.
+- app.ws() checks Bearer or query tokens before letting clients join tenant-isolated rooms.
+- createEtagMiddleware({ weak: true }) returns 304 Not Modified when content is unchanged and 200 OK after updates.
+- registerHealthRoutes() checks registered dependencies (/health/ready switches from 200 ok to 503 unhealthy when a fault is injected).
+- registerOpenApiRoutes() scans every validatedOpenApiHandler route automatically at /openapi.json.
 
 ### Implementation Code
 
@@ -727,7 +730,7 @@ registerHealthRoutes(app, {
 
 registerOpenApiRoutes(app, {
   title: 'ForgeJS Live Playground API',
-  version: '1.0.0-rc.2',
+  version: '1.0.0',
   specPath: '/playground-api/openapi.json',
   docsPath: '/playground-api/docs',
 });
@@ -735,6 +738,6 @@ registerOpenApiRoutes(app, {
 
 ### Verification Checklist
 
-- [ ] Connect the WebSocket client, send a live frame, and test ETag 304 Not Modified vs 200 OK after bumping.
-- [ ] Inject a dependency fault in Health & OpenAPI and verify /health/ready flips from 200 ok to 503 unhealthy.
-- [ ] Inspect live OpenTelemetry spans, PII-redacted Pino logs, and the generated OpenAPI 3.1 document.
+- [ ] Connect the WebSocket client, send a message, and test ETag 304 Not Modified vs 200 OK after bumping.
+- [ ] Simulate a dependency failure in Health & OpenAPI and verify /health/ready switches from 200 ok to 503 unhealthy.
+- [ ] Inspect live OpenTelemetry spans, redacted Pino logs, and the generated OpenAPI 3.1 JSON.

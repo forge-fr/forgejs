@@ -1,8 +1,8 @@
 # @forge-fr/node
 
-> Native node:http runtime adapter with direct-dispatch request metadata, synchronous FastResponse writes, RFC 6455 WebSocket upgrade codec, and POSIX graceful shutdown.
+> Node.js HTTP server adapter with fast direct request handling, native WebSocket upgrades, and clean shutdown on SIGINT/SIGTERM.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: runtime
 - **Tarball**: 22.6 kB (20 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/node
 ```
 

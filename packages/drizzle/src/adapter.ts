@@ -12,6 +12,7 @@ import {
   DatabaseError,
   createDatabasePlugin,
   createPostgresAdapter,
+  createUnitOfWork,
   postgresConfigSchema,
   type DatabaseAdapter,
   type DatabaseConnectionState,
@@ -20,6 +21,7 @@ import {
   type PostgresClientLike,
   type TransactionIsolationLevel,
   type TransactionOptions,
+  type UnitOfWork,
 } from '@forge-fr/database';
 import { normalizeDrizzleError } from './errors.js';
 
@@ -36,9 +38,15 @@ export type DrizzlePostgresTx<
 export type InferDrizzleTx<TDb> =
   TDb extends PostgresJsDatabase<infer TSchema> ? DrizzlePostgresTx<TSchema> : TDb;
 
+export type DrizzleUnitOfWork<
+  TDb = DrizzlePostgresClient,
+  TTx = InferDrizzleTx<TDb>,
+> = UnitOfWork<TDb, TTx>;
+
 export interface DrizzleTokens<TDb = DrizzlePostgresClient, TTx = InferDrizzleTx<TDb>> {
   readonly adapter: InjectionToken<DatabaseAdapter<TDb, TTx>>;
   readonly db: InjectionToken<TDb>;
+  readonly unitOfWork: InjectionToken<DrizzleUnitOfWork<TDb, TTx>>;
 }
 
 export function createDrizzleToken<TDb = DrizzlePostgresClient, TTx = InferDrizzleTx<TDb>>(
@@ -47,10 +55,24 @@ export function createDrizzleToken<TDb = DrizzlePostgresClient, TTx = InferDrizz
   return Object.freeze({
     adapter: createToken<DatabaseAdapter<TDb, TTx>>(`DrizzleAdapter:${name}`),
     db: createToken<TDb>(`DrizzleDb:${name}`),
+    unitOfWork: createToken<DrizzleUnitOfWork<TDb, TTx>>(`DrizzleUnitOfWork:${name}`),
   });
 }
 
 export const DefaultDrizzleTokens = createDrizzleToken<DrizzlePostgresClient>('default');
+
+/**
+ * Creates a typed Drizzle `UnitOfWork` preserving full native Drizzle query builder and
+ * relational query APIs on both `uow.client` and `ctx.tx`, while normalizing Drizzle errors.
+ */
+export function createDrizzleUnitOfWork<TDb = DrizzlePostgresClient, TTx = InferDrizzleTx<TDb>>(
+  adapter: DatabaseAdapter<TDb, TTx>,
+): DrizzleUnitOfWork<TDb, TTx> {
+  return createUnitOfWork({
+    adapter,
+    normalizeError: normalizeDrizzleError,
+  });
+}
 
 export interface DrizzlePostgresConfig<
   TSchema extends Record<string, unknown> = Record<string, never>,
@@ -80,6 +102,9 @@ export interface DrizzlePostgresPluginOptions<
     DatabaseAdapter<DrizzlePostgresClient<TSchema>, DrizzlePostgresTx<TSchema>>
   >;
   readonly dbToken?: InjectionToken<DrizzlePostgresClient<TSchema>>;
+  readonly unitOfWorkToken?: InjectionToken<
+    DrizzleUnitOfWork<DrizzlePostgresClient<TSchema>, DrizzlePostgresTx<TSchema>>
+  >;
   readonly healthCheckName?: string;
 }
 
@@ -426,11 +451,15 @@ export function createDrizzlePostgresPlugin<
     clientToken: (options.dbToken ?? DefaultDrizzleTokens.db) as InjectionToken<
       DrizzlePostgresClient<TSchema>
     >,
+    unitOfWorkToken: (options.unitOfWorkToken ?? DefaultDrizzleTokens.unitOfWork) as InjectionToken<
+      DrizzleUnitOfWork<DrizzlePostgresClient<TSchema>, DrizzlePostgresTx<TSchema>>
+    >,
     healthCheckName: options.healthCheckName ?? options.name ?? 'drizzle-postgres',
     configSchema: drizzlePostgresConfigSchema as unknown as StandardSchemaLike<
       DrizzlePostgresConfig<TSchema>,
       DrizzlePostgresConfig<TSchema>
     >,
     createAdapter: (config) => createDrizzlePostgresAdapter<TSchema>(config),
+    createUnitOfWork: (adapter) => createDrizzleUnitOfWork(adapter),
   });
 }

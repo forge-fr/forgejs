@@ -8,3 +8,9 @@
   - Root-jailed `createLocalStorageAdapter()` blocking symlink escapes outside `rootDir`.
   - Zero-dependency Web Crypto AWS SigV4 `createS3StorageAdapter()` with presigned URL support, `SecretValue` credentials, and injectable `fetch`.
   - `createMemoryStorageAdapter()` and `createStoragePlugin()` / `StorageTokens`.
+
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Synchronized `@forge-fr/storage` to `1.0.0` General Availability.
+

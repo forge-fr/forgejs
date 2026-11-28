@@ -1,4 +1,4 @@
-import postgres from 'postgres';
+import type postgres from 'postgres';
 import {
   isSecretValue,
   type ForgePlugin,
@@ -20,6 +20,7 @@ import type {
   DatabasePingResult,
   TransactionIsolationLevel,
   TransactionOptions,
+  UnitOfWork,
 } from './types.js';
 
 export type PostgresSslMode = boolean | 'require' | 'prefer' | 'allow' | 'verify-full';
@@ -44,7 +45,7 @@ export interface PostgresClientLike {
 export type PostgresDriverFactory = (
   url: string,
   options: PostgresAdapterOptions,
-) => PostgresClientLike;
+) => PostgresClientLike | Promise<PostgresClientLike>;
 
 export interface PostgresAdapterOptions {
   readonly name?: string;
@@ -65,6 +66,7 @@ export interface PostgresPluginOptions {
   readonly forgeVersion?: string;
   readonly adapterToken?: InjectionToken<DatabaseAdapter<PostgresClientLike, PostgresClientLike>>;
   readonly clientToken?: InjectionToken<PostgresClientLike>;
+  readonly unitOfWorkToken?: InjectionToken<UnitOfWork<PostgresClientLike, PostgresClientLike>>;
   readonly healthCheckName?: string;
 }
 
@@ -240,10 +242,40 @@ function buildTransactionMode(options?: TransactionOptions): string | undefined 
   return clauses.length > 0 ? clauses.join(' ') : undefined;
 }
 
-function createNativePostgresClient(
+type PostgresFactoryFn = (
+  url: string,
+  options?: postgres.Options<Record<string, postgres.PostgresType>>,
+) => unknown;
+
+let cachedPostgresDriverPromise: Promise<PostgresFactoryFn> | null = null;
+
+function loadPostgresDriver(): Promise<PostgresFactoryFn> {
+  if (cachedPostgresDriverPromise === null) {
+    const specifier = 'post' + 'gres';
+    cachedPostgresDriverPromise = import(/* @vite-ignore */ specifier).then((mod: unknown) => {
+      const candidate =
+        typeof mod === 'function'
+          ? mod
+          : typeof mod === 'object' && mod !== null && 'default' in mod
+            ? (mod as { default?: unknown }).default
+            : undefined;
+      if (typeof candidate !== 'function') {
+        throw new DatabaseConnectionError(
+          'PostgreSQL driver module "postgres" could not be loaded in this runtime',
+          { retryable: false },
+        );
+      }
+      return candidate as PostgresFactoryFn;
+    });
+  }
+  return cachedPostgresDriverPromise;
+}
+
+async function createNativePostgresClient(
   url: string,
   options: PostgresAdapterOptions,
-): PostgresClientLike {
+): Promise<PostgresClientLike> {
+  const postgresFn = await loadPostgresDriver();
   const nativeOptions: postgres.Options<Record<string, postgres.PostgresType>> = {
     max: options.max ?? 10,
     connect_timeout: options.connectTimeoutSeconds ?? 10,
@@ -257,7 +289,7 @@ function createNativePostgresClient(
     ...(options.ssl !== undefined ? { ssl: options.ssl } : {}),
   };
 
-  return postgres(url, nativeOptions) as unknown as PostgresClientLike;
+  return postgresFn(url, nativeOptions) as unknown as PostgresClientLike;
 }
 
 function sanitizeMessage(message: string, rawUrl: string, safeUrl: string): string {
@@ -332,8 +364,8 @@ export function createPostgresAdapter(
 
       try {
         candidateClient = options.driverFactory
-          ? options.driverFactory(rawUrl, options)
-          : createNativePostgresClient(rawUrl, options);
+          ? await options.driverFactory(rawUrl, options)
+          : await createNativePostgresClient(rawUrl, options);
 
         await candidateClient`SELECT 1`;
         activeClient = candidateClient;
@@ -439,6 +471,7 @@ export function createPostgresPlugin(
     ...(options.forgeVersion !== undefined ? { forgeVersion: options.forgeVersion } : {}),
     ...(options.adapterToken !== undefined ? { adapterToken: options.adapterToken } : {}),
     ...(options.clientToken !== undefined ? { clientToken: options.clientToken } : {}),
+    ...(options.unitOfWorkToken !== undefined ? { unitOfWorkToken: options.unitOfWorkToken } : {}),
     healthCheckName: options.healthCheckName ?? options.name ?? 'postgres',
     configSchema: postgresConfigSchema,
     createAdapter: (config) => createPostgresAdapter(config),

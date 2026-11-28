@@ -1,8 +1,8 @@
 # @forge-fr/cache
 
-> O(1) LRU in-memory and cursor SCAN-based Redis cache adapters with single-flight getOrSet, tag invalidation, prefix deletion, and CRLF/NUL key validation.
+> Fast LRU memory and non-blocking Redis cache adapters with stampede-safe getOrSet, tag invalidation, prefix clearing, and key validation.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 13.2 kB (32 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/cache
 ```
 

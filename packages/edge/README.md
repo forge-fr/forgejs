@@ -5,7 +5,7 @@ Runtime-agnostic WinterCG Edge runtime adapter and handlers for **ForgeJS** (Clo
 ## Features
 
 - **`createCloudflareWorkerHandler()` / `createEdgeHandler()` / `createDenoHandler()`:** Bridges ForgeJS HTTP apps and WebSocket routes (`WebSocketPair`) cleanly to Edge runtimes.
-- **Native WebIDL `Response` Guarantee (`v1.0.0-rc.2`):** Normalizes all outgoing responses via `toNativeResponse()` so strict `workerd` and Deno fetch pipelines always receive true native `globalThis.Response` instances.
+- **Native WebIDL `Response` Guarantee (`v1.0.0`):** Normalizes all outgoing responses via `toNativeResponse()` so strict `workerd` and Deno fetch pipelines always receive true native `globalThis.Response` instances.
 - **Bindings & Background Tasks:** Access Worker bindings via `getEdgeEnv(req)` and schedule non-blocking tasks via `runInEdgeBackground(req, promise)` backed by `executionCtx.waitUntil()`.
 
 ## Usage

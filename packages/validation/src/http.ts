@@ -8,6 +8,33 @@ import type {
 } from './types.js';
 
 export const VALIDATED_STATE_KEY = '__forgejs_validated__';
+export const VALIDATION_SCHEMAS_SYMBOL: unique symbol = Symbol.for('forgejs.validation.schemas');
+
+function attachValidationSchemas<TFn extends ForgeRouteHandler | ForgeMiddleware>(
+  fn: TFn,
+  schemas: RouteValidationSchemas,
+): TFn {
+  Object.defineProperty(fn, VALIDATION_SCHEMAS_SYMBOL, {
+    value: schemas,
+    enumerable: false,
+    configurable: true,
+    writable: false,
+  });
+  return fn;
+}
+
+export function getAttachedValidationSchemas(
+  target: unknown,
+): RouteValidationSchemas | undefined {
+  if (typeof target !== 'function' && (typeof target !== 'object' || target === null)) {
+    return undefined;
+  }
+  const attached = (target as Record<symbol, unknown>)[VALIDATION_SCHEMAS_SYMBOL];
+  if (typeof attached === 'object' && attached !== null) {
+    return attached as RouteValidationSchemas;
+  }
+  return undefined;
+}
 
 const FORBIDDEN_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
@@ -262,7 +289,7 @@ export function validateRequest<TSchemas extends RouteValidationSchemas>(
   options: HttpValidationOptions = {},
 ): ForgeMiddleware {
   const responseSchema = schemas.response;
-  return function forgeValidationMiddleware(ctx, next) {
+  return attachValidationSchemas(function forgeValidationMiddleware(ctx, next) {
     const fastCtx = ctx as FastValidatableContext;
     const validatedOrPromise = validateInputPartsSyncOrAsync(ctx, schemas, options);
     if (validatedOrPromise instanceof Promise) {
@@ -292,7 +319,7 @@ export function validateRequest<TSchemas extends RouteValidationSchemas>(
       }
       return response;
     });
-  };
+  }, schemas);
 }
 
 export type ValidatedRouteHandler<TSchemas extends RouteValidationSchemas> = (
@@ -312,6 +339,7 @@ export function validatedHandler<
   options: HttpValidationOptions = {},
 ): ForgeRouteHandler {
   const responseSchema = schemas.response;
+  const typedSchemas = schemas as RouteValidationSchemas;
 
   // Ultra-fast specialized path for body-only validation without response schema
   if (
@@ -322,7 +350,7 @@ export function validatedHandler<
     schemas.headers === undefined
   ) {
     const validateBody = compileFastValidator(schemas.body, BODY_TARGET_OPT);
-    return function forgeValidatedBodyFastHandler(ctx) {
+    return attachValidationSchemas(function forgeValidatedBodyFastHandler(ctx) {
       const fastCtx = ctx as FastValidatableContext;
       const bodyPromise =
         typeof fastCtx._readValidationBody === 'function'
@@ -351,11 +379,11 @@ export function validatedHandler<
         fastCtx._validated = validated;
         return handler(ctx, validated);
       });
-    };
+    }, typedSchemas);
   }
 
   if (!responseSchema) {
-    return function forgeValidatedFastHandler(ctx) {
+    return attachValidationSchemas(function forgeValidatedFastHandler(ctx) {
       const fastCtx = ctx as FastValidatableContext;
       const validatedOrPromise = validateInputPartsSyncOrAsync(ctx, schemas, options);
       if (validatedOrPromise instanceof Promise) {
@@ -366,10 +394,10 @@ export function validatedHandler<
       }
       fastCtx._validated = validatedOrPromise;
       return handler(ctx, validatedOrPromise);
-    };
+    }, typedSchemas);
   }
 
-  return async function forgeValidatedRouteHandler(ctx) {
+  return attachValidationSchemas(async function forgeValidatedRouteHandler(ctx) {
     const fastCtx = ctx as FastValidatableContext;
     const validatedOrPromise = validateInputPartsSyncOrAsync(ctx, schemas, options);
     const validated =
@@ -389,5 +417,5 @@ export function validatedHandler<
       target: 'response',
     });
     return ctx.json(validatedPayload);
-  };
+  }, typedSchemas);
 }

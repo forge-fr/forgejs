@@ -1,18 +1,18 @@
 # Caching & Redis
 
-> O(1) LRU memory cache, cursor SCAN-based Redis cache, single-flight getOrSet() stampede protection, and tag/prefix invalidation.
+> Fast in-memory LRU cache, safe SCAN-based Redis caching, duplicate-request protection via getOrSet(), and tag invalidation.
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/cache
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/caching
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/caching.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/infrastructure-and-cli.md
 
-## Single-flight caching & tag invalidation
+## Prevent duplicate loads & clear cache by tag
 
-getOrSet() coalesces concurrent cache misses for the same key into a single in-flight loader promise, preventing thundering-herd spikes against upstream databases.
+If many requests miss the same cache key at the exact same moment, getOrSet() runs your loader function once and shares the result with all waiting callers, protecting your database from traffic spikes.
 
 **File: `src/cache.ts`**
 
@@ -39,8 +39,8 @@ assert.deepEqual(a, b);
 await cache.invalidateTag('user:42');
 ```
 
-## Non-blocking Redis SCAN invalidation
+## Safe Redis key scanning
 
-> **NOTE: Zero Blocking KEYS * Calls**
+> **NOTE: No Blocking KEYS * Commands**
 >
-> createRedisCacheAdapter() uses incremental cursor SCAN batches for prefix and tag invalidation instead of blocking Redis KEYS * commands, and supports createCachePlugin() for kernel lifecycle wiring.
+> createRedisCacheAdapter() uses incremental SCAN batches to clear keys by prefix or tag instead of blocking Redis with KEYS *, and pairs cleanly with createCachePlugin() for automatic shutdown.

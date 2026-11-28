@@ -1,5 +1,10 @@
 # Changelog — @forge-fr/database
 
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Added `UnitOfWork<TTx>` (`createUnitOfWork`, `uow.run()`), `TransactionContext<TTx>` (`.afterCommit()`, `.afterRollback()`), `defineRepository()`, and lazy dynamic `postgres` driver loading for Edge bundle portability.
+
 ## [0.1.0] — Phase 4 Milestone 4.1 (2026-11-25)
 
 - Initial release of `@forge-fr/database`:

@@ -1,18 +1,18 @@
 # Controllers & Handlers
 
-> Composition-first route registration factories resolving typed DI services via ctx.container and generated via forge generate controller.
+> Organize HTTP endpoints with plain route-registration functions that pull typed services from ctx.container.
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/http, @forge-fr/core, @forge-fr/cli
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/controllers
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/controllers.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
 
-## Composition-first controllers
+## Simple function-based controllers
 
-Instead of decorator classes, ForgeJS encourages plain route-registration functions that accept ForgeHttpApp and resolve domain services from the request-scoped ctx.container.
+Instead of decorated classes, ForgeJS uses plain functions that register routes on ForgeHttpApp and resolve your domain services from the request-scoped ctx.container.
 
 **File: `src/modules/users/users.controller.ts`**
 
@@ -33,7 +33,7 @@ export function registerUserRoutes(app: ForgeHttpApp): void {
 }
 ```
 
-## Generating controllers with @forge-fr/cli
+## Generate boilerplate files with @forge-fr/cli
 
 **File: `terminal`**
 

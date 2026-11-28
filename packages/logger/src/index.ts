@@ -2,10 +2,14 @@ export {
   DEFAULT_PINO_REDACT_PATHS,
   DEFAULT_REDACT_KEYS,
   buildRedactionSet,
+  compileRedactPaths,
+  matchesRedactPath,
   normalizeRedactKey,
+  parseRedactPath,
   redactInlineSecrets,
   sanitizeLogContext,
   sanitizeLogMessage,
+  type CompiledRedactPath,
   type SanitizeContextOptions,
 } from './redact.js';
 
@@ -18,6 +22,21 @@ export {
 } from './pino-logger.js';
 
 export {
+  EdgeObservabilityTokens,
+  createEdgeLogger,
+  createEdgeMemoryLogSink,
+  createEdgeObservabilityPlugin,
+  type EdgeForgeLogger,
+  type EdgeLogRecord,
+  type EdgeLogWriter,
+  type EdgeLoggerOptions,
+  type EdgeMemoryLogSink,
+  type EdgeObservabilityPluginOptions,
+} from './edge.js';
+
+export {
+  CorrelationIdKey,
+  RequestLoggerKey,
   attachObservabilityHooks,
   bindCorrelationId,
   createCorrelationIdMiddleware,

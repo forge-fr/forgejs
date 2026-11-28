@@ -1,38 +1,46 @@
-# ForgeJS (`@forge-fr/*` · `v1.0.0-rc.2`)
+# ForgeJS (`@forge-fr/*` · `v1.0.0`)
 
 [![CI](https://github.com/forge-fr/forgejs/actions/workflows/ci.yml/badge.svg)](https://github.com/forge-fr/forgejs/actions/workflows/ci.yml)
+[![Release](https://github.com/forge-fr/forgejs/actions/workflows/release.yml/badge.svg)](https://github.com/forge-fr/forgejs/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Runtimes](https://img.shields.io/badge/Runtimes-Node%20%3E%3D22.18%20%7C%20Bun%20%3E%3D1.4%20%7C%20Edge-0f766e.svg)](#runtime-support)
 [![Security: OWASP ASVS 5.0.0](https://img.shields.io/badge/Security-OWASP%20ASVS%205.0.0-1d4ed8.svg)](./SECURITY.md)
 
-A pure-ESM, strict-TypeScript backend framework running identically on **Node.js (`>=22.18.0`)**, **Bun (`>=1.4.0`)**, and **WinterCG Edge / Cloudflare Workers** with composition-first dependency injection, Web Standards HTTP pipelines, capability-scoped plugins, and OWASP ASVS 5.0.0 security defaults.
+A modern, strict-TypeScript backend framework built on standard Web APIs. Write your API once and run it on **Node.js (`>=22.18.0`)**, **Bun (`>=1.4.0`)**, or **Cloudflare Workers / Edge** with clean modular structure, built-in validation, and safe OWASP ASVS 5.0.0 defaults.
 
-- **Web Portal & Documentation:** [https://forgejs.dev](https://forgejs.dev)
-- **Interactive Multi-Tenant Playground:** [https://forgejs.dev/playground](https://forgejs.dev/playground)
-- **9-Step Modular Backend Tutorial:** [Build a Production Backend Step by Step](./docs/tutorials/playground-backend.md)
+- **Website & Documentation:** [https://forgejs.id](https://forgejs.id)
+- **Live Interactive Playground:** [https://forgejs.id/playground](https://forgejs.id/playground)
+- **9-Step Backend Tutorial:** [Build a Production Backend Step by Step](./docs/tutorials/playground-backend.md)
 - **Documentation Hub (EN & ID):** [Documentation Index](./docs/INDEX.md)
-- **AI / LLM Documentation Corpus:** [`llms.txt`](./llms.txt) · [`llms-full.txt`](./llms-full.txt)
+- **AI / LLM Docs Feed:** [`llms.txt`](./llms.txt) (or [`llm.txt`](./llm.txt)) · [`llms-full.txt`](./llms-full.txt) (or [`llm-full.txt`](./llm-full.txt))
 
 ---
 
-## Install `@forge-fr/*` Packages (GitHub Packages)
+## Install `@forge-fr/*` Packages
 
-All 20 `@forge-fr/*` packages are published to **GitHub Packages** (`https://npm.pkg.github.com`).
+Install directly from the **public npm registry** — no extra `.npmrc` configuration or tokens required:
 
-1. Configure your project or user `.npmrc` (see [`.npmrc.github.example`](./.npmrc.github.example)):
+```bash
+npm install @forge-fr/core @forge-fr/http @forge-fr/node @forge-fr/validation zod
+```
+
+### Optional: GitHub Packages Mirror
+
+All 21 `@forge-fr/*` packages are also mirrored to **GitHub Packages** (`https://npm.pkg.github.com`). If your organization prefers GitHub Packages, point the `@forge-fr` scope in `.npmrc` (see [`.npmrc.github.example`](./.npmrc.github.example)):
 
 ```ini
 @forge-fr:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
-2. Install the packages you need:
+> Need GitHub Packages mirror instructions? Read [`docs/id/github-packages-publishing.md`](./docs/id/github-packages-publishing.md).
 
-```bash
-npm install @forge-fr/core @forge-fr/http @forge-fr/node @forge-fr/validation zod
-```
+### Publishing to Public npm from GitHub Actions
 
-> Read the step-by-step publishing & consumer guide in [`docs/id/github-packages-publishing.md`](./docs/id/github-packages-publishing.md).
+This public repository includes [(`.github/workflows/release.yml`)](./.github/workflows/release.yml) to publish all 21 `@forge-fr/*` packages in topological dependency order to `https://registry.npmjs.org` with npm OIDC provenance (`--provenance --access public`):
+
+1. Configure `NPM_TOKEN` (npm Automation Token for the `@forge-fr` organization) in **Settings → Secrets and variables → Actions** (or configure npm Trusted Publisher OIDC on npmjs.com for `forge-fr/forgejs`).
+2. Push a release tag (`git tag v1.0.0 && git push origin v1.0.0`) or trigger **Actions → Publish Release (OIDC Provenance) → Run workflow** (`dist_tag: latest`, `dry_run: false`).
 
 ---
 
@@ -87,11 +95,11 @@ await client.close();
 
 ---
 
-## Packages (`20 / 20` Monorepo Architecture)
+## Packages (`21 / 21` Monorepo Architecture)
 
 | Layer | Packages & API Reference |
 | :--- | :--- |
-| **Core & Kernel** | [`@forge-fr/core`](./docs/api/core.md) · [`@forge-fr/router`](./docs/api/router.md) · [`@forge-fr/http`](./docs/api/http.md) |
+| **Core & Kernel** | [`@forge-fr/core`](./docs/api/core.md) · [`@forge-fr/config`](./docs/api/config.md) · [`@forge-fr/router`](./docs/api/router.md) · [`@forge-fr/http`](./docs/api/http.md) |
 | **Runtime Adapters** | [`@forge-fr/node`](./docs/api/node.md) · [`@forge-fr/bun`](./docs/api/bun.md) · [`@forge-fr/edge`](./docs/api/edge.md) |
 | **Validation & Data** | [`@forge-fr/validation`](./docs/api/validation.md) · [`@forge-fr/database`](./docs/api/database.md) · [`@forge-fr/drizzle`](./docs/api/drizzle.md) · [`@forge-fr/prisma`](./docs/api/prisma.md) · [`@forge-fr/openapi`](./docs/api/openapi.md) |
 | **Auth & Security** | [`@forge-fr/auth`](./docs/api/auth.md) · [`@forge-fr/authorization`](./docs/api/authorization.md) · [`@forge-fr/security`](./docs/api/security.md) |
@@ -102,9 +110,9 @@ await client.close();
 
 ## Runtime Support
 
-- **Node.js `>=22.18.0`**: Native `IncomingMessage` / `ServerResponse` bridge + RFC 6455 WebSocket upgrade via `@forge-fr/node`.
-- **Bun `>=1.4.0`**: Native `Bun.serve()` HTTP & WebSocket server via `@forge-fr/bun`.
-- **WinterCG Edge & Cloudflare Workers**: Standard Fetch API + `WebSocketPair` / `ExecutionContext` support via `@forge-fr/edge`.
+- **Node.js `>=22.18.0`**: Runs directly on Node's built-in HTTP and WebSocket servers via `@forge-fr/node`.
+- **Bun `>=1.4.0`**: Runs natively on `Bun.serve()` for HTTP and WebSockets via `@forge-fr/bun`.
+- **Cloudflare Workers & Edge**: Runs on standard Web Fetch APIs (`Request` / `Response` / `WebSocketPair`) via `@forge-fr/edge`.
 
 ---
 
@@ -132,9 +140,9 @@ npm run bench
 
 ## Documentation (English & Bahasa Indonesia)
 
-- **Portal & Full Corpus Index:** [`docs/INDEX.md`](./docs/INDEX.md) · [`docs/README.md`](./docs/README.md) · [Live Docs Portal](https://forgejs.dev/docs/getting-started/introduction)
+- **Portal & Full Corpus Index:** [`docs/INDEX.md`](./docs/INDEX.md) · [`docs/README.md`](./docs/README.md) · [Live Docs Portal](https://forgejs.id/docs/getting-started/introduction)
 - **English Guides:** [Quick Start](./docs/quick-start.md) · [Architecture & Plugins](./docs/architecture.md) · [HTTP, Validation, OpenAPI & WebSockets](./docs/http-and-validation.md) · [Database, Auth & Authorization](./docs/data-and-auth.md) · [Security & Observability](./docs/security-and-observability.md) · [Cache, Queue, Storage, CLI & Edge](./docs/infrastructure-and-cli.md)
-- **Hands-On Tutorial:** [Build a Production Modular Backend (9 Steps)](./docs/tutorials/playground-backend.md) · [Interactive Stepper](https://forgejs.dev/docs/tutorials/playground-backend)
+- **Hands-On Tutorial:** [Build a Production Modular Backend (9 Steps)](./docs/tutorials/playground-backend.md) · [Interactive Stepper](https://forgejs.id/docs/tutorials/playground-backend)
 - **Panduan Bahasa Indonesia:** [Memulai Cepat](./docs/id/quick-start.md) · [Arsitektur & Plugin](./docs/id/architecture.md) · [Keamanan (OWASP ASVS 5.0.0)](./docs/id/security.md) · [Publikasi GitHub Packages](./docs/id/github-packages-publishing.md)
 
 ---

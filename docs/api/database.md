@@ -1,8 +1,8 @@
 # @forge-fr/database
 
-> Native PostgreSQL adapter built on postgres-js with SQLSTATE error normalization, credential-redacted URLs, allowlisted transaction isolation, and checksum-verified migrations.
+> PostgreSQL adapter built on postgres-js with UnitOfWork (.afterCommit/.afterRollback), defineRepository, clean error mapping, hidden connection passwords, and SQL migrations.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 17.9 kB (28 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/database
 ```
 

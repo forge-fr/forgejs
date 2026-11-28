@@ -1,5 +1,6 @@
 import {
   ForgeHttpError,
+  createWebSocketConnection,
   toNativeResponse,
   type FetchHandler,
   type HttpRuntimeAdapter,
@@ -181,18 +182,8 @@ function bindEdgeWebSocketLifecycle(
 ): void {
   let readyState: 'open' | 'closing' | 'closed' = 'open';
   const { route, upgradeContext } = decision;
-  const conn = {
-    id: globalThis.crypto.randomUUID(),
-    url: upgradeContext.url,
-    headers: upgradeContext.headers,
-    params: upgradeContext.params,
-    ...(upgradeContext.remoteAddress !== undefined
-      ? { remoteAddress: upgradeContext.remoteAddress }
-      : {}),
-    protocol: upgradeContext.protocol,
-    get readyState() {
-      return readyState;
-    },
+  const conn = createWebSocketConnection(upgradeContext, {
+    getReadyState: () => readyState,
     send(data: string | Uint8Array): void {
       if (readyState !== 'open') return;
       socket.send(data);
@@ -205,13 +196,7 @@ function bindEdgeWebSocketLifecycle(
     ping(): void {
       // Standard WinterCG/Cloudflare/Deno WebSocket objects manage ping/pong at runtime level
     },
-    getState<T = unknown>(key: string): T | undefined {
-      return upgradeContext.state.get(key) as T | undefined;
-    },
-    setState<T = unknown>(key: string, value: T): void {
-      upgradeContext.state.set(key, value);
-    },
-  };
+  });
 
   const handleOpen = (): void => {
     void Promise.resolve(route.handlers.onOpen?.(conn, upgradeContext)).catch((err: unknown) => {

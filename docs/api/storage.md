@@ -1,8 +1,8 @@
 # @forge-fr/storage
 
-> Object storage adapters for Memory, symlink-jailed local disk, and zero-SDK Web Crypto AWS SigV4 S3 with MIME allowlists, binary magic-byte inspection, and presigned URLs.
+> File storage adapters for Memory, confined local folders, and S3-compatible buckets with MIME allowlists, binary file-type checks, and signed URLs.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 22.5 kB (36 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/storage
 ```
 

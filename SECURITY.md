@@ -9,12 +9,12 @@
 
 | Version | Supported |
 | :--- | :--- |
-| `1.0.0-rc.2` (`main`) | :white_check_mark: Yes |
-| `< 1.0.0-rc.2` | :x: No |
+| `1.0.x` (`main`) | :white_check_mark: Yes |
+| `< 1.0.0` | :x: No |
 
 ## Reporting a Vulnerability
 
-We take security reports seriously across all 20 packages. **Please do not report security vulnerabilities through public GitHub Issues, Discussions, or Pull Requests.**
+We take security reports seriously across all 21 packages. **Please do not report security vulnerabilities through public GitHub Issues, Discussions, or Pull Requests.**
 
 Instead, please report them privately using **GitHub Private Vulnerability Reporting**:
 

@@ -1,18 +1,18 @@
 # Queues & Background Jobs
 
-> Memory, Redis sorted-set (atomic Lua pop), and PostgreSQL SKIP LOCKED job queues with retries, idempotency keys, DLQ replay, and graceful worker drain.
+> Run background jobs with Memory, Redis, or PostgreSQL drivers, automatic retries, dead-letter replay, and clean worker shutdown.
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/queue
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/queues
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/queues.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/infrastructure-and-cli.md
 
-## Enqueueing jobs & draining workers gracefully
+## Queue jobs and stop workers cleanly
 
-@forge-fr/queue provides identical job semantics across createMemoryQueueAdapter(), createRedisQueueAdapter() (atomic Lua pop), and createPostgresQueueAdapter() (PostgreSQL FOR UPDATE SKIP LOCKED).
+@forge-fr/queue gives you the same API across createMemoryQueueAdapter(), createRedisQueueAdapter() (atomic Lua pop), and createPostgresQueueAdapter() (using PostgreSQL FOR UPDATE SKIP LOCKED).
 
 **File: `src/worker.ts`**
 
@@ -41,8 +41,8 @@ await queue.enqueue(
 await worker.stop({ timeoutMs: 5_000 });
 ```
 
-## Retries, exponential backoff & Dead-Letter Queue (DLQ)
+## Retries, backoff & Dead-Letter Queue (DLQ)
 
-- Failed jobs retry with bounded exponential backoff up to maxAttempts before moving to the Dead-Letter Queue.
-- Inspect or replay dead-letter jobs programmatically via adapter.listDeadLetters() and adapter.replayDeadLetter(id).
-- Note: ForgeJS ships durable job queues, not a built-in cron scheduler.
+- Failed jobs automatically retry with increasing delays up to maxAttempts, then move to the Dead-Letter Queue.
+- Inspect or re-run failed jobs anytime with adapter.listDeadLetters() and adapter.replayDeadLetter(id).
+- Note: ForgeJS includes background job queues, not a built-in cron scheduler.

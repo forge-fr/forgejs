@@ -9,11 +9,13 @@ import {
   DatabaseConnectionError,
   DatabaseError,
   createDatabasePlugin,
+  createUnitOfWork,
   type DatabaseAdapter,
   type DatabaseConnectionState,
   type DatabasePingResult,
   type TransactionIsolationLevel,
   type TransactionOptions,
+  type UnitOfWork,
 } from '@forge-fr/database';
 import { normalizePrismaError } from './errors.js';
 
@@ -44,12 +46,18 @@ export interface PrismaClientLike {
   ): Promise<TResult>;
 }
 
+export type PrismaUnitOfWork<
+  TClient extends PrismaClientLike = PrismaClientLike,
+  TTxClient = TClient,
+> = UnitOfWork<TClient, TTxClient>;
+
 export interface PrismaTokens<
   TClient extends PrismaClientLike = PrismaClientLike,
   TTxClient = TClient,
 > {
   readonly adapter: InjectionToken<DatabaseAdapter<TClient, TTxClient>>;
   readonly client: InjectionToken<TClient>;
+  readonly unitOfWork: InjectionToken<PrismaUnitOfWork<TClient, TTxClient>>;
 }
 
 export function createPrismaToken<
@@ -59,10 +67,25 @@ export function createPrismaToken<
   return Object.freeze({
     adapter: createToken<DatabaseAdapter<TClient, TTxClient>>(`PrismaAdapter:${name}`),
     client: createToken<TClient>(`PrismaClient:${name}`),
+    unitOfWork: createToken<PrismaUnitOfWork<TClient, TTxClient>>(`PrismaUnitOfWork:${name}`),
   });
 }
 
 export const DefaultPrismaTokens = createPrismaToken<PrismaClientLike>('default');
+
+/**
+ * Creates a typed Prisma `UnitOfWork` preserving full native Prisma model delegates
+ * on both `uow.client` and `ctx.tx`, while normalizing Prisma errors (`P2002`, `P2034`, etc.).
+ */
+export function createPrismaUnitOfWork<
+  TClient extends PrismaClientLike = PrismaClientLike,
+  TTxClient = TClient,
+>(adapter: DatabaseAdapter<TClient, TTxClient>): PrismaUnitOfWork<TClient, TTxClient> {
+  return createUnitOfWork({
+    adapter,
+    normalizeError: normalizePrismaError,
+  });
+}
 
 export interface PrismaAdapterOptions<TClient extends PrismaClientLike = PrismaClientLike> {
   readonly name?: string;
@@ -82,6 +105,7 @@ export interface PrismaPluginOptions<
   readonly forgeVersion?: string;
   readonly adapterToken?: InjectionToken<DatabaseAdapter<TClient, TTxClient>>;
   readonly clientToken?: InjectionToken<TClient>;
+  readonly unitOfWorkToken?: InjectionToken<PrismaUnitOfWork<TClient, TTxClient>>;
   readonly healthCheckName?: string;
 }
 
@@ -378,11 +402,15 @@ export function createPrismaPlugin<
       DatabaseAdapter<TClient, TTxClient>
     >,
     clientToken: (options.clientToken ?? DefaultPrismaTokens.client) as InjectionToken<TClient>,
+    unitOfWorkToken: (options.unitOfWorkToken ?? DefaultPrismaTokens.unitOfWork) as InjectionToken<
+      PrismaUnitOfWork<TClient, TTxClient>
+    >,
     healthCheckName: options.healthCheckName ?? options.name ?? 'prisma',
     configSchema: prismaConfigSchema as unknown as StandardSchemaLike<
       PrismaAdapterOptions<TClient>,
       PrismaAdapterOptions<TClient>
     >,
     createAdapter: (config) => createPrismaAdapter<TClient, TTxClient>(config),
+    createUnitOfWork: (adapter) => createPrismaUnitOfWork(adapter),
   });
 }

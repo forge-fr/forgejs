@@ -67,6 +67,7 @@ function extractObjectProperties(
       name,
       in: inLocation,
       required: inLocation === 'path' ? true : requiredSet.has(name),
+      ...(propSchema.description !== undefined ? { description: propSchema.description } : {}),
       schema: propSchema,
     });
   }
@@ -89,7 +90,7 @@ export function generateOpenApiDocument(
       continue;
     }
 
-    const attachment = getAttachedOpenApiMetadata(route.handler, route.meta);
+    const attachment = getAttachedOpenApiMetadata(route.handler, route.meta, route.middleware);
     if (attachment?.doc?.exclude === true) {
       continue;
     }
@@ -140,40 +141,55 @@ export function generateOpenApiDocument(
       }
     }
 
-    const requestBody = schemas?.body
-      ? {
-          required: true,
-          content: {
-            'application/json': {
-              schema: schemaToJsonSchema(schemas.body, reflectOpts),
-            },
-          },
-        }
-      : undefined;
+    const bodyContentType = doc?.requestBodyContentType ?? 'application/json';
+    const requestBody =
+      doc?.requestBody !== undefined
+        ? doc.requestBody
+        : schemas?.body
+          ? {
+              required: true,
+              content: {
+                [bodyContentType]: {
+                  schema: schemaToJsonSchema(schemas.body, reflectOpts),
+                },
+              },
+            }
+          : undefined;
 
     const responsesMutable: Record<string, OpenApiResponse> = {};
     if (doc?.responses) {
       for (const [statusCode, spec] of Object.entries(doc.responses)) {
-        responsesMutable[statusCode] = {
-          description: spec.description,
-          ...(spec.schema !== undefined
-            ? {
-                content: {
-                  'application/json': {
+        const resContentType = spec.contentType ?? 'application/json';
+        const content =
+          spec.content !== undefined
+            ? spec.content
+            : spec.schema !== undefined
+              ? {
+                  [resContentType]: {
                     schema: schemaToJsonSchema(spec.schema, reflectOpts),
                   },
-                },
-              }
-            : {}),
+                }
+              : spec.contentType !== undefined
+                ? {
+                    [spec.contentType]: {
+                      schema: { type: 'string', format: 'binary' },
+                    },
+                  }
+                : undefined;
+
+        responsesMutable[statusCode] = {
+          description: spec.description,
+          ...(content !== undefined ? { content } : {}),
         };
       }
     }
 
     if (schemas?.response && responsesMutable['200'] === undefined) {
+      const defaultResContentType = doc?.responseContentType ?? 'application/json';
       responsesMutable['200'] = {
         description: 'Successful response',
         content: {
-          'application/json': {
+          [defaultResContentType]: {
             schema: schemaToJsonSchema(schemas.response, reflectOpts),
           },
         },
@@ -211,6 +227,17 @@ export function generateOpenApiDocument(
     sortedPaths[pathKey] = pathsMutable[pathKey]!;
   }
 
+  let componentSchemas: Record<string, OpenApiSchemaObject> | undefined;
+  if (options.schemas && Object.keys(options.schemas).length > 0) {
+    componentSchemas = {};
+    for (const [name, schemaDef] of Object.entries(options.schemas)) {
+      componentSchemas[name] = schemaToJsonSchema(schemaDef, reflectOpts);
+    }
+  }
+
+  const hasComponents =
+    componentSchemas !== undefined || options.securitySchemes !== undefined;
+
   return {
     openapi: '3.1.0',
     info: {
@@ -221,10 +248,13 @@ export function generateOpenApiDocument(
     ...(options.servers !== undefined ? { servers: options.servers } : {}),
     ...(options.tags !== undefined ? { tags: options.tags } : {}),
     paths: sortedPaths,
-    ...(options.securitySchemes !== undefined
+    ...(hasComponents
       ? {
           components: {
-            securitySchemes: options.securitySchemes,
+            ...(componentSchemas !== undefined ? { schemas: componentSchemas } : {}),
+            ...(options.securitySchemes !== undefined
+              ? { securitySchemes: options.securitySchemes }
+              : {}),
           },
         }
       : {}),

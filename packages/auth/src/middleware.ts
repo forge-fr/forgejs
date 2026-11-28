@@ -1,19 +1,31 @@
 import { ConfigurationError, UnauthorizedError } from '@forge-fr/core';
-import type { ForgeContext, ForgeMiddleware } from '@forge-fr/http';
+import { createContextKey, type ContextKey, type ForgeContext, type ForgeMiddleware } from '@forge-fr/http';
 import type { AuthIdentity, AuthStrategy } from './types.js';
 
-const AUTH_IDENTITY_MAP = new WeakMap<ForgeContext, AuthIdentity>();
+/** Official typed context key storing the authenticated `AuthIdentity` for the current request. */
+export const AuthIdentityKey: ContextKey<AuthIdentity> = createContextKey<AuthIdentity>('auth.identity');
+
+const FALLBACK_AUTH_IDENTITY_MAP = new WeakMap<ForgeContext, AuthIdentity>();
 
 export function setAuthIdentity(ctx: ForgeContext, identity: AuthIdentity): void {
-  AUTH_IDENTITY_MAP.set(ctx, identity);
+  if (typeof ctx.set === 'function') {
+    ctx.set(AuthIdentityKey, identity);
+  }
+  FALLBACK_AUTH_IDENTITY_MAP.set(ctx, identity);
 }
 
 export function getAuth(ctx: ForgeContext): AuthIdentity | undefined {
-  return AUTH_IDENTITY_MAP.get(ctx);
+  if (typeof ctx.get === 'function') {
+    const typed = ctx.get(AuthIdentityKey);
+    if (typed !== undefined) {
+      return typed;
+    }
+  }
+  return FALLBACK_AUTH_IDENTITY_MAP.get(ctx);
 }
 
 export function requireAuth(ctx: ForgeContext): AuthIdentity {
-  const identity = AUTH_IDENTITY_MAP.get(ctx);
+  const identity = getAuth(ctx);
   if (identity === undefined) {
     throw new UnauthorizedError('Authentication required');
   }

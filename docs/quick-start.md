@@ -1,10 +1,10 @@
 # Quick Start
 
-ForgeJS supports two progressive entry paths over the exact same Web Standards engine: **Simple API** for lightweight HTTP services and **Modular API** with encapsulated Dependency Injection modules for larger systems.
+ForgeJS gives you two easy starting paths on the exact same Web Standards engine: a **Simple HTTP API** for small services, and a **Modular API** with private feature modules for growing apps.
 
 ## 1. Simple HTTP API (`@forge-fr/http`)
 
-Mount routes with radix parameters, priority middleware, and run zero-socket integration tests with `@forge-fr/testing`:
+Add routes with URL parameters, attach middleware, and test everything fast in memory using `@forge-fr/testing`:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -40,7 +40,7 @@ await client.close();
 
 ## 2. Modular API with Typed DI (`@forge-fr/core` + `@forge-fr/http`)
 
-Organize features into encapsulated modules where only explicitly exported tokens are visible to consumers:
+Group features into self-contained modules where internal helpers stay private and only exported tokens are shared:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -87,7 +87,7 @@ await client.close();
 
 ## 3. Running on Native Node.js & Bun Servers
 
-Swap only the adapter (`@forge-fr/node` or `@forge-fr/bun`) without changing application code:
+Switch between Node.js (`@forge-fr/node`) and Bun (`@forge-fr/bun`) by changing just the adapter line — your routes stay the same:
 
 ```ts forge-example
 import assert from 'node:assert/strict';

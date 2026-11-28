@@ -1,0 +1,78 @@
+{
+  "name": "@forge-fr/config",
+  "version": "1.0.0",
+  "description": "Typed configuration and environment validation for ForgeJS using Standard Schema (Zod, Valibot, ArkType) with .env parsing, Edge env bindings, secret-safe diagnostics, and DI plugin integration.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "import": "./dist/node.js",
+      "default": "./dist/node.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "keywords": [
+    "forgejs",
+    "config",
+    "env",
+    "dotenv",
+    "standard-schema",
+    "zod",
+    "valibot",
+    "typescript",
+    "bun",
+    "nodejs",
+    "edge"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forge-fr/forgejs.git",
+    "directory": "packages/config"
+  },
+  "homepage": "https://github.com/forge-fr/forgejs#readme",
+  "bugs": {
+    "url": "https://github.com/forge-fr/forgejs/issues"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "@forge-fr/core": "^1.0.0",
+    "@standard-schema/spec": "^1.1.0"
+  },
+  "peerDependencies": {
+    "zod": ">=3.24.0 || >=4.0.0",
+    "valibot": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    },
+    "valibot": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

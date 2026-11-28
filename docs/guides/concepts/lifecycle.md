@@ -1,30 +1,30 @@
 # Application Lifecycle
 
-> Deterministic 7-stage ApplicationKernel lifecycle with boot-failure rollback, lifecycle events, and reverse-order graceful shutdown.
+> Predictable 7-stage startup and shutdown lifecycle in ApplicationKernel with automatic rollback on boot errors.
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/lifecycle
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/lifecycle.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
 
-## Seven deterministic stages
+## Seven predictable stages from boot to shutdown
 
-| Stage | Kernel State Transition | Responsibility |
+| Stage | State Transition | What Happens |
 | --- | --- | --- |
-| configure | created → configuring → configured | Validate kernel and plugin config schemas via Standard Schema v1 |
-| register | configured → registering → registered | Register module and plugin providers into the typed DI container |
-| initialize | registered → initializing → initialized | Run module/plugin initialization hooks in topological dependency order |
-| start | initialized → starting → started | Open database pools, queue workers, and transport listeners |
-| ready | started → ready | Application accepts live traffic and serves /health/ready |
-| shutdown | ready → shutting_down → shutdown | Drain in-flight connections and stop plugins in reverse topological order |
-| dispose | shutdown → disposing → disposed | Invoke LIFO async provider disposers and release container resources |
+| configure | created → configuring → configured | Validates app and plugin settings using your config schemas |
+| register | configured → registering → registered | Registers module and plugin services into the DI container |
+| initialize | registered → initializing → initialized | Runs module and plugin setup hooks in dependency order |
+| start | initialized → starting → started | Opens database pools, starts queue workers, and prepares servers |
+| ready | started → ready | App is live, accepting requests, and passing /health/ready |
+| shutdown | ready → shutting_down → shutdown | Finishes active requests and stops plugins in reverse order |
+| dispose | shutdown → disposing → disposed | Runs cleanup callbacks (last-in, first-out) and frees resources |
 
-## Observing lifecycle transitions & boot-failure rollback
+## Watching lifecycle events & automatic boot rollback
 
-Subscribe to kernel.events.on("lifecycle:stage") or register stage hooks via kernel.hooks.add(). If any plugin fails during initialize or start, ApplicationKernel automatically triggers reverse-order rollback cleanup before rethrowing.
+Listen to kernel.events.on("lifecycle:stage") or register hooks with kernel.hooks.add(). If a plugin fails while starting, ApplicationKernel automatically cleans up everything that already started in reverse order before throwing the error.
 
 **File: `src/kernel.ts`**
 

@@ -7,6 +7,7 @@ import {
   DatabaseSerializationError,
   DatabaseTimeoutError,
   DatabaseUniqueViolationError,
+  defineRepository,
   runInTransaction,
 } from '@forge-fr/database';
 import { createPluginTestHarness } from '@forge-fr/testing';
@@ -14,6 +15,7 @@ import {
   createPrismaAdapter,
   createPrismaPlugin,
   createPrismaToken,
+  createPrismaUnitOfWork,
   normalizePrismaError,
   prismaConfigSchema,
   type PrismaClientLike,
@@ -279,5 +281,49 @@ describe('@forge-fr/prisma Adapter & Plugin (M4.2)', () => {
     });
     await expect(badConfigHarness.configure()).rejects.toThrow(PluginConfigError);
     await badConfigHarness.dispose();
+  });
+
+  it('supports createPrismaUnitOfWork, defineRepository, normalized rollback errors, and tokens.unitOfWork DI export', async () => {
+    const fake = createFakePrismaClient();
+    const tokens = createPrismaToken<FakeAppPrismaClient>('uow-app');
+    const plugin = createPrismaPlugin<FakeAppPrismaClient>({
+      name: '@forge-fr/prisma-uow-app',
+      adapterToken: tokens.adapter,
+      clientToken: tokens.client,
+      unitOfWorkToken: tokens.unitOfWork,
+    });
+
+    const harness = createPluginTestHarness({
+      plugin,
+      config: { client: fake.client },
+    });
+
+    await harness.start();
+    const uow = harness.resolveExport(tokens.unitOfWork);
+    const directUow = createPrismaUnitOfWork(harness.resolveExport(tokens.adapter));
+
+    const UsersPrismaRepo = defineRepository((prisma: FakeAppPrismaClient) => ({
+      listUsers() {
+        return prisma.user.findMany();
+      },
+    }));
+
+    const events: string[] = [];
+    const rows = await uow.run(
+      async (ctx) => {
+        ctx.afterCommit(() => {
+          events.push('prisma:committed');
+        });
+        return ctx.repository(UsersPrismaRepo).listUsers();
+      },
+      { isolationLevel: 'repeatable_read' },
+    );
+
+    expect(rows).toEqual([{ id: 1, email: 'alice@forgejs.dev' }]);
+    expect(events).toEqual(['prisma:committed']);
+    expect(fake.lastTxOptions).toEqual({ isolationLevel: 'RepeatableRead' });
+    expect(await directUow.repository(UsersPrismaRepo).listUsers()).toHaveLength(1);
+
+    await harness.dispose();
   });
 });

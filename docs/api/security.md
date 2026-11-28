@@ -1,8 +1,8 @@
 # @forge-fr/security
 
-> OWASP ASVS 5.0.0 security headers & CSP, strict CORS, CSRF protection, hardened cookies, proxy-safe rate limiting, SSRF-blocking safe fetch, and symlink-jailed path resolution.
+> Unified createSecurityMiddleware composer, OWASP ASVS 5.0.0 headers, CSP, strict CORS, CSRF checks, sliding-window & Redis/Postgres rate limiting, SSRF-safe fetch, and jailed paths.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: security
 - **Tarball**: 25.8 kB (44 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/security
 ```
 
@@ -47,5 +48,5 @@ const safeFetch = createSafeFetch();
 
 ### HTTP Security Middleware, SSRF & Path Confinement
 
-- **Values**: `buildCspHeader`, `createSecurityHeadersMiddleware`, `createCorsMiddleware`, `generateCsrfToken`, `createCsrfMiddleware`, `serializeHardenedCookie`, `createMemoryRateLimitStore`, `createRateLimitMiddleware`, `extractClientIp`, `isDangerousPropertyKey`, `sanitizeObject`, `safeJsonParse`, `sanitizeFilename`, `resolveConfinedPath`, `isPrivateOrReservedIp`, `validateOutboundUrl`, `createSafeFetch`, `SecurityTokens`, `createSecurityPlugin`, `PathTraversalError`, `RateLimitExceededError`, `SsrfBlockedError`
-- **Types**: `ClientIpOptions`, `CorsOptions`, `CorsOriginRule`, `CspDirectives`, `CsrfMiddlewareOptions`, `HardenedCookieOptions`, `HstsOptions`, `MemoryRateLimitStoreOptions`, `RateLimitConsumeResult`, `RateLimitMiddlewareOptions`, `RateLimitStore`, `SafeFetch`, `SafeFetchOptions`, `SafeOutboundUrlOptions`, `SanitizeFilenameOptions`, `SanitizeObjectOptions`, `SecurityHeadersOptions`, `SecurityPluginConfig`, `SecurityPluginOptions`
+- **Values**: `buildCspHeader`, `createSecurityHeadersMiddleware`, `createCorsMiddleware`, `generateCsrfToken`, `createCsrfMiddleware`, `serializeHardenedCookie`, `createMemoryRateLimitStore`, `createSlidingWindowMemoryRateLimitStore`, `createRedisRateLimitStore`, `createPostgresRateLimitStore`, `createRateLimitMiddleware`, `createSecurityMiddleware`, `attachSecurity`, `extractClientIp`, `isDangerousPropertyKey`, `sanitizeObject`, `safeJsonParse`, `sanitizeFilename`, `resolveConfinedPath`, `isPrivateOrReservedIp`, `validateOutboundUrl`, `createSafeFetch`, `SecurityTokens`, `createSecurityPlugin`, `PathTraversalError`, `RateLimitExceededError`, `SsrfBlockedError`
+- **Types**: `ClientIpOptions`, `CorsOptions`, `CorsOriginRule`, `CspDirectives`, `CsrfMiddlewareOptions`, `HardenedCookieOptions`, `HstsOptions`, `MemoryRateLimitStoreOptions`, `PostgresRateLimitQueryResult`, `PostgresRateLimitSqlLike`, `PostgresRateLimitStore`, `PostgresRateLimitStoreOptions`, `RateLimitAlgorithm`, `RateLimitConsumeResult`, `RateLimitMiddlewareOptions`, `RateLimitStore`, `RedisRateLimitClientLike`, `RedisRateLimitStoreOptions`, `SafeFetch`, `SafeFetchOptions`, `SafeOutboundUrlOptions`, `SanitizeFilenameOptions`, `SanitizeObjectOptions`, `SecurityHeadersOptions`, `SecurityMiddlewareOptions`, `SecurityPluginConfig`, `SecurityPluginOptions`, `SlidingWindowMemoryRateLimitStoreOptions`

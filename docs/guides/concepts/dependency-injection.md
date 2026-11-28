@@ -1,20 +1,20 @@
 # Dependency Injection
 
-> Typed DI tokens, singleton/transient/request scopes, captive-dependency detection, cycle errors, and LIFO async disposal.
+> Wire services cleanly with typed tokens, singleton/transient/request lifetimes, cycle detection, and automatic cleanup.
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core, @forge-fr/testing
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
 
-## Tokens, providers, and scopes
+## Typed tokens and service lifetimes
 
-- singleton — Instantiated once per root container and disposed in reverse LIFO order on container.dispose().
-- transient — Created fresh on every resolve() call.
-- request — Created once per child scope (container.createScope()) and disposed automatically at the end of the HTTP request.
+- singleton — Created once for the whole app and cleaned up automatically when the app stops.
+- transient — Created brand new every time resolve() is called.
+- request — Created once per HTTP request (via container.createScope()) and cleaned up as soon as that request finishes.
 
 **File: `src/di.ts`**
 
@@ -48,11 +48,11 @@ await scope.dispose();
 await container.dispose();
 ```
 
-## Captive-dependency & cycle guards
+## Built-in safety checks for wiring mistakes
 
-| Error Class | Trigger Condition |
+| Error Class | When ForgeJS Throws It |
 | --- | --- |
-| ScopeViolationError | A singleton provider injects a request-scoped provider (captive dependency) |
-| CircularDependencyError | Provider A depends on B which depends back on A (includes full token cycle path) |
-| ProviderNotFoundError | Resolving a token that was never registered or exported |
-| ContainerDisposedError | Calling register() or resolve() after dispose() completed |
+| ScopeViolationError | A long-lived singleton tries to depend on a per-request service |
+| CircularDependencyError | Service A depends on B and B depends back on A (prints the exact loop) |
+| ProviderNotFoundError | You ask for a token that was never registered or exported |
+| ContainerDisposedError | You try to register or resolve a service after the app shut down |

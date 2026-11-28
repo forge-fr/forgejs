@@ -1,8 +1,8 @@
 # @forge-fr/prisma
 
-> Prisma ORM adapter supporting Prisma v5/v6/v7+ generated clients, P1xxx/P2xxx error normalization, isolation-level transactions, and $disconnect draining.
+> Official Prisma ORM adapter for Prisma v5, v6, and v7+ clients with createPrismaUnitOfWork, consistent error mapping, safe transactions, and clean shutdown.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 9.1 kB (16 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/prisma
 ```
 

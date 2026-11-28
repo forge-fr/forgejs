@@ -1,5 +1,10 @@
 # Changelog — @forge-fr/core
 
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Synchronized `@forge-fr/core` to `1.0.0` General Availability (`FORGE_CORE_VERSION = "1.0.0"`) with full `^0.1.0 || ^1.0.0-rc.1 || ^1.0.0` plugin SemVer compatibility.
+
 ## [0.1.0] — Phase 3 Complete (2026-11-25)
 
 ### Added (Phase 3 — Milestone 3.2: Capability Enforcement, Config Validation, Encapsulation & Lifecycle Orchestration)

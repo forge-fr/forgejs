@@ -1,18 +1,18 @@
 # Prisma ORM
 
-> Integrate generated PrismaClient (v5/v6/v7+) with P1xxx/P2xxx error normalization and kernel $disconnect draining.
+> Connect PrismaClient (v5, v6, or v7+) to the ForgeJS kernel with clean error mapping and automatic $disconnect on shutdown.
 
 - **Section**: Database & Data Access
 - **Packages**: @forge-fr/prisma, @forge-fr/database
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/database/prisma
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/database/prisma.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
 
-## Registering PrismaClient with the kernel
+## Register PrismaClient with the kernel
 
-@forge-fr/prisma accepts any duck-typed PrismaClientLike instance (supporting Prisma v5, v6, and v7+ driver adapters) without pinning @prisma/client as a hard runtime dependency.
+@forge-fr/prisma accepts any generated PrismaClient instance (Prisma v5, v6, or v7+ driver adapters) through a lightweight structural interface, so you can upgrade Prisma independently.
 
 **File: `src/db/prisma.ts`**
 
@@ -31,9 +31,9 @@ await kernel.start();
 const prisma = kernel.container.resolve(DefaultPrismaTokens.client);
 ```
 
-## Prisma P1xxx/P2xxx error mapping
+## Mapped Prisma error codes
 
-| Prisma Error Code | Mapped ForgeJS Database Error |
+| Prisma Error Code | ForgeJS Database Error |
 | --- | --- |
 | P2002 | DatabaseUniqueViolationError |
 | P2003 | DatabaseForeignKeyError |

@@ -1,8 +1,8 @@
 # @forge-fr/validation
 
-> Standard Schema v1 validation engine with Zod v4 direct fast path, typed route handler wrapper, response schema stripping, and recursive prototype-pollution sanitization.
+> Input and response validation for Zod, Valibot, and any Standard Schema v1 library, with automatic OpenAPI 3.1 schema attachment, field stripping, and prototype-pollution guards.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: validation
 - **Tarball**: 13.6 kB (24 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/validation
 ```
 

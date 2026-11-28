@@ -9,6 +9,7 @@ const execFileAsync = promisify(execFile);
 
 export const TOPOLOGICAL_PUBLISH_ORDER = [
   'core',
+  'config',
   'router',
   'http',
   'testing',

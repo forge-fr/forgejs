@@ -1,18 +1,18 @@
 # Authorization
 
-> Segment-strict RBAC, deny-overrides-allow ABAC policies, anti-IDOR assertOwnership(), and multi-tenant isolation checks.
+> Enforce roles (RBAC), custom rules (ABAC), record ownership checks (anti-IDOR), and multi-tenant isolation in one place.
 
 - **Section**: Authentication & Security
 - **Packages**: @forge-fr/authorization
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/authorization
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/authorization.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
 
-## RBAC, ABAC policies & multi-tenant isolation
+## Roles, custom rules & multi-tenant boundaries
 
-createAuthorizer() evaluates RBAC roles, explicit deniedPermissions, ABAC policies, and tenant isolation identically in both HTTP middleware and pure domain services via authorizer.forActor(actor). Deny always overrides allow.
+createAuthorizer() evaluates roles, explicit denials, custom attribute rules, and tenant matching consistently in both HTTP routes and domain services via authorizer.forActor(actor). Any deny rule always wins over allow.
 
 **File: `src/authz.ts`**
 

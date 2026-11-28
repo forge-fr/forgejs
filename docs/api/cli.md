@@ -1,8 +1,8 @@
 # @forge-fr/cli
 
-> Official zero-dependency forge CLI for project scaffolding (minimal, api, modular), artifact generators, official plugin registration, dev/build/start/test orchestration, and doctor checks.
+> Zero-dependency forge CLI to scaffold new apps, generate full CRUD resources/modules/schemas/repositories/services/controllers, add official plugins, and run doctor checks.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Tooling / CLI
 - **Category**: tooling
 - **Tarball**: 20.5 kB (40 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/cli
 ```
 
@@ -40,5 +41,5 @@ forge doctor --json
 
 ### CLI Programmatic API & Safety Helpers
 
-- **Values**: `runCli`, `parseCliArgs`, `HELP_TEXT`, `OFFICIAL_FORGE_PLUGINS`, `resolvePluginPackageSpec`, `resolveSafeTargetPath`, `sanitizeJsonObject`, `validateProjectName`, `validateSymbolName`, `buildProjectTemplateFiles`, `generateArtifactFiles`, `defaultSpawnCommand`, `executeNewCommand`, `executeGenerateCommand`, `executePluginCommand`, `executeDoctorCommand`, `executeLifecycleCommand`, `CliError`
-- **Types**: `CliErrorCode`, `CliExecutionContext`, `CliResult`, `CliRuntimeTarget`, `CliSpawnFn`, `DoctorCheckResult`, `DoctorReport`, `GeneratedFileEntry`, `GeneratorArtifactKind`, `NormalizedSymbolName`, `ParsedCliArgs`, `ProjectTemplateKind`, `ProjectTemplateOptions`, `SpawnCommandOptions`, `SpawnCommandResult`
+- **Values**: `runCli`, `parseCliArgs`, `HELP_TEXT`, `OFFICIAL_FORGE_PLUGINS`, `inflectSymbolName`, `pluralizeWord`, `singularizeWord`, `resolvePluginPackageSpec`, `resolveSafeTargetPath`, `sanitizeJsonObject`, `validateProjectName`, `validateSymbolName`, `buildProjectTemplateFiles`, `generateArtifactFiles`, `generateCodeArtifacts`, `generateModuleBundle`, `injectModuleRegistrationInAppSource`, `renderControllerTemplate`, `renderModuleTemplate`, `renderRepositoryTemplate`, `renderSchemaTemplate`, `renderServiceTemplate`, `resolveGeneratorContext`, `loadForgeProjectConfig`, `resolveGeneratorKind`, `defaultSpawnCommand`, `executeNewCommand`, `executeGenerateCommand`, `executePluginCommand`, `executeDoctorCommand`, `executeLifecycleCommand`, `CliError`
+- **Types**: `CliErrorCode`, `CliExecutionContext`, `CliPromptFn`, `CliResult`, `CliRuntimeTarget`, `CliSpawnFn`, `DoctorCheckResult`, `DoctorReport`, `ForgeProjectConfig`, `GeneratedFileEntry`, `GeneratorArtifactKind`, `GeneratorNamingMode`, `GeneratorOptions`, `InflectedSymbolName`, `NormalizedSymbolName`, `ParsedCliArgs`, `ProjectRuntimeTarget`, `ProjectTemplateKind`, `ProjectTemplateOptions`, `ResolvedGeneratorContext`, `SpawnCommandOptions`, `SpawnCommandResult`

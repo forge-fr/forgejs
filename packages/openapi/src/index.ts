@@ -16,11 +16,16 @@ export {
 } from './routes.js';
 
 export { generateOpenApiDocument } from './generator.js';
-export { registerOpenApiRoutes, renderSwaggerUiHtml } from './swagger.js';
+export {
+  DEFAULT_SWAGGER_UI_DIST,
+  registerOpenApiRoutes,
+  renderSwaggerUiHtml,
+} from './swagger.js';
 export { OpenApiTokens, createOpenApiPlugin } from './plugin.js';
 
 export type {
   OpenApiComponents,
+  OpenApiDiscriminator,
   OpenApiDocument,
   OpenApiGeneratorOptions,
   OpenApiInfo,

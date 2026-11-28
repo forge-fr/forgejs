@@ -1,9 +1,15 @@
-import type { ForgeHttpApp } from '@forge-fr/http';
+import type { ForgeContext, ForgeHttpApp, ForgeMiddleware } from '@forge-fr/http';
 import type { AnySchema } from '@forge-fr/validation';
+
+export interface OpenApiDiscriminator {
+  readonly propertyName: string;
+  readonly mapping?: Readonly<Record<string, string>>;
+}
 
 export interface OpenApiSchemaObject {
   readonly type?: string | readonly string[];
   readonly format?: string;
+  readonly title?: string;
   readonly description?: string;
   readonly enum?: readonly unknown[];
   readonly const?: unknown;
@@ -17,10 +23,16 @@ export interface OpenApiSchemaObject {
   readonly anyOf?: readonly OpenApiSchemaObject[];
   readonly oneOf?: readonly OpenApiSchemaObject[];
   readonly allOf?: readonly OpenApiSchemaObject[];
+  readonly discriminator?: OpenApiDiscriminator;
   readonly minimum?: number;
   readonly maximum?: number;
+  readonly exclusiveMinimum?: number;
+  readonly exclusiveMaximum?: number;
+  readonly multipleOf?: number;
   readonly minLength?: number;
   readonly maxLength?: number;
+  readonly minItems?: number;
+  readonly maxItems?: number;
   readonly pattern?: string;
   readonly [key: string]: unknown;
 }
@@ -113,12 +125,29 @@ export interface OpenApiRouteDoc {
   readonly deprecated?: boolean;
   readonly security?: readonly Readonly<Record<string, readonly string[]>>[];
   readonly exclude?: boolean;
+  /**
+   * Media type for the reflected `schemas.body` payload (e.g., `'application/json'`,
+   * `'multipart/form-data'`, `'application/x-www-form-urlencoded'`, `'application/octet-stream'`).
+   * Default: `'application/json'`.
+   */
+  readonly requestBodyContentType?: string;
+  /**
+   * Optional explicit `requestBody` definition (useful for binary or multi-content request bodies).
+   */
+  readonly requestBody?: OpenApiRequestBody;
+  /**
+   * Default media type for the reflected `schemas.response` payload.
+   * Default: `'application/json'`.
+   */
+  readonly responseContentType?: string;
   readonly responses?: Readonly<
     Record<
       string,
       {
         readonly description: string;
         readonly schema?: AnySchema | OpenApiSchemaObject;
+        readonly contentType?: string;
+        readonly content?: Readonly<Record<string, OpenApiMediaType>>;
       }
     >
   >;
@@ -130,6 +159,7 @@ export interface OpenApiGeneratorOptions {
   readonly description?: string;
   readonly servers?: readonly OpenApiServer[];
   readonly tags?: readonly OpenApiTag[];
+  readonly schemas?: Readonly<Record<string, AnySchema | OpenApiSchemaObject>>;
   readonly securitySchemes?: Readonly<Record<string, OpenApiSecurityScheme>>;
   readonly security?: readonly Readonly<Record<string, readonly string[]>>[];
   readonly excludePaths?: readonly string[];
@@ -140,6 +170,10 @@ export interface SwaggerUiOptions {
   readonly title?: string;
   /** Pin CDN base URL for swagger-ui-dist. Must be https:// or relative path. */
   readonly swaggerUiDistUrl?: string;
+  /** Optional Subresource Integrity (SRI) hash for swagger-ui-bundle.js. */
+  readonly scriptIntegrity?: string;
+  /** Optional Subresource Integrity (SRI) hash for swagger-ui.css. */
+  readonly styleIntegrity?: string;
   /** Optional persistence key override. */
   readonly persistAuthorization?: boolean;
 }
@@ -149,8 +183,27 @@ export interface RegisterOpenApiRoutesOptions extends OpenApiGeneratorOptions {
   readonly specPath?: string;
   /** Swagger UI HTML path. Default: `'/docs'`. */
   readonly docsPath?: string;
-  /** Optional guard predicate or disable flag for production environments. Default: `true`. */
+  /** Optional disable flag. Default: `true`. */
   readonly enabled?: boolean;
+  /**
+   * When set to `false`, disables OpenAPI / Swagger UI routes when `environment === 'production'`
+   * (or `process.env.NODE_ENV === 'production'`).
+   */
+  readonly exposeInProduction?: boolean;
+  /** Optional explicit runtime environment override (e.g., `'production'`, `'development'`). */
+  readonly environment?: string;
+  /**
+   * Optional authorization predicate evaluated on every request to `specPath` and `docsPath`.
+   * Return `false` to reject unauthorized access with `403 Forbidden`.
+   */
+  readonly authorize?: (ctx: ForgeContext) => Promise<boolean> | boolean;
+  /** Optional route-level middleware applied to `specPath` and `docsPath`. */
+  readonly middleware?: readonly ForgeMiddleware[];
+  /**
+   * Memoize generated OpenAPI document between requests (automatically invalidated if new routes are registered).
+   * Default: `true`.
+   */
+  readonly cacheSpec?: boolean;
   /** Swagger UI rendering options. */
   readonly ui?: SwaggerUiOptions;
 }

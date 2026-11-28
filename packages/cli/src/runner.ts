@@ -11,7 +11,7 @@ import {
 import { CliError } from './errors.js';
 import type { CliExecutionContext, CliResult } from './types.js';
 
-const CLI_VERSION = '1.0.0-rc.2';
+const CLI_VERSION = '1.0.0';
 
 export async function runCli(
   argv: readonly string[],

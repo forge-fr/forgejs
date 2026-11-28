@@ -1,20 +1,20 @@
 # ForgeJS Playground Backend Example (`@forge-fr/*`)
 
-Production-style multi-tenant backend powering the live ForgeJS Playground ([interactive demo](https://forgejs.dev/playground)), built exclusively with ForgeJS framework packages (no frontend code).
+A complete multi-tenant backend powering the live ForgeJS Playground ([try the interactive demo](https://forgejs.id/playground)), built using only ForgeJS backend packages (no frontend code).
 
-## Architecture
+## What Is Inside
 
-- **Domain Modules (`src/server/`):**
-  - `auth/` — Argon2id / PBKDF2 password hashing, JWT, HttpOnly sessions, scoped API keys, and OAuth2 PKCE
-  - `security/` — Security headers, rate limiting, CSRF, SSRF-safe outbound checks, and path-confinement guards
-  - `tasks/` — Multi-tenant RBAC/ABAC CRUD + tag-invalidated `@forge-fr/cache`
-  - `attachments/` — Binary magic-byte inspection + confined storage via `@forge-fr/storage`
-  - `webhooks/` — Async `@forge-fr/queue` delivery worker, retries, and Dead-Letter Queue (DLQ) replay
-  - `realtime/` — Tenant-scoped SSE & WebSocket event stream
-  - `system/` — Structured logging (`@forge-fr/logger`), OpenTelemetry metrics/traces, health probes, and OpenAPI 3.1 + Swagger UI
-- **Dual Runtime Entrypoints:**
-  - **Node.js (`src/server.ts`):** Native `@forge-fr/node` HTTP & WebSocket adapter on port `3000`
-  - **Cloudflare Workers / Edge (`src/worker.ts` + `wrangler.jsonc`):** Native `@forge-fr/edge` Fetch & `WebSocketPair` adapter with Web Crypto PBKDF2 (`src/cloudflare/webcrypto-password-hasher.ts`)
+- **Feature Modules (`src/server/`):**
+  - `auth/` — Secure password hashing, JWTs, HttpOnly sessions, scoped API keys, and OAuth2 PKCE
+  - `security/` — Security headers, rate limiting, CSRF protection, SSRF URL checks, and safe file paths
+  - `tasks/` — Multi-tenant task CRUD with role/ownership checks and tag-invalidated `@forge-fr/cache`
+  - `attachments/` — File upload checks (magic bytes + size limits) via `@forge-fr/storage`
+  - `webhooks/` — Background job delivery, automatic retries, and Dead-Letter Queue replay via `@forge-fr/queue`
+  - `realtime/` — Tenant-scoped Server-Sent Events (SSE) and WebSockets
+  - `system/` — Redacted structured logs (`@forge-fr/logger`), OpenTelemetry tracing, health probes, and OpenAPI 3.1 + Swagger UI
+- **Two Ready-to-Run Entrypoints:**
+  - **Node.js (`src/server.ts`):** Uses `@forge-fr/node` on port `3000`
+  - **Cloudflare Workers / Edge (`src/worker.ts` + `wrangler.jsonc`):** Uses `@forge-fr/edge` with Web Crypto password hashing (`src/cloudflare/webcrypto-password-hasher.ts`)
 
 ## Run on Node.js
 

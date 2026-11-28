@@ -1,0 +1,121 @@
+# ForgeJS
+
+> Build clear, well-structured TypeScript backends for Node.js, Bun, and Cloudflare Workers with built-in validation, safe defaults, and zero runtime lock-in.
+
+ForgeJS v1.0.0 is a clear, modular, pure-ESM TypeScript backend framework built on Web Standards for Node.js (>=22.18.0), Bun (>=1.4.0), and WinterCG Edge runtimes across 21 focused `@forge-fr/*` packages.
+
+- Full unified documentation corpus: [llms-full.txt](https://github.com/forge-fr/forgejs/llms-full.txt) (also available at [llm-full.txt](https://github.com/forge-fr/forgejs/llm-full.txt))
+- Standard index manifest: [llms.txt](https://github.com/forge-fr/forgejs/llms.txt) (also available at [llm.txt](https://github.com/forge-fr/forgejs/llm.txt))
+- XML Sitemap: [sitemap.xml](https://github.com/forge-fr/forgejs/sitemap.xml)
+- Interactive Multi-Tenant Playground: [Live Playground](https://github.com/forge-fr/forgejs/playground)
+
+## Hands-On Tutorials & Guides
+
+- [Build a Production Modular Backend Step by Step (9 Steps)](https://github.com/forge-fr/forgejs/docs/tutorials/playground-backend.md): Interactive guide covering modules, Argon2id auth, RBAC/ABAC, security middleware, caching, safe file storage, webhook queues with DLQ replay, SSE/WebSockets, OpenTelemetry, and OpenAPI 3.1.
+- [Guides & Learning Paths](https://github.com/forge-fr/forgejs/guides.md): Curated backend learning paths organized from first project setup to production readiness.
+- [Architecture Specs, ADRs & Benchmarks](https://github.com/forge-fr/forgejs/docs/architecture/hub.md): System architecture overview, 21-package dependency graph, OWASP ASVS 5.0.0 posture, and benchmark summaries.
+
+## Part A: Getting Started
+
+- [Introduction](https://github.com/forge-fr/forgejs/docs/getting-started/introduction.md): What ForgeJS is, how it stays simple and portable across runtimes, and how it compares with Express, Fastify, Hono, and NestJS.
+- [Installation](https://github.com/forge-fr/forgejs/docs/getting-started/installation.md): System requirements, public npm and GitHub Packages setup, install commands for pnpm, npm, and Bun, TypeScript config, and quick fixes.
+- [Quick Start](https://github.com/forge-fr/forgejs/docs/getting-started/quick-start.md): Create a validated HTTP API with createHttpApp() and validatedHandler(), then run the same code on Node.js, Bun, or Edge.
+- [Your First Application](https://github.com/forge-fr/forgejs/docs/getting-started/first-application.md): Step-by-step backend app combining createKernel(), defineModule(), validatedHandler(), security headers, and clean shutdown.
+
+## Part B: Core Concepts
+
+- [Architecture](https://github.com/forge-fr/forgejs/docs/concepts/architecture.md): How ForgeJS organizes code into 6 clear layers enforced by 60 automated boundary checks across all 20 packages.
+- [Application Lifecycle](https://github.com/forge-fr/forgejs/docs/concepts/lifecycle.md): Predictable 7-stage startup and shutdown lifecycle in ApplicationKernel with automatic rollback on boot errors.
+- [Configuration & Secrets](https://github.com/forge-fr/forgejs/docs/concepts/configuration.md): Manage typed app settings with createConfigManager() and keep passwords or API keys hidden from logs using secret().
+- [Dependency Injection](https://github.com/forge-fr/forgejs/docs/concepts/dependency-injection.md): Wire services cleanly with typed tokens, singleton/transient/request lifetimes, cycle detection, and automatic cleanup.
+- [Encapsulated Modules](https://github.com/forge-fr/forgejs/docs/concepts/modules.md): Organize features with defineModule(), keep internal helpers private by default, and share only explicit exports.
+- [Error Handling](https://github.com/forge-fr/forgejs/docs/concepts/error-handling.md): Use built-in ForgeError classes for clear HTTP errors while automatically hiding internal details and stack traces in production.
+
+## Part C: HTTP & API Development
+
+- [Routing](https://github.com/forge-fr/forgejs/docs/http/routing.md): Fast static route lookup, path parameters with regex constraints, wildcards, nested route groups, and automatic 405 responses.
+- [Controllers & Handlers](https://github.com/forge-fr/forgejs/docs/http/controllers.md): Organize HTTP endpoints with plain route-registration functions that pull typed services from ctx.container.
+- [Request & Response](https://github.com/forge-fr/forgejs/docs/http/request-and-response.md): Safe size-limited body readers (1 MiB default), clean response helpers, built-in gzip/deflate compression, and ETag caching.
+- [Middleware & Hooks](https://github.com/forge-fr/forgejs/docs/http/middleware.md): Predictable middleware ordering (global → module → group → route), double-next protection, and 7 HTTP lifecycle hooks.
+- [Validation](https://github.com/forge-fr/forgejs/docs/http/validation.md): Validate params, query, headers, and JSON bodies with Zod v4, Valibot v1, or any Standard Schema v1 library.
+- [Response Validation & Serialization](https://github.com/forge-fr/forgejs/docs/http/serialization.md): Check outgoing response data with validatedHandler({ response }) so sensitive fields never slip into API output.
+- [OpenAPI 3.1 & Swagger UI](https://github.com/forge-fr/forgejs/docs/http/openapi.md): Generate OpenAPI 3.1 specs straight from your route schemas and serve a hardened Swagger UI page automatically.
+
+## Part D: Database & Data Access
+
+- [Database Overview](https://github.com/forge-fr/forgejs/docs/database/overview.md): How ForgeJS handles PostgreSQL, Drizzle, and Prisma connections, clean error mapping, and password masking in database URLs.
+- [PostgreSQL](https://github.com/forge-fr/forgejs/docs/database/postgresql.md): Connect to PostgreSQL with connection pooling, safe transactions, typed SQL error handling, and checksum-checked migrations.
+- [Drizzle ORM](https://github.com/forge-fr/forgejs/docs/database/drizzle.md): Use Drizzle ORM with full native TypeScript schema inference via createDrizzlePostgresPlugin() and automatic pool cleanup.
+- [Prisma ORM](https://github.com/forge-fr/forgejs/docs/database/prisma.md): Connect PrismaClient (v5, v6, or v7+) to the ForgeJS kernel with clean error mapping and automatic $disconnect on shutdown.
+- [Repository Pattern](https://github.com/forge-fr/forgejs/docs/database/repository-pattern.md): Keep business logic independent from your ORM by defining repository tokens that can be swapped cleanly in tests.
+- [Database Testing](https://github.com/forge-fr/forgejs/docs/database/testing.md): Run real PostgreSQL 16 integration tests in CI or local Docker by setting FORGE_TEST_DATABASE_URL.
+
+## Part E: Authentication & Security
+
+- [Authentication](https://github.com/forge-fr/forgejs/docs/security/authentication.md): Strong Argon2id password hashing, strict JWT verification, hashed sessions and API keys, OAuth 2.0 PKCE, and Better Auth.
+- [Authorization](https://github.com/forge-fr/forgejs/docs/security/authorization.md): Enforce roles (RBAC), custom rules (ABAC), record ownership checks (anti-IDOR), and multi-tenant isolation in one place.
+- [Security Guide (OWASP ASVS 5.0.0)](https://github.com/forge-fr/forgejs/docs/security/security-guide.md): Clear breakdown of built-in HTTP protections, optional @forge-fr/security middleware, and what your team still owns.
+
+## Part F: Plugins & Extensions
+
+- [Plugin System](https://github.com/forge-fr/forgejs/docs/plugins/plugin-system.md): How ForgeJS plugins check version compatibility, boot in dependency order, detect conflicts, and run with scoped permissions.
+- [Creating Plugins](https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins.md): Write, validate, and test your own ForgeJS plugins using definePlugin(), config schemas, and createPluginTestHarness().
+- [Adapter Development](https://github.com/forge-fr/forgejs/docs/plugins/adapter-development.md): Build custom runtime, database, cache, queue, or storage adapters and test them with the shared ForgeJS contract suites.
+- [Integrating External Libraries](https://github.com/forge-fr/forgejs/docs/plugins/external-libraries.md): How ForgeJS integrates Redis, Prisma, Zod, and Argon2 via optional peer dependencies without locking your versions.
+
+## Part G: Advanced Features
+
+- [Caching & Redis](https://github.com/forge-fr/forgejs/docs/advanced/caching.md): Fast in-memory LRU cache, safe SCAN-based Redis caching, duplicate-request protection via getOrSet(), and tag invalidation.
+- [Queues & Background Jobs](https://github.com/forge-fr/forgejs/docs/advanced/queues.md): Run background jobs with Memory, Redis, or PostgreSQL drivers, automatic retries, dead-letter replay, and clean worker shutdown.
+- [Events & Hooks](https://github.com/forge-fr/forgejs/docs/advanced/events-and-hooks.md): Emit typed domain events with flexible error handling and run ordered hook pipelines using @forge-fr/core.
+- [File Storage & S3](https://github.com/forge-fr/forgejs/docs/advanced/storage.md): Store files in memory, on local disk, or on S3 (without the AWS SDK) with path-traversal protection and file signature checks.
+- [WebSockets & Server-Sent Events](https://github.com/forge-fr/forgejs/docs/advanced/realtime.md): Add real-time WebSockets (app.ws()) with pre-upgrade authentication and Origin checks, plus Server-Sent Events streaming.
+- [Logging, Metrics, Tracing & Health Checks](https://github.com/forge-fr/forgejs/docs/advanced/observability.md): Structured JSON logging with automatic secret masking, correlation IDs, OpenTelemetry tracing, and /health/live & /health/ready endpoints.
+
+## Part H: Testing & Production
+
+- [Testing](https://github.com/forge-fr/forgejs/docs/deployment/testing.md): Test HTTP routes, WebSockets, DI overrides, and plugins fast in memory with identical behavior on Node.js and Bun.
+- [Runtime Compatibility](https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility.md): Honest runtime matrix separating what is tested locally (Node.js v22.23.5, Bun 1.4.4) from CI-configured targets.
+- [Production Deployment](https://github.com/forge-fr/forgejs/docs/deployment/production.md): Production checklist covering NODE_ENV=production, graceful shutdown on SIGTERM, health checks, and reverse proxies.
+- [Performance & Benchmarks](https://github.com/forge-fr/forgejs/docs/deployment/performance.md): How ForgeJS stays fast and the exact reproducible Node.js v22.23.5 and Bun 1.4.4 benchmark numbers from benchmarks/RESULTS.md.
+
+## Part I: CLI Reference
+
+- [CLI Reference (@forge-fr/cli)](https://github.com/forge-fr/forgejs/docs/cli/reference.md): Complete guide to all 10 forge CLI commands, flags, starter templates, expected output, and error codes.
+
+## Part K: Community & Contributing
+
+- [Contributing](https://github.com/forge-fr/forgejs/docs/community/contributing.md): How the monorepo is organized, coding and boundary rules, and how to run the full test and doc checks before a PR.
+- [Plugin Author Guide](https://github.com/forge-fr/forgejs/docs/community/plugin-author-guide.md): Checklist for publishing clean, ESM-only ForgeJS plugins with safe permissions, peer dependencies, and verified tarballs.
+- [Release & Versioning](https://github.com/forge-fr/forgejs/docs/community/release-and-versioning.md): Semantic Versioning across all 21 @forge-fr/* packages, what shipped in v1.0.0 General Availability, and how public npm and GitHub Packages releases run.
+- [Frequently Asked Questions](https://github.com/forge-fr/forgejs/docs/community/faq.md): Straight answers on runtime support, database ORMs, typed tokens vs. decorators, security boundaries, and benchmarks.
+
+## API Reference (21 @forge-fr/* Packages)
+
+- [API Directory Overview](https://github.com/forge-fr/forgejs/api.md): Layer overview, package sizes, dependencies, and links to all 21 packages.
+- [@forge-fr/core](https://github.com/forge-fr/forgejs/api/core.md): App startup lifecycle, typed service container, isolated feature modules, permission-checked plugins, config, events, errors, secrets, and health checks.
+- [@forge-fr/config](https://github.com/forge-fr/forgejs/api/config.md): Strongly typed environment and .env configuration validated with Zod, Valibot, or Standard Schema v1, with automatic secret redaction and Edge-safe loaders.
+- [@forge-fr/router](https://github.com/forge-fr/forgejs/api/router.md): Zero-dependency URL router with instant static path lookup, typed parameter patterns, wildcards, route groups, and automatic HEAD/405 responses.
+- [@forge-fr/http](https://github.com/forge-fr/forgejs/api/http.md): Web-standard HTTP server with typed ContextKey<T> state, layered middleware, streaming multipart/binary body readers, SSE/WebSocket pub-sub RealtimeHub, compression, and ETags.
+- [@forge-fr/node](https://github.com/forge-fr/forgejs/api/node.md): Node.js HTTP server adapter with fast direct request handling, native WebSocket upgrades, and clean shutdown on SIGINT/SIGTERM.
+- [@forge-fr/bun](https://github.com/forge-fr/forgejs/api/bun.md): Bun server adapter powered by Bun.serve() with fast HTTP handling, native WebSockets, in-flight request draining, and graceful shutdown.
+- [@forge-fr/edge](https://github.com/forge-fr/forgejs/api/edge.md): Edge Fetch adapter for Cloudflare Workers, Deno, and serverless isolates with zero Node or Bun globals plus background task helpers.
+- [@forge-fr/testing](https://github.com/forge-fr/forgejs/api/testing.md): First-class testing harness with createTestKernel/createTestApp, typed DI overrides, in-memory HTTP/SSE/multipart/cookie-jar TestClient, and WebSocket pairs.
+- [@forge-fr/validation](https://github.com/forge-fr/forgejs/api/validation.md): Input and response validation for Zod, Valibot, and any Standard Schema v1 library, with automatic OpenAPI 3.1 schema attachment, field stripping, and prototype-pollution guards.
+- [@forge-fr/database](https://github.com/forge-fr/forgejs/api/database.md): PostgreSQL adapter built on postgres-js with UnitOfWork (.afterCommit/.afterRollback), defineRepository, clean error mapping, hidden connection passwords, and SQL migrations.
+- [@forge-fr/drizzle](https://github.com/forge-fr/forgejs/api/drizzle.md): Official Drizzle ORM plugin with createDrizzleUnitOfWork that preserves 100% of Drizzle TypeScript inference, adds typed transactions, and maps PostgreSQL errors cleanly.
+- [@forge-fr/prisma](https://github.com/forge-fr/forgejs/api/prisma.md): Official Prisma ORM adapter for Prisma v5, v6, and v7+ clients with createPrismaUnitOfWork, consistent error mapping, safe transactions, and clean shutdown.
+- [@forge-fr/auth](https://github.com/forge-fr/forgejs/api/auth.md): Argon2id (Node/Bun) and Web Crypto PBKDF2-SHA256 (Edge) password hashing, typed AuthIdentityKey, strict JWT/JWKS verification, hashed sessions/API keys, OAuth 2.0 PKCE, and Better Auth.
+- [@forge-fr/authorization](https://github.com/forge-fr/forgejs/api/authorization.md): Role-based (RBAC) and attribute-based (ABAC) access control, resource ownership checks, tenant isolation guards, and service-level authorizers.
+- [@forge-fr/security](https://github.com/forge-fr/forgejs/api/security.md): Unified createSecurityMiddleware composer, OWASP ASVS 5.0.0 headers, CSP, strict CORS, CSRF checks, sliding-window & Redis/Postgres rate limiting, SSRF-safe fetch, and jailed paths.
+- [@forge-fr/logger](https://github.com/forge-fr/forgejs/api/logger.md): Structured Pino logging (plus zero-dep @forge-fr/logger/edge) with dot-path secret redaction, typed CorrelationIdKey/RequestLoggerKey, OpenTelemetry tracing/metrics, and /health probes.
+- [@forge-fr/cache](https://github.com/forge-fr/forgejs/api/cache.md): Fast LRU memory and non-blocking Redis cache adapters with stampede-safe getOrSet, tag invalidation, prefix clearing, and key validation.
+- [@forge-fr/queue](https://github.com/forge-fr/forgejs/api/queue.md): Background job queues, cron/interval createJobScheduler with distributed lease locks, createTransactionalOutbox, and createDurableEventBridge for Memory, Redis, and PostgreSQL.
+- [@forge-fr/storage](https://github.com/forge-fr/forgejs/api/storage.md): File storage adapters for Memory, confined local folders, and S3-compatible buckets with MIME allowlists, binary file-type checks, and signed URLs.
+- [@forge-fr/openapi](https://github.com/forge-fr/forgejs/api/openapi.md): Auto-discovers OpenAPI 3.1 specs from validatedHandler() and validatedOpenApiHandler() (Zod v3/v4, Valibot, Standard Schema), with multipart/binary schemas and guarded Swagger UI.
+- [@forge-fr/cli](https://github.com/forge-fr/forgejs/api/cli.md): Zero-dependency forge CLI to scaffold new apps, generate full CRUD resources/modules/schemas/repositories/services/controllers, add official plugins, and run doctor checks.
+
+## Optional
+
+- [Official Plugin & CLI Ecosystem](https://github.com/forge-fr/forgejs/ecosystem.md): Overview of all 12 official plugins and 10 verified `forge` CLI commands.
+- [Source Repository](https://github.com/forge-fr/forgejs): GitHub repository, MIT license, and release notes.

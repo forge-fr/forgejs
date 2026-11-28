@@ -1,18 +1,18 @@
 # Creating Plugins
 
-> Author, validate, and test custom ForgeJS plugins with definePlugin(), Standard Schema config validation, and createPluginTestHarness().
+> Write, validate, and test your own ForgeJS plugins using definePlugin(), config schemas, and createPluginTestHarness().
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/core, @forge-fr/testing
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/creating-plugins.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
 
-## Authoring with definePlugin()
+## Writing a plugin with definePlugin()
 
-Use definePlugin() with explicit capabilities, a forgeVersion SemVer range, and a Standard Schema v1 configSchema so invalid plugin configurations fail fast during the configure stage.
+Use definePlugin() to declare your plugin capabilities, supported ForgeJS version range, and a configSchema so bad settings are caught right at startup.
 
 **File: `src/plugins/metrics.plugin.ts`**
 
@@ -47,9 +47,9 @@ export const metricsPlugin = definePlugin({
 });
 ```
 
-## Isolated plugin testing with createPluginTestHarness()
+## Test plugins in isolation with createPluginTestHarness()
 
-createPluginTestHarness({ plugin, config }) boots a real ApplicationKernel with your plugin, validates exported tokens via resolveExport(), checks health probes, and exercises teardown.
+createPluginTestHarness({ plugin, config }) starts a real kernel with just your plugin so you can test its exported tokens, health checks, and cleanup hooks easily.
 
 **File: `tests/metrics.plugin.test.ts`**
 

@@ -5,6 +5,7 @@ export {
   createPrismaAdapter,
   createPrismaPlugin,
   createPrismaToken,
+  createPrismaUnitOfWork,
   prismaConfigSchema,
   type PrismaAdapterOptions,
   type PrismaClientLike,
@@ -12,4 +13,5 @@ export {
   type PrismaPluginOptions,
   type PrismaTokens,
   type PrismaTransactionOptions,
+  type PrismaUnitOfWork,
 } from './adapter.js';

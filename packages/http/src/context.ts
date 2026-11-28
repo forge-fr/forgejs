@@ -1,7 +1,8 @@
 import type { Container, ForgeLogger, InjectionToken } from '@forge-fr/core';
 import {
   DEFAULT_MAX_BODY_BYTES,
-   type FastBoundedTextRequest,
+  DEFAULT_MAX_MULTIPART_BYTES,
+  type FastBoundedTextRequest,
   hasForbiddenKey,
   readBoundedBytes,
   readBoundedJson,
@@ -10,25 +11,38 @@ import {
   readBoundedUrlEncoded,
   stripForbiddenKeys,
 } from './body.js';
-import { BadRequestError, ResponseCommittedError } from './errors.js';
+import {
+  formatContentDisposition,
+  normalizeBinaryInput,
+  wrapAbortableStream,
+  type BinaryBodyInput,
+  type BinaryResponseOptions,
+  type DownloadResponseOptions,
+} from './binary.js';
+import { BadRequestError, ContextKeyNotFoundError, ResponseCommittedError } from './errors.js';
+import type { AnyContextKey, ContextKey, DefaultedContextKey } from './context-key.js';
 import {
   FastResponse,
   copyFastBody,
   createFastResponse,
   createFastStaticResponse,
 } from './fast-body.js';
+import { readMultipartStream } from './multipart-stream.js';
 import { negotiateContentType } from './negotiation.js';
 import { createSseResponse } from './sse.js';
 import type {
   BodyParseOptions,
   ForgeContext,
   MultipartParseOptions,
+  MultipartStreamOptions,
+  MultipartStreamPart,
   ParsedMultipart,
   RedirectStatusCode,
   RequestBodyReader,
   ResponseHelperInit,
   RuntimeRequestMeta,
   SseProducer,
+  SseResponseOptions,
 } from './types.js';
 
 const FORBIDDEN_QUERY_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
@@ -227,8 +241,10 @@ export class ForgeContextImpl implements ForgeContext {
   public _requestId: string | undefined;
   public _params: Readonly<Record<string, string>> = EMPTY_PARAMS;
   public _routeMeta: Readonly<Record<string, unknown>> = EMPTY_META;
+  public _routePattern: string | undefined = undefined;
   private _queryRecord: Readonly<Record<string, string>> | undefined = undefined;
   private stateObj: Record<string, unknown> | null = null;
+  private typedState: Map<symbol, unknown> | null = null;
   public _validated: unknown = undefined;
   private stagedStatus = 200;
   private _committed = false;
@@ -432,7 +448,14 @@ export class ForgeContextImpl implements ForgeContext {
         multipart: (opts?: MultipartParseOptions): Promise<ParsedMultipart> =>
           readBoundedMultipart(this.request, {
             ...opts,
-            maxBytes: opts?.maxBytes ?? defaultMaxBytes,
+            maxBytes:
+              opts?.maxBytes ?? Math.max(defaultMaxBytes, DEFAULT_MAX_MULTIPART_BYTES),
+          }),
+        multipartStream: (opts?: MultipartStreamOptions): AsyncIterable<MultipartStreamPart> =>
+          readMultipartStream(this.request, {
+            ...opts,
+            maxBytes:
+              opts?.maxBytes ?? Math.max(defaultMaxBytes, DEFAULT_MAX_MULTIPART_BYTES),
           }),
       };
     }
@@ -525,6 +548,10 @@ export class ForgeContextImpl implements ForgeContext {
     return this._routeMeta;
   }
 
+  public get routePattern(): string | undefined {
+    return this._routePattern;
+  }
+
   public get signal(): AbortSignal {
     const cold = this.ensureCold();
     if (cold.abortController === null) {
@@ -560,9 +587,13 @@ export class ForgeContextImpl implements ForgeContext {
   public setRouteMatch(
     params: Readonly<Record<string, string>>,
     meta: Readonly<Record<string, unknown>>,
+    routePattern?: string,
   ): void {
     this._params = params;
     this._routeMeta = meta;
+    if (routePattern !== undefined) {
+      this._routePattern = routePattern;
+    }
   }
 
   public header(name: string): string | null {
@@ -606,6 +637,45 @@ export class ForgeContextImpl implements ForgeContext {
 
   public resolveOptional<T>(token: InjectionToken<T>): T | undefined {
     return this.container.resolveOptional(token);
+  }
+
+  public get<T>(key: DefaultedContextKey<T>): T;
+  public get<T>(key: ContextKey<T>): T | undefined;
+  public get<T>(key: AnyContextKey<T>): T | undefined;
+  public get<T>(key: AnyContextKey<T>): T | undefined {
+    if (this.typedState !== null && this.typedState.has(key.id)) {
+      return this.typedState.get(key.id) as T;
+    }
+    if (key.hasDefault) {
+      return key.defaultValue();
+    }
+    return undefined;
+  }
+
+  public set<T>(key: AnyContextKey<T>, value: T): this {
+    if (this.typedState === null) {
+      this.typedState = new Map<symbol, unknown>();
+    }
+    this.typedState.set(key.id, value);
+    return this;
+  }
+
+  public has<T>(key: AnyContextKey<T>): boolean {
+    return this.typedState !== null && this.typedState.has(key.id);
+  }
+
+  public delete<T>(key: AnyContextKey<T>): boolean {
+    return this.typedState !== null ? this.typedState.delete(key.id) : false;
+  }
+
+  public require<T>(key: AnyContextKey<T>, message?: string): T {
+    if (this.typedState !== null && this.typedState.has(key.id)) {
+      return this.typedState.get(key.id) as T;
+    }
+    if (key.hasDefault) {
+      return key.defaultValue();
+    }
+    throw new ContextKeyNotFoundError(key.label, message);
   }
 
   public getState<T = unknown>(key: string): T | undefined {
@@ -876,6 +946,10 @@ export class ForgeContextImpl implements ForgeContext {
     return createFastResponse(body, status, record, setCookies);
   }
 
+  public formData(options?: MultipartParseOptions): Promise<ParsedMultipart> {
+    return this.body.multipart(options);
+  }
+
   public bytes(
     body: Uint8Array,
     contentType = 'application/octet-stream',
@@ -886,6 +960,94 @@ export class ForgeContextImpl implements ForgeContext {
     const copy = new Uint8Array(body.byteLength);
     copy.set(body);
     return createFastResponse(copy, status, record, setCookies);
+  }
+
+  public binary(body: BinaryBodyInput, options?: BinaryResponseOptions | string): Response {
+    const opts: BinaryResponseOptions | undefined =
+      typeof options === 'string' ? { contentType: options } : options;
+    const normalized = normalizeBinaryInput(body);
+    const contentType =
+      opts?.contentType ?? normalized.inferredContentType ?? 'application/octet-stream';
+    const status = opts?.status ?? this.stagedStatus;
+    const headers = this.buildHeaders(opts?.headers, contentType);
+    if (!headers.has('content-length')) {
+      headers.set('content-length', String(normalized.byteLength));
+    }
+    if (opts?.cacheControl !== undefined) {
+      assertValidHeaderValue('cache-control', opts.cacheControl);
+      headers.set('cache-control', opts.cacheControl);
+    }
+    if (opts?.etag !== undefined) {
+      assertValidHeaderValue('etag', opts.etag);
+      headers.set('etag', opts.etag);
+    }
+    if (this.method === 'HEAD') {
+      return new Response(null, { status, headers });
+    }
+    const responseBody =
+      normalized.body instanceof Uint8Array
+        ? (normalized.body as Uint8Array<ArrayBuffer>)
+        : normalized.body;
+    return new Response(responseBody, { status, headers });
+  }
+
+  public download(
+    body: BinaryBodyInput | ReadableStream<Uint8Array>,
+    filename: string,
+    options?: DownloadResponseOptions,
+  ): Response {
+    const disposition = formatContentDisposition(filename, options?.disposition ?? 'attachment');
+    const status = options?.status ?? this.stagedStatus;
+
+    if (body instanceof ReadableStream) {
+      const contentType = options?.contentType ?? 'application/octet-stream';
+      const headers = this.buildHeaders(options?.headers, contentType);
+      headers.set('content-disposition', disposition);
+      if (options?.contentLength !== undefined) {
+        if (!Number.isInteger(options.contentLength) || options.contentLength < 0) {
+          throw new BadRequestError('Invalid contentLength option');
+        }
+        headers.set('content-length', String(options.contentLength));
+      }
+      if (options?.cacheControl !== undefined) {
+        assertValidHeaderValue('cache-control', options.cacheControl);
+        headers.set('cache-control', options.cacheControl);
+      }
+      if (options?.etag !== undefined) {
+        assertValidHeaderValue('etag', options.etag);
+        headers.set('etag', options.etag);
+      }
+      if (this.method === 'HEAD') {
+        body.cancel('HEAD request').catch(() => {});
+        return new Response(null, { status, headers });
+      }
+      return new Response(wrapAbortableStream(body, this.signal), { status, headers });
+    }
+
+    const normalized = normalizeBinaryInput(body);
+    const contentType =
+      options?.contentType ?? normalized.inferredContentType ?? 'application/octet-stream';
+    const headers = this.buildHeaders(options?.headers, contentType);
+    headers.set('content-disposition', disposition);
+    if (!headers.has('content-length')) {
+      headers.set('content-length', String(normalized.byteLength));
+    }
+    if (options?.cacheControl !== undefined) {
+      assertValidHeaderValue('cache-control', options.cacheControl);
+      headers.set('cache-control', options.cacheControl);
+    }
+    if (options?.etag !== undefined) {
+      assertValidHeaderValue('etag', options.etag);
+      headers.set('etag', options.etag);
+    }
+    if (this.method === 'HEAD') {
+      return new Response(null, { status, headers });
+    }
+    const responseBody =
+      normalized.body instanceof Uint8Array
+        ? (normalized.body as Uint8Array<ArrayBuffer>)
+        : normalized.body;
+    return new Response(responseBody, { status, headers });
   }
 
   public empty(statusCode = 204): Response {
@@ -911,12 +1073,31 @@ export class ForgeContextImpl implements ForgeContext {
   ): Response {
     const status = init?.status ?? this.stagedStatus;
     const headers = this.buildHeaders(init?.headers, contentType);
-    return new Response(body, { status, headers });
+    if (this.method === 'HEAD') {
+      body.cancel('HEAD request').catch(() => {});
+      return new Response(null, { status, headers });
+    }
+    return new Response(wrapAbortableStream(body, this.signal), { status, headers });
   }
 
-  public sse(producer: SseProducer, init?: Omit<ResponseHelperInit, 'status'>): Response {
+  public sse(producer: SseProducer, init?: SseResponseOptions): Response {
     const headers = this.buildHeaders(init?.headers);
-    return createSseResponse(producer, { headers, signal: this.signal });
+    const rawHeaderLastId = this.header('last-event-id');
+    const resolvedLastId =
+      init?.lastEventId ??
+      (rawHeaderLastId !== null && rawHeaderLastId.trim().length > 0 && !/[\r\n\0]/.test(rawHeaderLastId)
+        ? rawHeaderLastId.trim()
+        : undefined);
+    return createSseResponse(producer, {
+      headers,
+      signal: this.signal,
+      ...(resolvedLastId !== undefined ? { lastEventId: resolvedLastId } : {}),
+      ...(init?.keepAliveIntervalMs !== undefined
+        ? { keepAliveIntervalMs: init.keepAliveIntervalMs }
+        : {}),
+      ...(init?.keepAliveComment !== undefined ? { keepAliveComment: init.keepAliveComment } : {}),
+      ...(init?.retryMs !== undefined ? { retryMs: init.retryMs } : {}),
+    });
   }
 
   public dispose(): Promise<void> | void {

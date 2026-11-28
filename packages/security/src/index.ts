@@ -32,13 +32,33 @@ export {
 export {
   createMemoryRateLimitStore,
   createRateLimitMiddleware,
+  createSlidingWindowMemoryRateLimitStore,
   extractClientIp,
   type ClientIpOptions,
   type MemoryRateLimitStoreOptions,
+  type RateLimitAlgorithm,
   type RateLimitConsumeResult,
   type RateLimitMiddlewareOptions,
   type RateLimitStore,
+  type SlidingWindowMemoryRateLimitStoreOptions,
 } from './rate-limit.js';
+
+export {
+  createPostgresRateLimitStore,
+  createRedisRateLimitStore,
+  type PostgresRateLimitQueryResult,
+  type PostgresRateLimitSqlLike,
+  type PostgresRateLimitStore,
+  type PostgresRateLimitStoreOptions,
+  type RedisRateLimitClientLike,
+  type RedisRateLimitStoreOptions,
+} from './rate-limit-stores.js';
+
+export {
+  attachSecurity,
+  createSecurityMiddleware,
+  type SecurityMiddlewareOptions,
+} from './compose.js';
 
 export {
   isDangerousPropertyKey,

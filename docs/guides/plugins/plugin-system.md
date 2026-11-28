@@ -1,32 +1,32 @@
 # Plugin System
 
-> SemVer 2.0.0 compatibility engine, topological dependency DAG, conflict detection, and frozen capability-scoped PluginContext.
+> How ForgeJS plugins check version compatibility, boot in dependency order, detect conflicts, and run with scoped permissions.
 
 - **Section**: Plugins & Extensions
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/plugins/plugin-system
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/plugins/plugin-system.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
 
-## Declared capabilities & frozen PluginContext
+## Declared permissions & locked PluginContext
 
-Every ForgeJS plugin explicitly declares the capabilities it requires. During kernel boot, createPluginContext() creates a frozen context object whose methods enforce capability boundaries at runtime.
+Every plugin lists the exact capabilities it needs. At startup, ForgeJS hands the plugin a locked context object that only lets it call the APIs it declared.
 
-| Capability | Permitted PluginContext Operation |
+| Capability | What the Plugin Is Allowed to Do |
 | --- | --- |
-| di:register | Register private or explicitly exported providers into the container |
-| di:resolve | Resolve visible providers registered by core or declared plugin dependencies |
-| config:read | Read kernel configuration values via ConfigManager |
-| events:emit | Emit typed kernel events |
-| events:listen | Subscribe to kernel lifecycle or domain events |
-| hooks:register | Attach handlers to kernel lifecycle hooks |
-| health:register | Register readiness/liveness checks with HealthRegistry |
+| di:register | Register private or exported services into the DI container |
+| di:resolve | Read exported services from core or declared plugin dependencies |
+| config:read | Read settings from ConfigManager |
+| events:emit | Send typed kernel events |
+| events:listen | Listen to kernel lifecycle or app events |
+| hooks:register | Attach callbacks to kernel lifecycle hooks |
+| health:register | Add liveness or readiness checks to HealthRegistry |
 
-## SemVer compatibility, dependencies & conflicts
+## Version checks, boot order & conflict protection
 
-- forgeVersion ranges are checked against FORGE_CORE_VERSION using the built-in SemVer 2.0.0 engine before any plugin hook runs.
-- Plugin dependencies are topologically sorted at boot and shut down in exact reverse order.
-- Calling a PluginContext API outside declared capabilities throws PluginCapabilityError immediately.
-- Conflicting plugins or circular plugin dependencies fail fast with PluginConflictError or CircularPluginDependencyError.
+- forgeVersion ranges are checked against the running @forge-fr/core version before any plugin runs.
+- Plugins start in dependency order and shut down in exact reverse order.
+- If a plugin calls an API it did not declare, ForgeJS stops immediately with PluginCapabilityError.
+- Conflicting plugins or circular dependencies fail fast at startup with clear error messages.

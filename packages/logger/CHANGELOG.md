@@ -8,3 +8,9 @@
   - OpenTelemetry (`@opentelemetry/api`) tracing & metrics integration (`getActiveTraceContext`, `createOtelInstrumentation`, `createOtelHttpMiddleware`).
   - Production-safe liveness & readiness health endpoints (`createLivenessHandler`, `createReadinessHandler`, `registerHealthRoutes`) wired to `@forge-fr/core` `HealthRegistry`.
   - ForgeJS DI plugin (`createObservabilityPlugin`, `ObservabilityTokens`) with graceful log flush on shutdown.
+
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Added dot-path redaction in `sanitizeLogContext`, typed `CorrelationIdKey` & `RequestLoggerKey`, `onError` + `onResponse` route pattern parity in `attachObservabilityHooks()`, and zero-Pino `@forge-fr/logger/edge` subpath.
+

@@ -13,6 +13,14 @@ const BOOLEAN_FLAGS = new Set([
   'w',
   'json',
   'dry-run',
+  'interactive',
+  'i',
+  'crud',
+  'no-crud',
+  'single',
+  'only-module',
+  'register',
+  'no-pluralize',
 ]);
 
 export function parseCliArgs(argv: readonly string[]): ParsedCliArgs {
@@ -64,6 +72,7 @@ export function parseCliArgs(argv: readonly string[]): ParsedCliArgs {
       else if (short === 'y') flags.add('yes');
       else if (short === 'f') flags.add('force');
       else if (short === 'w') flags.add('watch');
+      else if (short === 'i') flags.add('interactive');
       else flags.add(short);
       continue;
     }

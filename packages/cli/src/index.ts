@@ -2,13 +2,30 @@ export { CliError, type CliErrorCode } from './errors.js';
 export { parseCliArgs } from './argv.js';
 export {
   OFFICIAL_FORGE_PLUGINS,
+  inflectSymbolName,
+  pluralizeWord,
   resolvePluginPackageSpec,
   resolveSafeTargetPath,
   sanitizeJsonObject,
+  singularizeWord,
   validateProjectName,
   validateSymbolName,
 } from './safety.js';
-export { buildProjectTemplateFiles, generateArtifactFiles, type ProjectTemplateOptions } from './templates.js';
+export {
+  buildProjectTemplateFiles,
+  generateArtifactFiles,
+  generateCodeArtifacts,
+  generateModuleBundle,
+  injectModuleRegistrationInAppSource,
+  renderControllerTemplate,
+  renderModuleTemplate,
+  renderRepositoryTemplate,
+  renderSchemaTemplate,
+  renderServiceTemplate,
+  resolveGeneratorContext,
+  type ProjectTemplateOptions,
+  type ResolvedGeneratorContext,
+} from './templates.js';
 export {
   HELP_TEXT,
   defaultSpawnCommand,
@@ -17,19 +34,27 @@ export {
   executeLifecycleCommand,
   executeNewCommand,
   executePluginCommand,
+  loadForgeProjectConfig,
+  resolveGeneratorKind,
 } from './commands.js';
 export { runCli } from './runner.js';
 export type {
   CliExecutionContext,
+  CliPromptFn,
   CliResult,
   CliRuntimeTarget,
   CliSpawnFn,
   DoctorCheckResult,
   DoctorReport,
+  ForgeProjectConfig,
   GeneratedFileEntry,
   GeneratorArtifactKind,
+  GeneratorNamingMode,
+  GeneratorOptions,
+  InflectedSymbolName,
   NormalizedSymbolName,
   ParsedCliArgs,
+  ProjectRuntimeTarget,
   ProjectTemplateKind,
   SpawnCommandOptions,
   SpawnCommandResult,

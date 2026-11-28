@@ -10,3 +10,9 @@
   - `MemoryAdapter` conforming to `HttpRuntimeAdapter`.
   - `createTestClient()` ergonomic in-process HTTP test client.
   - `overrideProvider()` DI provider override helper.
+
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Added `createTestKernel()` and `createTestApp()` with typed DI token overrides, `overrideValue()`, `Symbol.asyncDispose`, and `TestClient` multipart, SSE (`getSse()`), and cookie-jar (`withCookies()`) helpers.
+

@@ -1,6 +1,6 @@
 {
   "name": "@forge-fr/bun",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0",
   "description": "Native Bun (Bun.serve) runtime adapter for ForgeJS with Web Standard Request/Response, client IP mapping, body size enforcement, and graceful server draining.",
   "license": "MIT",
   "type": "module",
@@ -9,7 +9,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "files": [
@@ -42,10 +43,10 @@
   "scripts": {
     "build": "tsc -b tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@forge-fr/http": "^1.0.0-rc.2"
+    "@forge-fr/http": "^1.0.0"
   },
   "publishConfig": {
     "access": "public",

@@ -1,8 +1,8 @@
 # @forge-fr/auth
 
-> OWASP Argon2id password hashing (Node & Bun cross-compatible), algorithm-pinned JWT/JWKS, SHA-256 hashed sessions & API keys, OAuth 2.0 PKCE/OIDC, and Better Auth bridge.
+> Argon2id (Node/Bun) and Web Crypto PBKDF2-SHA256 (Edge) password hashing, typed AuthIdentityKey, strict JWT/JWKS verification, hashed sessions/API keys, OAuth 2.0 PKCE, and Better Auth.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: security
 - **Tarball**: 27.6 kB (48 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/auth
 ```
 
@@ -44,8 +45,8 @@ const valid = await hasher.verify('correct-horse-battery-staple', hash);
 
 ### Passwords, Crypto & Identity
 
-- **Values**: `createAuthIdentity`, `createArgon2PasswordHasher`, `base64UrlDecode`, `base64UrlEncode`, `constantTimeEqual`, `generateRandomBytes`, `generateSecureToken`, `sha256Base64Url`, `sha256Bytes`, `sha256Hex`
-- **Types**: `AuthIdentity`, `AuthIdentityInput`, `AuthMethod`, `AuthStrategy`, `Argon2PasswordHasherOptions`, `PasswordHasher`
+- **Values**: `createAuthIdentity`, `createArgon2PasswordHasher`, `createWebCryptoPasswordHasher`, `base64UrlDecode`, `base64UrlEncode`, `constantTimeEqual`, `generateRandomBytes`, `generateSecureToken`, `sha256Base64Url`, `sha256Bytes`, `sha256Hex`
+- **Types**: `AuthIdentity`, `AuthIdentityInput`, `AuthMethod`, `AuthStrategy`, `Argon2PasswordHasherOptions`, `PasswordHasher`, `WebCryptoPasswordHasherOptions`
 
 ### JWT, Sessions, API Keys, OAuth/OIDC & Better Auth
 
@@ -54,5 +55,5 @@ const valid = await hasher.verify('correct-horse-battery-staple', hash);
 
 ### HTTP Auth Middleware & Plugin
 
-- **Values**: `createAuthMiddleware`, `getAuth`, `requireAuth`, `setAuthIdentity`, `AuthTokens`, `createAuthPlugin`
+- **Values**: `AuthIdentityKey`, `createAuthMiddleware`, `getAuth`, `requireAuth`, `setAuthIdentity`, `AuthTokens`, `createAuthPlugin`
 - **Types**: `AuthMiddlewareOptions`, `AuthPluginConfig`, `AuthPluginOptions`

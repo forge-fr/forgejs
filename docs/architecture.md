@@ -1,10 +1,10 @@
 # Architecture, DI Container, Modules & Capability-Scoped Plugins
 
-ForgeJS enforces strict separation between runtime-agnostic core primitives (`@forge-fr/core`), HTTP/Web Standards handling (`@forge-fr/http`), and runtime edge adapters (`@forge-fr/node`, `@forge-fr/bun`, `@forge-fr/edge`).
+ForgeJS keeps your core app logic (`@forge-fr/core`) and HTTP handling (`@forge-fr/http`) strictly separate from server runtimes (`@forge-fr/node`, `@forge-fr/bun`, `@forge-fr/edge`).
 
 ## 1. Dependency Injection & Request Scoping
 
-`@forge-fr/core` supports `singleton`, `transient`, and `request` provider lifetimes, prevents captive dependencies, detects dependency cycles, and runs async `dispose` hooks in reverse LIFO order:
+`@forge-fr/core` supports `singleton`, `transient`, and `request` service lifetimes. It catches circular or mismatched dependencies early and runs async `dispose` cleanup callbacks in reverse order when shutting down:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -47,9 +47,9 @@ await container.dispose();
 assert.deepEqual(disposed, ['req-1', 'req-2', 'config']);
 ```
 
-## 2. Capability-Scoped Plugins & Health Checks
+## 2. Permission-Checked Plugins & Health Checks
 
-Plugins declare explicit capabilities (`di:register`, `health:register`, `events:emit`, etc.), optional Standard Schema `configSchema` validation, and isolated `exportProvider()` visibility tested via `createPluginTestHarness`:
+Plugins list the exact permissions they need (`di:register`, `health:register`, `events:emit`, and more), validate their own settings with a `configSchema`, and can be tested in isolation with `createPluginTestHarness`:
 
 ```ts forge-example
 import assert from 'node:assert/strict';

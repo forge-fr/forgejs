@@ -1,18 +1,18 @@
 # Your First Application
 
-> Step-by-step typed backend combining createKernel(), defineModule(), validatedHandler(), security headers, and graceful shutdown.
+> Step-by-step backend app combining createKernel(), defineModule(), validatedHandler(), security headers, and clean shutdown.
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/core, @forge-fr/http, @forge-fr/validation, @forge-fr/security, @forge-fr/node
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/first-application
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/first-application.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
 
-## Complete modular service
+## Complete modular service example
 
-This end-to-end service defines a private module state store, exports a typed service token, mounts security headers, validates request and response contracts, and drains gracefully on SIGTERM.
+This complete service keeps its data store private inside a module, shares a typed service token, adds security headers, validates both incoming requests and outgoing responses, and shuts down cleanly on SIGTERM.
 
 **File: `src/app.ts`**
 
@@ -86,7 +86,7 @@ app.post(
     async (ctx, input) => {
       const projects = await ctx.container!.resolve(ProjectServiceToken);
       const created = projects.create(input.body.name, input.body.ownerId);
-      // ownerId is automatically stripped by the response contract
+      // ownerId is automatically stripped by the response schema
       return ctx.json({ id: created.id, name: created.name }, { status: 201 });
     },
   ),
@@ -96,25 +96,25 @@ const server = await app.listen(createNodeAdapter(), { host: '127.0.0.1', port: 
 attachProcessShutdown(server, { onShutdown: () => kernel.shutdown() });
 ```
 
-## Recommended modular folder layout
+## Recommended folder layout
 
-Running forge new <name> --template modular generates a clean domain-first structure where each feature module owns its tokens, services, and route registration factory.
+Running forge new <name> --template modular creates a clean feature-based layout where each feature folder owns its tokens, business logic, and HTTP routes.
 
 **File: `directory-tree`**
 
 ```bash
 src/
-├── index.ts                 # Runtime entrypoint (Node/Bun/Edge adapter + shutdown)
-├── app.ts                   # createKernel() + createHttpApp() assembly
+├── index.ts                 # Server entry file (Node, Bun, or Edge adapter + shutdown)
+├── app.ts                   # createKernel() + createHttpApp() setup
 └── modules/
     └── tasks/
         ├── tasks.module.ts      # defineModule() + private & exported tokens
-        ├── tasks.service.ts     # Pure domain logic (zero runtime globals)
-        └── tasks.controller.ts  # Route registration + validatedHandler()
+        ├── tasks.service.ts     # Core business logic (no runtime-specific globals)
+        └── tasks.controller.ts  # HTTP routes + validatedHandler()
 ```
 
-## Response contract stripping
+## Automatic cleanup of extra response fields
 
-> **SECURITY: Automatic PII Redaction on Response Schemas**
+> **SECURITY: Prevent Accidental Data Leaks in Responses**
 >
-> When validatedHandler() receives a response schema, undeclared fields such as ownerId or internal database columns are stripped before JSON serialization. Schema mismatches fail closed with ResponseValidationError (HTTP 500, expose: false).
+> When you pass a response schema to validatedHandler(), any extra fields not listed in the schema (such as ownerId or password hashes) are removed automatically before sending JSON. If the response does not match the schema, ForgeJS fails safely with an internal HTTP 500 error.

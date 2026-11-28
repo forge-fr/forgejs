@@ -1,8 +1,8 @@
 # @forge-fr/core
 
-> 7-stage application kernel, typed dependency injection container, encapsulated modules, SemVer capability-scoped plugin runtime, errors, secrets, config, events, hooks, and health checks.
+> App startup lifecycle, typed service container, isolated feature modules, permission-checked plugins, config, events, errors, secrets, and health checks.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Framework Core
 - **Category**: core
 - **Tarball**: 50.5 kB (56 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/core
 ```
 

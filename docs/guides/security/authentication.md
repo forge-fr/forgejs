@@ -1,20 +1,20 @@
 # Authentication
 
-> Cross-runtime OWASP Argon2id hashing, algorithm-pinned JWT/JWKS, SHA-256 hashed sessions and API keys, OAuth 2.0 PKCE/OIDC, and Better Auth.
+> Strong Argon2id password hashing, strict JWT verification, hashed sessions and API keys, OAuth 2.0 PKCE, and Better Auth.
 
 - **Section**: Authentication & Security
 - **Packages**: @forge-fr/auth
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/security/authentication
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/security/authentication.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/data-and-auth.md
 
-## Password hashing, algorithm-pinned JWTs & hashed sessions
+## Passwords, JWTs, and hashed sessions
 
-- createArgon2PasswordHasher() enforces OWASP Argon2id floors (memoryCost >= 12288 KiB, default 19456, timeCost >= 2, 1024-byte cap) and is verified cross-compatible between @node-rs/argon2 and Bun.password.
-- createJwtService() requires an explicit algorithms allowlist, rejects alg: none, and enforces >=32-byte HMAC secrets.
-- Session IDs and API keys are stored strictly as SHA-256 hex digests and verified in constant time.
+- createArgon2PasswordHasher() enforces OWASP Argon2id strength settings and works seamlessly across Node.js (@node-rs/argon2) and Bun (Bun.password).
+- createJwtService() requires an explicit list of allowed algorithms, blocks alg: none, and requires at least 32-byte HMAC secrets.
+- Session tokens and API keys are stored only as SHA-256 hashes and compared in constant time to prevent timing attacks.
 
 **File: `src/auth.ts`**
 
@@ -46,6 +46,6 @@ const sessions = createSessionManager({
 });
 ```
 
-## OAuth 2.0 PKCE / OIDC & Better Auth bridge
+## OAuth 2.0 PKCE / OIDC & Better Auth support
 
-@forge-fr/auth includes createOAuthPkceClient() (S256 PKCE + state/nonce validation), createApiKeyService(), and mountBetterAuth() / createBetterAuthBridge() for teams adopting Better Auth.
+@forge-fr/auth also provides createOAuthPkceClient() (with S256 PKCE and state/nonce checks), createApiKeyService(), and mountBetterAuth() / createBetterAuthBridge() if you use Better Auth.

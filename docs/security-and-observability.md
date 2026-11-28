@@ -2,7 +2,7 @@
 
 ## 1. Security Headers, CORS, Input Sanitization & SSRF Protection (`@forge-fr/security`)
 
-`@forge-fr/security` ships hardened defaults without third-party dependencies:
+`@forge-fr/security` provides ready-to-use security middleware and safety helpers with zero third-party dependencies:
 
 ```ts forge-example
 import assert from 'node:assert/strict';
@@ -48,7 +48,7 @@ await client.close();
 
 ## 2. Structured Logging, Redaction, Correlation & Health Probes (`@forge-fr/logger`)
 
-`@forge-fr/logger` redacts secrets and credentialed URLs recursively, neutralizes CRLF characters in logs, attaches correlation IDs, and serves production-safe `/health/live` and `/health/ready` endpoints:
+`@forge-fr/logger` hides secrets and database passwords automatically, strips unsafe line breaks from log messages, adds request correlation IDs, and mounts `/health/live` and `/health/ready` checks:
 
 ```ts forge-example
 import assert from 'node:assert/strict';

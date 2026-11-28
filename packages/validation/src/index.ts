@@ -18,6 +18,8 @@ export {
 
 export {
   VALIDATED_STATE_KEY,
+  VALIDATION_SCHEMAS_SYMBOL,
+  getAttachedValidationSchemas,
   getValidated,
   validateRequest,
   validatedHandler,

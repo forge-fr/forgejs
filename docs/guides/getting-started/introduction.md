@@ -1,38 +1,38 @@
 # Introduction
 
-> What ForgeJS is, its architectural philosophy, honest comparisons with Express, Fastify, Hono, and NestJS, and verified runtime targets.
+> What ForgeJS is, how it stays simple and portable across runtimes, and how it compares with Express, Fastify, Hono, and NestJS.
 
 - **Section**: Getting Started
 - **Packages**: @forge-fr/core, @forge-fr/http
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/getting-started/introduction.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/quick-start.md
 
 ## What is ForgeJS?
 
-ForgeJS is an open-source, pure-ESM, strict-TypeScript backend framework built directly on Web Standards (Request, Response, Headers, ReadableStream, AbortSignal, CompressionStream, and Web Crypto).
+ForgeJS is an open-source TypeScript backend framework built on standard web APIs (Request, Response, Headers, Streams, and Web Crypto) using modern JavaScript modules (ESM).
 
-Rather than coupling application logic to node:http primitives or requiring runtime reflection decorators, ForgeJS separates domain code from host runtimes across 20 modular @forge-fr/* packages synchronized at v1.0.0-rc.2.
+Instead of locking your business logic to one server runtime or relying on complex class decorators, ForgeJS separates your app code from the server layer across 21 focused @forge-fr/* packages synchronized at v1.0.0.
 
-- 16 of 20 packages ship with zero third-party runtime dependencies.
-- Verified locally on Node.js v22.23.5 and Bun 1.4.4, with a zero-global WinterCG Edge adapter (@forge-fr/edge).
-- 60/60 automated architectural boundary assertions enforce unidirectional layering across the workspace.
+- 16 of the 21 packages have zero third-party runtime dependencies, keeping installs small and predictable.
+- Tested locally on Node.js v22.23.5 and Bun 1.4.4, plus an edge runtime adapter (@forge-fr/edge) for Cloudflare Workers and Deno.
+- 63 automated boundary checks verify that core framework packages never accidentally import Node-only or Bun-only APIs.
 
 ## Design philosophy & framework comparison
 
-ForgeJS favors explicit composition over hidden magic: typed tokens (createToken<T>()), encapsulated modules (defineModule()), and capability-scoped plugins (definePlugin()) deliver predictable structure without sacrificing cold-start latency or request throughput.
+ForgeJS favors clear, explicit wiring over hidden framework magic. You pass typed service tokens (createToken<T>()), group features into modules (defineModule()), and extend the app with permission-checked plugins (definePlugin()) while keeping startup and request speed fast.
 
-| Dimension | ForgeJS Approach | Trade-off to Consider |
+| Area | ForgeJS Approach | Trade-off to Keep in Mind |
 | --- | --- | --- |
-| DI & Modules | Composition-first typed tokens & defineModule() | No reflect-metadata or class decorator magic |
-| Runtime Portability | Web Standards core + thin Node/Bun/Edge adapters | Pure ESM only (Node.js >=22.18.0; no legacy CJS) |
-| Security Posture | Hardened HTTP defaults + composable OWASP ASVS 5.0.0 suite | App services still own authorization & domain policies |
-| Database Strategy | Native PostgreSQL, Drizzle, and Prisma plugins | TypeORM, MikroORM, Sequelize, and Knex are not built-in |
+| Modules & Wiring | Plain typed tokens & defineModule() functions | No class decorators or reflect-metadata needed |
+| Runtime Portability | Standard Web API core + small Node, Bun, and Edge adapters | Modern ESM only (Node.js >= 22.18.0; no CommonJS require) |
+| Security Posture | Safe HTTP defaults + ready-to-use OWASP ASVS 5.0.0 security middleware | Your app services still decide who owns each record |
+| Database Support | Official PostgreSQL, Drizzle, and Prisma plugins with UnitOfWork | TypeORM, MikroORM, Sequelize, and Knex are not built-in |
 
-## When not to use ForgeJS
+## When ForgeJS might not be the right fit
 
-- If your codebase requires CommonJS require() output or Node.js versions older than 22.18.0.
-- If you specifically want decorator-driven NestJS class controllers or built-in TypeORM/MikroORM integration.
-- If you only need a single-file micro-router with zero lifecycle, DI, or security primitives.
+- Your project still depends on CommonJS require() or runs on Node.js older than 22.18.0.
+- Your team specifically wants decorator-based class controllers (like NestJS) or built-in TypeORM/MikroORM.
+- You only need a tiny single-file router and do not want lifecycle management, modules, or built-in security helpers.

@@ -1,9 +1,9 @@
 import type { ForgeHttpApp } from '@forge-fr/http';
 import { OpenApiError } from './errors.js';
 import { generateOpenApiDocument } from './generator.js';
-import type { RegisterOpenApiRoutesOptions, SwaggerUiOptions } from './types.js';
+import type { OpenApiDocument, RegisterOpenApiRoutesOptions, SwaggerUiOptions } from './types.js';
 
-const DEFAULT_SWAGGER_UI_DIST = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5';
+export const DEFAULT_SWAGGER_UI_DIST = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.18.2';
 
 function escapeHtml(raw: string): string {
   return raw
@@ -54,6 +54,14 @@ export function renderSwaggerUiHtml(
     options.swaggerUiDistUrl ?? DEFAULT_SWAGGER_UI_DIST,
   );
   const safeAssetBaseAttr = escapeHtml(assetBase);
+  const styleIntegrityAttr =
+    typeof options.styleIntegrity === 'string' && options.styleIntegrity.length > 0
+      ? ` integrity="${escapeHtml(options.styleIntegrity)}" crossorigin="anonymous"`
+      : '';
+  const scriptIntegrityAttr =
+    typeof options.scriptIntegrity === 'string' && options.scriptIntegrity.length > 0
+      ? ` integrity="${escapeHtml(options.scriptIntegrity)}" crossorigin="anonymous"`
+      : '';
   const safeConfigJson = escapeJsonForInlineScript({
     url: specUrl,
     persistAuthorization: options.persistAuthorization === true,
@@ -65,11 +73,11 @@ export function renderSwaggerUiHtml(
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${title}</title>
-    <link rel="stylesheet" href="${safeAssetBaseAttr}/swagger-ui.css" />
+    <link rel="stylesheet" href="${safeAssetBaseAttr}/swagger-ui.css"${styleIntegrityAttr} />
   </head>
   <body>
     <div id="swagger-ui"></div>
-    <script src="${safeAssetBaseAttr}/swagger-ui-bundle.js"></script>
+    <script src="${safeAssetBaseAttr}/swagger-ui-bundle.js"${scriptIntegrityAttr}></script>
     <script>
       globalThis.addEventListener('DOMContentLoaded', function () {
         const cfg = ${safeConfigJson};
@@ -98,11 +106,24 @@ function buildSwaggerCspHeader(assetOriginOrSelf: string): string {
   ].join('; ');
 }
 
+function resolveRuntimeEnvironment(explicitEnv?: string): string | undefined {
+  if (typeof explicitEnv === 'string' && explicitEnv.length > 0) {
+    return explicitEnv;
+  }
+  const proc = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process;
+  return proc?.env?.['NODE_ENV'];
+}
+
 export function registerOpenApiRoutes(
   app: ForgeHttpApp,
   options: RegisterOpenApiRoutesOptions,
 ): void {
   if (options.enabled === false) {
+    return;
+  }
+
+  const runtimeEnv = resolveRuntimeEnvironment(options.environment);
+  if (options.exposeInProduction === false && runtimeEnv === 'production') {
     return;
   }
 
@@ -114,27 +135,82 @@ export function registerOpenApiRoutes(
   const scriptOrigin = assetBase.startsWith('https://') ? new URL(assetBase).origin : "'self'";
   const cspHeader = buildSwaggerCspHeader(scriptOrigin);
 
-  app.get(specPath, (ctx) => {
+  const shouldCache = options.cacheSpec !== false;
+  let cachedDoc: OpenApiDocument | undefined;
+  let cachedRouteCount = -1;
+
+  const getDocument = (): OpenApiDocument => {
+    const currentRouteCount = app.routes().length;
+    if (shouldCache && cachedDoc !== undefined && cachedRouteCount === currentRouteCount) {
+      return cachedDoc;
+    }
     const doc = generateOpenApiDocument(app, {
       ...options,
       excludePaths: [...(options.excludePaths ?? []), specPath, docsPath],
     });
-    ctx.setHeader('cache-control', 'no-store');
-    return ctx.json(doc);
+    if (shouldCache) {
+      cachedDoc = doc;
+      cachedRouteCount = currentRouteCount;
+    }
+    return doc;
+  };
+
+  const cachedHtml = renderSwaggerUiHtml(specPath, {
+    title: options.ui?.title ?? options.title,
+    swaggerUiDistUrl: assetBase,
+    ...(options.ui?.scriptIntegrity !== undefined
+      ? { scriptIntegrity: options.ui.scriptIntegrity }
+      : {}),
+    ...(options.ui?.styleIntegrity !== undefined
+      ? { styleIntegrity: options.ui.styleIntegrity }
+      : {}),
+    ...(options.ui?.persistAuthorization !== undefined
+      ? { persistAuthorization: options.ui.persistAuthorization }
+      : {}),
   });
 
-  app.get(docsPath, (ctx) => {
-    const html = renderSwaggerUiHtml(specPath, {
-      title: options.ui?.title ?? options.title,
-      swaggerUiDistUrl: assetBase,
-      ...(options.ui?.persistAuthorization !== undefined
-        ? { persistAuthorization: options.ui.persistAuthorization }
-        : {}),
-    });
-    ctx.setHeader('content-security-policy', cspHeader);
-    ctx.setHeader('x-content-type-options', 'nosniff');
-    ctx.setHeader('x-frame-options', 'DENY');
-    ctx.setHeader('referrer-policy', 'no-referrer');
-    return ctx.html(html);
-  });
+  const routeOptions =
+    options.middleware && options.middleware.length > 0
+      ? { middleware: [...options.middleware] }
+      : undefined;
+
+  app.get(
+    specPath,
+    async (ctx) => {
+      if (options.authorize) {
+        const allowed = await options.authorize(ctx);
+        if (!allowed) {
+          throw new OpenApiError('OpenAPI documentation access denied', {
+            statusCode: 403,
+            expose: true,
+          });
+        }
+      }
+      const doc = getDocument();
+      ctx.setHeader('cache-control', 'no-store');
+      return ctx.json(doc);
+    },
+    routeOptions,
+  );
+
+  app.get(
+    docsPath,
+    async (ctx) => {
+      if (options.authorize) {
+        const allowed = await options.authorize(ctx);
+        if (!allowed) {
+          throw new OpenApiError('OpenAPI documentation access denied', {
+            statusCode: 403,
+            expose: true,
+          });
+        }
+      }
+      ctx.setHeader('content-security-policy', cspHeader);
+      ctx.setHeader('x-content-type-options', 'nosniff');
+      ctx.setHeader('x-frame-options', 'DENY');
+      ctx.setHeader('referrer-policy', 'no-referrer');
+      return ctx.html(cachedHtml);
+    },
+    routeOptions,
+  );
 }

@@ -1,18 +1,18 @@
 # Validation
 
-> Standard Schema v1 validation across params, query, headers, and body with Zod v4 fast path and prototype-pollution sanitization.
+> Validate params, query, headers, and JSON bodies with Zod v4, Valibot v1, or any Standard Schema v1 library.
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/validation
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/validation
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/validation.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
 
-## Zod v4, Valibot v1 & Standard Schema v1
+## Works with Zod v4, Valibot v1, and Standard Schema
 
-@forge-fr/validation supports any @standard-schema/spec v1 schema natively (Zod v4, Valibot v1, ArkType) plus zodAdapter for legacy Zod v3 and customSchema() for bespoke validators. Incoming JSON bodies are scanned to strip __proto__, constructor, and prototype keys automatically.
+@forge-fr/validation works out of the box with any Standard Schema v1 library (Zod v4, Valibot v1, ArkType), plus zodAdapter for Zod v3 and customSchema() for custom validators. Incoming JSON is also stripped of __proto__, constructor, and prototype keys automatically.
 
 **File: `src/validated-route.ts`**
 
@@ -45,6 +45,6 @@ app.post(
 );
 ```
 
-## Compiled Zod v4 fast path
+## Fast path for synchronous Zod v4 schemas
 
-compileFastValidator() detects synchronous Zod v4 schemas once at route registration and invokes safeParse() directly (2.6x faster than ~standard.validate), falling back automatically to Standard Schema validate() for async refinements, Valibot, or custom validators.
+At route setup, compileFastValidator() checks if your schema is a synchronous Zod v4 schema and calls safeParse() directly for extra speed. For async rules, Valibot, or custom schemas, it falls back automatically to the standard validate() interface.

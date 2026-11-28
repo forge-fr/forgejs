@@ -1,21 +1,21 @@
 # File Storage & S3
 
-> Memory, symlink-jailed local disk, and zero-SDK Web Crypto AWS SigV4 S3 object storage with magic-byte upload validation.
+> Store files in memory, on local disk, or on S3 (without the AWS SDK) with path-traversal protection and file signature checks.
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/storage
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/storage
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/storage.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/infrastructure-and-cli.md
 
-## Traversal-safe keys, symlink confinement & AWS SigV4
+## Safe file keys, local disk jails & zero-SDK S3
 
-- All storage adapters normalize keys and reject path traversal (../, null bytes, absolute paths) with StoragePathError.
-- createLocalStorageAdapter() jails writes inside the configured root using canonical realpath symlink verification.
-- createS3StorageAdapter() signs AWS SigV4 requests via Web Crypto with zero AWS SDK dependencies and HTTPS enforced by default.
-- verifyMagicBytesForMime() validates actual file binary headers against allowed MIME types.
+- Every adapter validates file keys and blocks path-escape attempts (like ../ or null bytes) with StoragePathError.
+- createLocalStorageAdapter() checks real filesystem paths so symlinks cannot escape your upload directory.
+- createS3StorageAdapter() signs AWS SigV4 requests using built-in Web Crypto (no heavy AWS SDK) over HTTPS by default.
+- verifyMagicBytesForMime() checks the actual first bytes of a file to confirm it matches its claimed file type.
 
 **File: `src/storage.ts`**
 

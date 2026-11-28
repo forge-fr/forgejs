@@ -1,22 +1,22 @@
 # Runtime Compatibility
 
-> Transparent compatibility matrix separating locally verified runtimes (Node.js v22.23.5, Bun 1.4.4) from CI-configured targets.
+> Honest runtime matrix separating what is tested locally (Node.js v22.23.5, Bun 1.4.4) from CI-configured targets.
 
 - **Section**: Testing & Production
 - **Packages**: @forge-fr/node, @forge-fr/bun, @forge-fr/edge
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/deployment/runtime-compatibility.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/RUNTIME_COMPATIBILITY.md
 
-## Verified & configured runtime matrix
+## Verified & configured runtime support
 
-| Runtime | Declared Target | Local Verification | CI Matrix |
+| Runtime | Supported Version | Local Verification | CI Matrix |
 | --- | --- | --- | --- |
-| Node.js 22 LTS | >= 22.18.0 | Verified locally (v22.23.5 — 21/21 smoke) | ubuntu · macos · windows |
-| Bun 1.4+ | >= 1.4.0 | Verified locally (1.4.4 — 23/23 smoke) | ubuntu · macos (1.4.4) |
-| WinterCG Edge | Web Fetch API | Unit & contract verified (no local workerd/deno binary) | Included in Node & Bun jobs |
+| Node.js 22 LTS | >= 22.18.0 | Tested locally (v22.23.5 — 21/21 smoke) | ubuntu · macos · windows |
+| Bun 1.4+ | >= 1.4.0 | Tested locally (1.4.4 — 23/23 smoke) | ubuntu · macos (1.4.4) |
+| Cloudflare / Edge | Web Fetch API | Unit & bundle verified (no local workerd/deno binary) | Included in Node & Bun jobs |
 | Node.js 24 LTS | >= 22.18.0 | Not installed locally | ubuntu-latest (Node 24) |
 | PostgreSQL 16 | postgres-js / Drizzle / Prisma | Skipped locally (no Docker daemon) | postgres:16-alpine service job |
 

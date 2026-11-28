@@ -1,8 +1,8 @@
 # Contributing to ForgeJS (`@forge-fr/*`)
 
-Thank you for contributing to ForgeJS! Every package in this repository follows strict pure-ESM TypeScript, minimal-dependency boundaries, and OWASP ASVS 5.0.0 security defaults.
+Thank you for helping improve ForgeJS! Every package in this repository uses modern ESM TypeScript, minimal dependencies, clear runtime boundaries, and safe OWASP ASVS 5.0.0 defaults.
 
-*(Looking for Indonesian documentation? See [`docs/id/quick-start.md`](./docs/id/quick-start.md) and [`docs/id/architecture.md`](./docs/id/architecture.md).)*
+*(Looking for Indonesian guides? See [`docs/id/quick-start.md`](./docs/id/quick-start.md) and [`docs/id/architecture.md`](./docs/id/architecture.md).)*
 
 ---
 
@@ -10,7 +10,7 @@ Thank you for contributing to ForgeJS! Every package in this repository follows 
 
 **Prerequisites:**
 - **Node.js** `>=22.18.0` (see [`.nvmrc`](./.nvmrc))
-- **npm** `>=10.x` (or **Bun** `>=1.4.0` for cross-runtime parity checks)
+- **npm** `>=10.x` (or **Bun** `>=1.4.0` for cross-runtime checks)
 
 ```bash
 git clone https://github.com/forge-fr/forgejs.git
@@ -21,23 +21,23 @@ npm run build
 
 ### Verification Commands
 
-| Command | Purpose |
+| Command | What It Checks |
 | :--- | :--- |
-| `npm run build` | Compile all 20 `@forge-fr/*` packages in strict project-reference topological order |
-| `npm run typecheck` | Typecheck all 20 packages with `tsc -b --noEmit` |
-| `npm run packages:verify` | Verify tarball hygiene, clean `NodeNext`/`Bundler` imports, and CLI binary smoke tests |
-| `npm run docs:verify` | Typecheck and execute all verified `ts forge-example` snippets |
-| `npm run bench` | Run the reproducible benchmark suite against Hono and Fastify |
+| `npm run build` | Builds all 21 `@forge-fr/*` packages in dependency order |
+| `npm run typecheck` | Runs strict TypeScript checks across all 21 packages |
+| `npm run packages:verify` | Verifies package tarballs, ESM imports, and CLI smoke tests |
+| `npm run docs:verify` | Type-checks and runs every `ts forge-example` doc snippet |
+| `npm run bench` | Runs the reproducible benchmark suite against Hono and Fastify |
 
 ---
 
-## 2. Architectural & Coding Standards
+## 2. Coding & Architecture Rules
 
-1. **Pure ESM Only:** All relative imports inside `packages/*/src/` must include explicit `.js` extensions compatible with `NodeNext` module resolution.
-2. **Strict TypeScript:** All packages compile with `strict: true`, `exactOptionalPropertyTypes: true`, `noUncheckedIndexedAccess: true`, and `verbatimModuleSyntax: true`.
-3. **Minimal Dependencies:** `@forge-fr/core` and `@forge-fr/router` must remain **zero third-party runtime dependencies**.
-4. **No Cross-Runtime Leaks:** Keep `node:*` APIs isolated to `@forge-fr/node`, `@forge-fr/cli`, and `@forge-fr/storage` local drivers, `Bun.*` APIs isolated to `@forge-fr/bun`, and keep `@forge-fr/edge` strictly WinterCG Fetch-standard.
-5. **Security by Default:** Never strip input/output sanitization, header-injection checks, prototype-pollution guards, or `ForgeError.expose = false` 5xx behavior. Read [`SECURITY.md`](./SECURITY.md) before modifying security-sensitive modules.
+1. **Modern ESM Only:** Relative imports inside `packages/*/src/` must use `.js` extensions for `NodeNext` resolution.
+2. **Strict TypeScript:** Keep `strict`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, and `verbatimModuleSyntax` passing with zero errors.
+3. **Zero Extra Core Dependencies:** `@forge-fr/core` and `@forge-fr/router` must stay free of third-party runtime dependencies.
+4. **Clean Runtime Boundaries:** Keep `node:*` APIs inside `@forge-fr/node`, `@forge-fr/cli`, and local `@forge-fr/storage`; keep `Bun.*` inside `@forge-fr/bun`; keep `@forge-fr/edge` strictly on Web Fetch APIs.
+5. **Safe Defaults Always On:** Never weaken input/output validation, header checks, prototype-pollution guards, or hidden 5xx errors (`ForgeError.expose = false`). Read [`SECURITY.md`](./SECURITY.md) before changing security code.
 
 ---
 
@@ -53,7 +53,7 @@ npm run build
 4. Verify your changes pass `npm run build`, `npm run typecheck`, `npm run packages:verify`, and `npm run docs:verify`.
 5. Fill out the Pull Request template checklist cleanly.
 
-For documentation previews and interactive backend testing, visit [https://forgejs.dev](https://forgejs.dev).
+For documentation previews and interactive backend testing, visit [https://forgejs.id](https://forgejs.id).
 
 ---
 

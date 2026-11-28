@@ -8,3 +8,9 @@
   - Typed route attachment helpers (`validatedOpenApiHandler`, `openApiMeta`) preserving strict TypeScript inference.
   - Hardened Swagger UI endpoint (`registerOpenApiRoutes`, `renderSwaggerUiHtml`) with strict HTML/JS escaping and Content-Security-Policy headers.
   - ForgeJS DI plugin (`createOpenApiPlugin`, `OpenApiTokens`).
+
+## [1.0.0] - 2026-11-27
+
+### Added & Changed
+- Added automatic schema discovery from `validatedHandler()`, Zod v4 `toJSONSchema()` + full Zod v3/v4 & Valibot reflection, `multipart/form-data` & binary media types, reusable `components.schemas`, and production guards on `registerOpenApiRoutes()`.
+

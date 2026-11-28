@@ -1,8 +1,8 @@
 # @forge-fr/drizzle
 
-> First-class Drizzle ORM plugin preserving native PostgresJsDatabase<TSchema> inference, typed transactions, and DrizzleQueryError SQLSTATE normalization.
+> Official Drizzle ORM plugin with createDrizzleUnitOfWork that preserves 100% of Drizzle TypeScript inference, adds typed transactions, and maps PostgreSQL errors cleanly.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: database
 - **Tarball**: 8.6 kB (16 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/drizzle
 ```
 

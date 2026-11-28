@@ -1,8 +1,8 @@
 # @forge-fr/openapi
 
-> OpenAPI 3.1 generator reflecting Standard Schema v1 routes into JSON Schema 2020-12 with validatedOpenApiHandler and XSS-escaped Swagger UI routes.
+> Auto-discovers OpenAPI 3.1 specs from validatedHandler() and validatedOpenApiHandler() (Zod v3/v4, Valibot, Standard Schema), with multipart/binary schemas and guarded Swagger UI.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: validation
 - **Tarball**: 17.5 kB (36 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/openapi
 ```
 
@@ -47,5 +48,5 @@ registerOpenApiRoutes(app, {
 
 ### OpenAPI 3.1 Generator, Swagger UI & Plugin
 
-- **Values**: `OpenApiError`, `sanitizeJsonSchema`, `schemaToJsonSchema`, `OPENAPI_META_KEY`, `attachOpenApiMetadata`, `getAttachedOpenApiMetadata`, `openApiMeta`, `validatedOpenApiHandler`, `generateOpenApiDocument`, `registerOpenApiRoutes`, `renderSwaggerUiHtml`, `OpenApiTokens`, `createOpenApiPlugin`
-- **Types**: `OpenApiComponents`, `OpenApiDocument`, `OpenApiGeneratorOptions`, `OpenApiHandlerMetadata`, `OpenApiInfo`, `OpenApiMediaType`, `OpenApiOperation`, `OpenApiParameter`, `OpenApiPathItem`, `OpenApiPathMethod`, `OpenApiPluginOptions`, `OpenApiRequestBody`, `OpenApiResponse`, `OpenApiRouteDoc`, `OpenApiSchemaObject`, `OpenApiSecurityScheme`, `OpenApiServer`, `OpenApiTag`, `RegisterOpenApiRoutesOptions`, `SchemaReflectOptions`, `SwaggerUiOptions`
+- **Values**: `OpenApiError`, `sanitizeJsonSchema`, `schemaToJsonSchema`, `OPENAPI_META_KEY`, `attachOpenApiMetadata`, `getAttachedOpenApiMetadata`, `openApiMeta`, `validatedOpenApiHandler`, `generateOpenApiDocument`, `DEFAULT_SWAGGER_UI_DIST`, `registerOpenApiRoutes`, `renderSwaggerUiHtml`, `OpenApiTokens`, `createOpenApiPlugin`
+- **Types**: `OpenApiComponents`, `OpenApiDiscriminator`, `OpenApiDocument`, `OpenApiGeneratorOptions`, `OpenApiHandlerMetadata`, `OpenApiInfo`, `OpenApiMediaType`, `OpenApiOperation`, `OpenApiParameter`, `OpenApiPathItem`, `OpenApiPathMethod`, `OpenApiPluginOptions`, `OpenApiRequestBody`, `OpenApiResponse`, `OpenApiRouteDoc`, `OpenApiSchemaObject`, `OpenApiSecurityScheme`, `OpenApiServer`, `OpenApiTag`, `RegisterOpenApiRoutesOptions`, `SchemaReflectOptions`, `SwaggerUiOptions`

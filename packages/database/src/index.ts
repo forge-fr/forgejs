@@ -49,3 +49,14 @@ export {
   type PostgresPluginOptions,
   type PostgresSslMode,
 } from './postgres.js';
+
+export {
+  createUnitOfWork,
+  defineRepository,
+  type CreateUnitOfWorkOptions,
+  type RepositoryFactory,
+  type TransactionContext,
+  type TransactionHook,
+  type UnitOfWork,
+  type UnitOfWorkRunOptions,
+} from './unit-of-work.js';

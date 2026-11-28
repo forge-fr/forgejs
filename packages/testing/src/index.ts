@@ -1,12 +1,33 @@
 export { MemoryAdapter } from './memory-adapter.js';
 export {
   createTestClient,
+  type ParsedSseMessage,
   type TestClient,
   type TestClientOptions,
+  type TestMultipartFieldValue,
+  type TestMultipartFile,
   type TestRequestOptions,
   type TestResponse,
+  type TestSseResponse,
 } from './client.js';
-export { overrideProvider, type ProviderTarget } from './di.js';
+export {
+  applyOverrides,
+  isTypedProviderOverride,
+  overrideFactory,
+  overrideProvider,
+  overrideValue,
+  type ProviderTarget,
+  type TestOverride,
+  type TypedProviderOverride,
+} from './di.js';
+export {
+  createTestApp,
+  createTestKernel,
+  type TestApp,
+  type TestAppOptions,
+  type TestKernel,
+  type TestKernelOptions,
+} from './harness.js';
 export {
   runHttpAdapterContractSuite,
   type AdapterContractCheckResult,

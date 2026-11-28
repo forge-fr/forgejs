@@ -1,8 +1,8 @@
 # @forge-fr/authorization
 
-> Segment-strict RBAC, deny-overrides ABAC policy engine, anti-IDOR resource ownership guards, multi-tenant isolation checks, and service-layer actor authorizers.
+> Role-based (RBAC) and attribute-based (ABAC) access control, resource ownership checks, tenant isolation guards, and service-level authorizers.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Adapter Layer
 - **Category**: security
 - **Tarball**: 19.2 kB (40 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/authorization
 ```
 

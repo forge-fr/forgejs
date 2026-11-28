@@ -1,18 +1,18 @@
 # Encapsulated Modules
 
-> Define modular boundaries with defineModule(), explicit exports, non-transitive encapsulation, and diamond deduplication.
+> Organize features with defineModule(), keep internal helpers private by default, and share only explicit exports.
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/modules
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/modules.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
 
-## Private providers vs. explicit exports
+## Private by default, shared only when exported
 
-Providers registered inside defineModule() are private by default. Downstream modules attempting to resolve an unexported token fail fast with ProviderNotVisibleError. Exports are non-transitive unless explicitly re-exported.
+Services registered inside defineModule() stay private to that module unless you list their tokens in exports. If another module tries to access a private token, ForgeJS stops immediately with ProviderNotVisibleError.
 
 **File: `src/modules/billing.module.ts`**
 
@@ -42,7 +42,7 @@ const billing = kernel.container.resolve(BillingServiceToken);
 console.info('Total cents:', billing.total());
 ```
 
-## Diamond dependency deduplication & cycle checks
+## Shared module deduplication & loop protection
 
-- If Modules B and C both import SharedModule A, createModuleRegistry() instantiates and initializes SharedModule A exactly once.
-- Circular module imports throw CircularModuleDependencyError during boot before any providers run.
+- If two different modules both import the same SharedModule, ForgeJS registers and initializes SharedModule only once.
+- Circular module imports fail right at startup with CircularModuleDependencyError before any code runs.

@@ -1,8 +1,8 @@
 # @forge-fr/router
 
-> Zero-dependency radix router with O(1) static route lookup, constrained parameters, wildcard matching, nested groups, automatic HEAD, and RFC 405 Allow generation.
+> Zero-dependency URL router with instant static path lookup, typed parameter patterns, wildcards, route groups, and automatic HEAD/405 responses.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Framework Core
 - **Category**: core
 - **Tarball**: 16.4 kB (24 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/router
 ```
 

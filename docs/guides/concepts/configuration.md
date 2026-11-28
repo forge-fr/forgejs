@@ -1,18 +1,18 @@
 # Configuration & Secrets
 
-> Typed configuration management via createConfigManager(), prototype-safe key guards, and credential masking with secret() and SecretValue.
+> Manage typed app settings with createConfigManager() and keep passwords or API keys hidden from logs using secret().
 
 - **Section**: Core Concepts
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/concepts/configuration
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/concepts/configuration.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/architecture.md
 
 ## Typed configuration manager
 
-createConfigManager() layers defaults, explicit runtime values, and optional Standard Schema validation while rejecting __proto__, constructor, and prototype key paths.
+createConfigManager() combines defaults, environment values, and optional schema validation while blocking unsafe key paths like __proto__, constructor, and prototype.
 
 **File: `src/config.ts`**
 
@@ -38,11 +38,11 @@ const config = createConfigManager<AppConfig>({
 const port = config.get<number>('port');
 const dbSecret = config.get<SecretValue<string>>('databaseUrl');
 // dbSecret.toString() === '[REDACTED]'
-// dbSecret.reveal() returns the raw string only at the driver boundary
+// Call dbSecret.reveal() only right where the database client needs it
 ```
 
-## SecretValue redaction guarantees
+## How SecretValue protects credentials
 
-- Values wrapped with secret() serialize to REDACTED_PLACEHOLDER ("[REDACTED]") in JSON.stringify(), toString(), valueOf(), and Node/Bun inspect output.
-- Call .reveal() explicitly only when passing credentials to a database, JWT, or S3 client.
-- redactObject() recursively masks secret keys across nested configuration or telemetry objects.
+- Anything wrapped in secret() prints as "[REDACTED]" in JSON.stringify(), toString(), valueOf(), and console inspection.
+- You explicitly call .reveal() only when handing a credential to a database, JWT signer, or S3 client.
+- redactObject() scans nested objects and masks sensitive fields before logging or reporting.

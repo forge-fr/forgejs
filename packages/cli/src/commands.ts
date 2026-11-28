@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import readline from 'node:readline/promises';
 import { CliError } from './errors.js';
 import {
   resolvePluginPackageSpec,
@@ -8,15 +9,23 @@ import {
   sanitizeJsonObject,
   validateProjectName,
 } from './safety.js';
-import { buildProjectTemplateFiles, generateArtifactFiles } from './templates.js';
+import {
+  buildProjectTemplateFiles,
+  generateCodeArtifacts,
+  injectModuleRegistrationInAppSource,
+} from './templates.js';
 import type {
   CliExecutionContext,
+  CliPromptFn,
   CliResult,
   CliRuntimeTarget,
   CliSpawnFn,
   DoctorCheckResult,
   DoctorReport,
+  ForgeProjectConfig,
   GeneratorArtifactKind,
+  GeneratorNamingMode,
+  GeneratorOptions,
   ParsedCliArgs,
   ProjectRuntimeTarget,
   ProjectTemplateKind,
@@ -32,7 +41,7 @@ export const HELP_TEXT = [
   '',
   'Commands:',
   '  new <name>                         Create a new ForgeJS project',
-  '  generate <type> <name>             Generate module, controller, or service (alias: g)',
+  '  generate <type> <name>             Generate module, resource, schema, repository, service, or controller (alias: g)',
   '  plugin add <plugin>                Register a ForgeJS or npm plugin into package.json',
   '  dev                                Start development server (supports --watch, --runtime)',
   '  build                              Compile TypeScript project (tsc -b)',
@@ -42,6 +51,109 @@ export const HELP_TEXT = [
   '  help                               Show this help output',
   '  version                            Show CLI version',
 ].join('\n');
+
+const GENERATOR_KIND_ALIASES: Readonly<Record<string, GeneratorArtifactKind>> = {
+  module: 'module',
+  mod: 'module',
+  resource: 'resource',
+  res: 'resource',
+  crud: 'resource',
+  controller: 'controller',
+  ctrl: 'controller',
+  c: 'controller',
+  service: 'service',
+  svc: 'service',
+  s: 'service',
+  repository: 'repository',
+  repo: 'repository',
+  r: 'repository',
+  schema: 'schema',
+  sch: 'schema',
+};
+
+export function resolveGeneratorKind(rawKind: string): GeneratorArtifactKind {
+  const normalized = rawKind.trim().toLowerCase();
+  const mapped = GENERATOR_KIND_ALIASES[normalized];
+  if (!mapped) {
+    throw new CliError(
+      'CLI_INVALID_ARGUMENT',
+      `Unknown generator type "${rawKind}". Expected module, resource, controller, service, repository, or schema.`,
+    );
+  }
+  return mapped;
+}
+
+export async function loadForgeProjectConfig(baseDir: string): Promise<ForgeProjectConfig> {
+  const forgeConfigPath = path.join(baseDir, 'forge.config.json');
+  if (await pathExists(forgeConfigPath)) {
+    try {
+      const raw = JSON.parse(await fs.readFile(forgeConfigPath, 'utf8')) as Record<string, unknown>;
+      return parseProjectConfigObject(raw);
+    } catch (err: unknown) {
+      if (err instanceof CliError) throw err;
+      throw new CliError('CLI_INVALID_ARGUMENT', `Invalid JSON in ${forgeConfigPath}`, {
+        cause: err,
+      });
+    }
+  }
+
+  const pkgPath = path.join(baseDir, 'package.json');
+  if (await pathExists(pkgPath)) {
+    try {
+      const rawPkg = JSON.parse(await fs.readFile(pkgPath, 'utf8')) as Record<string, unknown>;
+      if (typeof rawPkg['forge'] === 'object' && rawPkg['forge'] !== null) {
+        return parseProjectConfigObject(rawPkg['forge'] as Record<string, unknown>);
+      }
+    } catch {
+      // Ignore malformed package.json during optional config probing
+    }
+  }
+
+  return {};
+}
+
+function parseProjectConfigObject(raw: Record<string, unknown>): ForgeProjectConfig {
+  const safe = sanitizeJsonObject(raw);
+  const modulesDir =
+    typeof safe['modulesDir'] === 'string' && safe['modulesDir'].trim().length > 0
+      ? safe['modulesDir'].trim()
+      : undefined;
+  const rawNaming = safe['naming'];
+  let naming: GeneratorNamingMode | undefined;
+  if (rawNaming !== undefined) {
+    if (rawNaming === 'plural' || rawNaming === 'singular' || rawNaming === 'exact') {
+      naming = rawNaming;
+    } else {
+      throw new CliError(
+        'CLI_INVALID_ARGUMENT',
+        `Invalid forge config "naming": "${String(rawNaming)}". Expected plural, singular, or exact.`,
+      );
+    }
+  }
+  const crud = typeof safe['crud'] === 'boolean' ? safe['crud'] : undefined;
+
+  return {
+    ...(modulesDir !== undefined ? { modulesDir } : {}),
+    ...(naming !== undefined ? { naming } : {}),
+    ...(crud !== undefined ? { crud } : {}),
+  };
+}
+
+function createDefaultPrompt(): CliPromptFn {
+  return async (question: string, defaultValue?: string): Promise<string> => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    try {
+      const suffix = defaultValue !== undefined ? ` (${defaultValue})` : '';
+      const answer = (await rl.question(`${question}${suffix}: `)).trim();
+      return answer.length > 0 ? answer : (defaultValue ?? '');
+    } finally {
+      rl.close();
+    }
+  };
+}
 
 export function defaultSpawnCommand(
   command: string,
@@ -187,46 +299,136 @@ export async function executeGenerateCommand(
   parsed: ParsedCliArgs,
   ctx: CliExecutionContext,
 ): Promise<CliResult> {
-  const kindRaw = parsed.positionals[0];
-  const nameRaw = parsed.positionals[1];
+  const isInteractive = parsed.flags.has('interactive') || ctx.prompt !== undefined;
+  const promptFn = ctx.prompt ?? (parsed.flags.has('interactive') ? createDefaultPrompt() : undefined);
+
+  let kindRaw = parsed.positionals[0];
+  let nameRaw = parsed.positionals[1];
+
+  if (!kindRaw && isInteractive && promptFn) {
+    kindRaw = await promptFn(
+      'Artifact type (module, resource, controller, service, repository, schema)',
+      'module',
+    );
+  }
+  if (!nameRaw && isInteractive && promptFn) {
+    nameRaw = await promptFn('Module or resource name (e.g. products)');
+  }
+
   if (!kindRaw || !nameRaw) {
     throw new CliError(
       'CLI_INVALID_ARGUMENT',
-      'Usage: forge generate <module|controller|service> <name>',
-    );
-  }
-  if (!['module', 'controller', 'service'].includes(kindRaw)) {
-    throw new CliError(
-      'CLI_INVALID_ARGUMENT',
-      `Unknown generator type "${kindRaw}". Expected module, controller, or service.`,
+      'Usage: forge generate <module|resource|controller|service|repository|schema> <name>',
     );
   }
 
+  const kind = resolveGeneratorKind(kindRaw);
   const baseDir = path.resolve(ctx.cwd ?? process.cwd(), parsed.options['dir'] ?? '.');
-  const artifact = generateArtifactFiles(kindRaw as GeneratorArtifactKind, nameRaw);
-  const targetFile = resolveSafeTargetPath(baseDir, artifact.relativePath);
+  const projectConfig = await loadForgeProjectConfig(baseDir);
+
+  let customOutDir = parsed.options['out-dir'] ?? parsed.options['modules-dir'];
+  if (
+    !customOutDir &&
+    parsed.flags.has('interactive') &&
+    promptFn &&
+    projectConfig.modulesDir === undefined
+  ) {
+    customOutDir = await promptFn('Output modules directory', 'src/modules');
+  }
+
+  const modulesDir = customOutDir ?? projectConfig.modulesDir ?? 'src/modules';
+  // Validate that modulesDir stays confined within baseDir
+  resolveSafeTargetPath(baseDir, modulesDir);
+
+  const rawNamingOpt = parsed.options['naming'];
+  let naming: GeneratorNamingMode = projectConfig.naming ?? 'plural';
+  if (parsed.flags.has('no-pluralize')) {
+    naming = 'exact';
+  } else if (rawNamingOpt !== undefined) {
+    if (rawNamingOpt === 'plural' || rawNamingOpt === 'singular' || rawNamingOpt === 'exact') {
+      naming = rawNamingOpt;
+    } else {
+      throw new CliError(
+        'CLI_INVALID_ARGUMENT',
+        `Invalid --naming "${rawNamingOpt}". Expected plural, singular, or exact.`,
+      );
+    }
+  }
+
+  const singleFile = parsed.flags.has('single') || parsed.flags.has('only-module');
+  const crud = parsed.flags.has('no-crud')
+    ? false
+    : parsed.flags.has('crud')
+      ? true
+      : (projectConfig.crud ?? (kind === 'module' || kind === 'resource'));
+
+  const generatorOptions: GeneratorOptions = {
+    modulesDir,
+    naming,
+    crud,
+    singleFile,
+  };
+
+  const artifacts = generateCodeArtifacts(kind, nameRaw, generatorOptions);
+  const resolvedTargets = artifacts.map((artifact) => ({
+    artifact,
+    targetFile: resolveSafeTargetPath(baseDir, artifact.relativePath),
+  }));
 
   const dryRun = parsed.flags.has('dry-run');
   const force = parsed.flags.has('force');
-  if (!dryRun) {
-    if ((await pathExists(targetFile)) && !force) {
-      throw new CliError(
-        'CLI_FILE_EXISTS',
-        `File "${artifact.relativePath}" already exists. Pass --force to overwrite.`,
-      );
+
+  // Pre-flight check all target files before writing anything so we never partially overwrite
+  if (!force) {
+    for (const { artifact, targetFile } of resolvedTargets) {
+      if (await pathExists(targetFile)) {
+        throw new CliError(
+          'CLI_FILE_EXISTS',
+          `File "${artifact.relativePath}" already exists. Pass --force to overwrite.`,
+        );
+      }
     }
-    await fs.mkdir(path.dirname(targetFile), { recursive: true });
-    await fs.writeFile(targetFile, artifact.content, 'utf8');
   }
 
-  const stdout = `${dryRun ? '[dry-run] Would generate' : 'Generated'} ${artifact.relativePath}\n`;
+  if (!dryRun) {
+    for (const { artifact, targetFile } of resolvedTargets) {
+      await fs.mkdir(path.dirname(targetFile), { recursive: true });
+      await fs.writeFile(targetFile, artifact.content, 'utf8');
+    }
+
+    if (parsed.flags.has('register')) {
+      const appFile = resolveSafeTargetPath(baseDir, 'src/app.ts');
+      if (await pathExists(appFile)) {
+        const currentApp = await fs.readFile(appFile, 'utf8');
+        const updatedApp = injectModuleRegistrationInAppSource(
+          currentApp,
+          nameRaw,
+          generatorOptions,
+        );
+        if (updatedApp !== currentApp) {
+          await fs.writeFile(appFile, updatedApp, 'utf8');
+        }
+      }
+    }
+  }
+
+  const prefix = dryRun ? '[dry-run] Would generate' : 'Generated';
+  const stdout = `${resolvedTargets.map(({ artifact }) => `${prefix} ${artifact.relativePath}`).join('\n')}\n`;
   ctx.stdout?.(stdout);
+
   return {
     exitCode: 0,
     command: 'generate',
     stdout,
     stderr: '',
-    data: { relativePath: artifact.relativePath, targetFile },
+    data: {
+      kind,
+      name: nameRaw,
+      relativePath: resolvedTargets[0]!.artifact.relativePath,
+      targetFile: resolvedTargets[0]!.targetFile,
+      files: resolvedTargets.map((t) => t.artifact.relativePath),
+      targetFiles: resolvedTargets.map((t) => t.targetFile),
+    },
   };
 }
 

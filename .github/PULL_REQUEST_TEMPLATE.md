@@ -15,7 +15,7 @@
 
 ## Verification Checklist
 
-- [ ] `npm run build` compiles all 20 packages cleanly
+- [ ] `npm run build` compiles all 21 packages cleanly
 - [ ] `npm run typecheck` passes with zero TypeScript errors
 - [ ] `npm run packages:verify` passes tarball & clean consumer checks
 - [ ] `npm run docs:verify` passes documentation example execution (if docs changed)

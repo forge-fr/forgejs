@@ -1,8 +1,8 @@
 # @forge-fr/logger
 
-> Structured Pino logging with recursive secret redaction and CRLF neutralization, correlation IDs, OpenTelemetry W3C tracing/metrics, and sanitized /health/live & /health/ready routes.
+> Structured Pino logging (plus zero-dep @forge-fr/logger/edge) with dot-path secret redaction, typed CorrelationIdKey/RequestLoggerKey, OpenTelemetry tracing/metrics, and /health probes.
 
-- **Version**: v1.0.0-rc.2
+- **Version**: v1.0.0
 - **Layer**: Infrastructure
 - **Category**: infrastructure
 - **Tarball**: 21.4 kB (32 files)
@@ -15,6 +15,7 @@
 ## Installation
 
 ```bash
+# Add once to .npmrc: @forge-fr:registry=https://npm.pkg.github.com
 npm install @forge-fr/logger
 ```
 
@@ -43,8 +44,8 @@ logger.info('Service initialized');
 
 ### Pino Logging, Redaction & Correlation
 
-- **Values**: `DEFAULT_PINO_REDACT_PATHS`, `DEFAULT_REDACT_KEYS`, `buildRedactionSet`, `normalizeRedactKey`, `redactInlineSecrets`, `sanitizeLogContext`, `sanitizeLogMessage`, `createPinoLogger`, `createMemoryLogSink`, `createCorrelationIdMiddleware`, `createRequestLoggingMiddleware`, `attachObservabilityHooks`, `bindCorrelationId`, `getCorrelationId`, `getRequestLogger`, `isValidCorrelationId`, `resolveCorrelationId`
-- **Types**: `ContextAccessor`, `CorrelationIdOptions`, `MemoryLogSink`, `ObservabilityHooksOptions`, `PinoForgeLogger`, `PinoLoggerOptions`, `RequestLoggingOptions`, `SanitizeContextOptions`
+- **Values**: `DEFAULT_PINO_REDACT_PATHS`, `DEFAULT_REDACT_KEYS`, `buildRedactionSet`, `compileRedactPaths`, `matchesRedactPath`, `normalizeRedactKey`, `parseRedactPath`, `redactInlineSecrets`, `sanitizeLogContext`, `sanitizeLogMessage`, `createPinoLogger`, `createMemoryLogSink`, `createEdgeLogger`, `createEdgeMemoryLogSink`, `createEdgeObservabilityPlugin`, `EdgeObservabilityTokens`, `CorrelationIdKey`, `RequestLoggerKey`, `createCorrelationIdMiddleware`, `createRequestLoggingMiddleware`, `attachObservabilityHooks`, `bindCorrelationId`, `getCorrelationId`, `getRequestLogger`, `isValidCorrelationId`, `resolveCorrelationId`
+- **Types**: `CompiledRedactPath`, `ContextAccessor`, `CorrelationIdOptions`, `EdgeLoggerOptions`, `EdgeObservabilityPluginOptions`, `MemoryLogSink`, `ObservabilityHooksOptions`, `PinoForgeLogger`, `PinoLoggerOptions`, `RequestLoggingOptions`, `SanitizeContextOptions`
 
 ### OpenTelemetry, Health Routes & Plugin
 

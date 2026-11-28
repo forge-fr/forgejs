@@ -7,6 +7,7 @@ import {
   type StandardSchemaLike,
 } from '@forge-fr/core';
 import { DefaultDatabaseTokens, type DatabaseAdapter } from './types.js';
+import { createUnitOfWork, type UnitOfWork } from './unit-of-work.js';
 
 export interface DatabasePluginOptions<
   TClient = unknown,
@@ -19,9 +20,13 @@ export interface DatabasePluginOptions<
   readonly forgeVersion?: string;
   readonly adapterToken?: InjectionToken<DatabaseAdapter<TClient, TTxClient>>;
   readonly clientToken?: InjectionToken<TClient>;
+  readonly unitOfWorkToken?: InjectionToken<UnitOfWork<TClient, TTxClient>>;
   readonly healthCheckName?: string;
   readonly configSchema?: StandardSchemaLike<TConfigInput, TConfig>;
   readonly createAdapter: (config: TConfig) => DatabaseAdapter<TClient, TTxClient>;
+  readonly createUnitOfWork?: (
+    adapter: DatabaseAdapter<TClient, TTxClient>,
+  ) => UnitOfWork<TClient, TTxClient>;
 }
 
 export function createDatabasePlugin<
@@ -33,12 +38,14 @@ export function createDatabasePlugin<
   options: DatabasePluginOptions<TClient, TTxClient, TConfig, TConfigInput>,
 ): ForgePlugin<TConfig, TConfigInput> {
   const pluginName = options.name ?? '@forge-fr/database';
-  const pluginVersion = options.version ?? '1.0.0-rc.2';
-  const forgeVersion = options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1';
+  const pluginVersion = options.version ?? '1.0.0';
+  const forgeVersion = options.forgeVersion ?? '^0.1.0 || ^1.0.0-rc.1 || ^1.0.0';
   const adapterToken = (options.adapterToken ??
     DefaultDatabaseTokens.adapter) as InjectionToken<DatabaseAdapter<TClient, TTxClient>>;
   const clientToken = (options.clientToken ??
     DefaultDatabaseTokens.client) as InjectionToken<TClient>;
+  const unitOfWorkToken = (options.unitOfWorkToken ??
+    DefaultDatabaseTokens.unitOfWork) as InjectionToken<UnitOfWork<TClient, TTxClient>>;
   const healthCheckName = options.healthCheckName ?? pluginName;
 
   const adaptersByContext = new WeakMap<
@@ -57,10 +64,23 @@ export function createDatabasePlugin<
       const adapter = options.createAdapter(config);
       adaptersByContext.set(ctx, adapter);
 
+      const uow =
+        options.createUnitOfWork !== undefined
+          ? options.createUnitOfWork(adapter)
+          : createUnitOfWork(adapter);
+
       ctx.registerProvider(
         {
           token: adapterToken,
           useValue: adapter,
+        },
+        { export: true },
+      );
+
+      ctx.registerProvider(
+        {
+          token: unitOfWorkToken,
+          useValue: uow,
         },
         { export: true },
       );

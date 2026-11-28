@@ -1,7 +1,7 @@
 {
   "name": "@forge-fr/monorepo",
   "private": true,
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0",
   "type": "module",
   "workspaces": [
     "packages/*"
@@ -15,7 +15,9 @@
     "build": "tsc -b --force packages/*/tsconfig.json",
     "typecheck": "tsc -b packages/*/tsconfig.json --noEmit",
     "packages:build": "node scripts/prepare-github-packages.mjs --build",
+    "packages:validate": "node scripts/verify-workspace.mjs",
     "packages:verify": "node scripts/verify-packaging.mjs",
+    "packages:publish:npm": "node scripts/prepare-github-packages.mjs --build --publish --registry https://registry.npmjs.org",
     "packages:prepare:github": "node scripts/prepare-github-packages.mjs --build --verify --pack --out-dir dist-packages",
     "packages:publish:github": "node scripts/prepare-github-packages.mjs --build --publish --registry https://npm.pkg.github.com",
     "docs:verify": "node scripts/verify-docs-examples.mjs",

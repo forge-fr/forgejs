@@ -120,3 +120,20 @@ export class ResponseCommittedError extends ForgeHttpError {
     });
   }
 }
+
+export class ContextKeyNotFoundError extends ForgeHttpError {
+  public readonly keyLabel: string;
+
+  public constructor(keyLabel: string, message?: string) {
+    super(
+      message ?? `Required context key "${keyLabel}" has not been set on this request context`,
+      {
+        code: 'CONTEXT_KEY_NOT_FOUND',
+        statusCode: 500,
+        expose: false,
+        details: { keyLabel },
+      },
+    );
+    this.keyLabel = keyLabel;
+  }
+}

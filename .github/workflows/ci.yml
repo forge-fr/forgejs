@@ -24,8 +24,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Build all 20 packages
+      - name: Build all 21 packages
         run: npm run build
+      - name: Validate workspace metadata & version consistency
+        run: npm run packages:validate
       - name: Strict TypeScript check
         run: npm run typecheck
 
@@ -42,9 +44,9 @@ jobs:
           bun-version: '1.4.4'
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Build all 20 packages
+      - name: Build all 21 packages
         run: npm run build
-      - name: Verify 20-package npm pack tarballs & consumer ESM imports
+      - name: Verify 21-package npm pack tarballs & consumer ESM imports
         run: npm run packages:verify
       - name: Verify executable documentation examples (Node 22 & Bun 1.4)
         run: npm run docs:verify

@@ -148,7 +148,7 @@ export const AuthServiceToken = createToken<AuthService>('playground:AuthService
 
 const ALLOWED_OAUTH_REDIRECT_URIS = [
   'http://localhost:3000/playground',
-  'https://playground.forgejs.dev/callback',
+  'https://playground.forgejs.id/callback',
 ] as const;
 
 function resolveJwtSecret(explicitSecret?: string): ReturnType<typeof secret<string>> {

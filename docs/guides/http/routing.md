@@ -1,18 +1,18 @@
 # Routing
 
-> O(1) static route lookup, constrained radix parameters, wildcards, nested groups, autoHead, and RFC 405 Allow generation.
+> Fast static route lookup, path parameters with regex constraints, wildcards, nested route groups, and automatic 405 responses.
 
 - **Section**: HTTP & API Development
 - **Packages**: @forge-fr/router, @forge-fr/http
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/http/routing
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/http/routing.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/http-and-validation.md
 
 ## Static, parameterized, constrained, and wildcard routes
 
-@forge-fr/router compiles exact static paths into an O(1) method-indexed map checked prior to normalization, while dynamic segments and regex constraints traverse a compact Radix tree.
+@forge-fr/router looks up exact static paths in constant O(1) time via an internal map, and matches dynamic URL parameters and regex rules using a fast Radix tree.
 
 **File: `src/routes.ts`**
 
@@ -30,9 +30,9 @@ app.group('/api/v1', (api) => {
 });
 ```
 
-## Route groups, autoHead & prototype-key protection
+## Route groups, HEAD support & parameter safety
 
-- Nested app.group("/api/v1", (api) => ...) composes prefixes, scoped middleware, and route metadata cleanly.
-- Route params use null-prototype objects and reject __proto__, constructor, and prototype parameter keys.
-- Automatic HEAD handling (autoHead) and RFC 405 Allow header generation are enabled by default.
-- Duplicate or conflicting route definitions throw RouteConflictError at registration time.
+- Nest routes cleanly with app.group("/api/v1", (api) => ...) to share URL prefixes and middleware.
+- Route params are stored in prototype-free objects and automatically reject unsafe names like __proto__ or constructor.
+- HEAD requests (autoHead) and 405 Method Not Allowed responses with Allow headers work automatically.
+- Accidental duplicate or conflicting routes throw RouteConflictError right when you register them.

@@ -19,8 +19,10 @@ export {
 
 export {
   createArgon2PasswordHasher,
+  createWebCryptoPasswordHasher,
   type Argon2PasswordHasherOptions,
   type PasswordHasher,
+  type WebCryptoPasswordHasherOptions,
 } from './password.js';
 
 export {
@@ -89,6 +91,7 @@ export {
 } from './better-auth.js';
 
 export {
+  AuthIdentityKey,
   createAuthMiddleware,
   getAuth,
   requireAuth,

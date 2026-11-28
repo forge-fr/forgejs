@@ -1,18 +1,18 @@
 # Logging, Metrics, Tracing & Health Checks
 
-> Structured Pino logging with secret & URL redaction, CRLF neutralization, correlation IDs, OpenTelemetry tracing/metrics, and sanitized /health/live & /health/ready endpoints.
+> Structured JSON logging with automatic secret masking, correlation IDs, OpenTelemetry tracing, and /health/live & /health/ready endpoints.
 
 - **Section**: Advanced Features
 - **Packages**: @forge-fr/logger
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/advanced/observability
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/advanced/observability.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/docs/security-and-observability.md
 
-## Redacted Pino logging, correlation IDs & health probes
+## Safe structured logs, request IDs & health probes
 
-@forge-fr/logger automatically redacts SecretValue objects, password/token keys, and credentialed database URLs, strips CRLF log-injection newlines, propagates x-correlation-id headers, and serves production-safe health endpoints.
+@forge-fr/logger automatically hides SecretValue fields, passwords, tokens, and database URL credentials, cleans unsafe line breaks from log messages, passes x-correlation-id headers, and registers production-safe health endpoints.
 
 **File: `src/observability.ts`**
 
@@ -41,4 +41,4 @@ registerHealthRoutes(app, { registry: app.kernel.health });
 
 ## OpenTelemetry tracing & metrics
 
-Mount createObservabilityPlugin() or createTelemetryMiddleware() to connect @opentelemetry/api tracer spans and HTTP latency histograms without hard-coupling your domain layer to a specific APM vendor.
+Add createObservabilityPlugin() or createTelemetryMiddleware() to export OpenTelemetry traces and HTTP latency metrics without tying your business logic to a specific monitoring vendor.

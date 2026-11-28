@@ -1,22 +1,22 @@
 # Contributing
 
-> Monorepo workspace layout, strict TypeScript standards, architectural boundary tests, and verification commands for contributors.
+> How the monorepo is organized, coding and boundary rules, and how to run the full test and doc checks before a PR.
 
 - **Section**: Community & Contributing
 - **Packages**: @forge-fr/core
-- **Version**: v1.0.0-rc.2
-- **Updated**: 2026-11-26
+- **Version**: v1.0.0
+- **Updated**: 2026-11-27
 - **HTML URL**: https://github.com/forge-fr/forgejs/docs/community/contributing
 - **Markdown URL**: https://github.com/forge-fr/forgejs/docs/community/contributing.md
 - **Source**: https://github.com/forge-fr/forgejs/blob/main/README.md
 
 ## Repository standards & boundary rules
 
-- Strict TypeScript: strict: true, exactOptionalPropertyTypes: true, noUncheckedIndexedAccess: true, pure ESM only.
-- Zero node:* or Bun globals in core, router, http, validation, openapi, authorization, security, or edge packages.
-- All 20 packages share synchronized versions and must remain acyclic in the workspace dependency graph.
+- Strict TypeScript (strict, exactOptionalPropertyTypes, noUncheckedIndexedAccess) and pure ESM across every package.
+- No node:* or Bun globals inside core, router, http, validation, openapi, authorization, security, or edge.
+- All 20 packages stay on matching versions with zero circular package dependencies.
 
-## Running the full verification suite
+## Run the full verification suite
 
 **File: `terminal`**
 

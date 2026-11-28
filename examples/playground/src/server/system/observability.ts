@@ -219,7 +219,7 @@ export function createObservabilityService(serviceName = 'forgejs-live-playgroun
 
   const instrumentation = createOtelInstrumentation({
     serviceName,
-    serviceVersion: '1.0.0-rc.2',
+    serviceVersion: '1.0.0',
     tracerProvider,
     meterProvider,
     contextAccessor,
